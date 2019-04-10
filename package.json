@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Morpheu5/Inequality#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.123",
+    "@types/node": "^11.13.2",
     "@types/p5": "^0.7.2",
     "file-loader": "^3.0.1",
     "ts-loader": "^5.3.3",

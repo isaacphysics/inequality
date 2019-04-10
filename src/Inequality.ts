@@ -131,8 +131,8 @@ export
     }
 
     preload = () => {
-        this.font_it = this.p.loadFont(""+fontIt);
-        this.font_up = this.p.loadFont(""+fontUp);
+        this.font_it = this.p.loadFont(require("./assets/STIXGeneral-Italic.ttf"));
+        this.font_up = this.p.loadFont(require("./assets/STIXGeneral-Regular.ttf"));
     };
 
     loadTestCase = (s: Array<{ type: string, properties: any }>) => {
@@ -704,7 +704,7 @@ export
 
 export function makeInequality(width: number, height: number, initialSymbolsToParse: Array<{ type: string, properties: any }>, { editorMode = "math", textEntry = false } = {}) {
     let sketch: Inequality;
-    let p = new p5((instance) => {
+    let p = new p5((instance: p5) => {
         sketch = new Inequality(instance, 320, 240, [], { editorMode, textEntry });
     });
     return sketch;
