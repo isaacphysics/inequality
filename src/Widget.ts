@@ -21,7 +21,16 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import * as p5 from "p5";
-import * as _ from 'lodash';
+import _compact = require('lodash/compact');
+import _each = require('lodash/each');
+import _intersection = require('lodash/intersection');
+import _isEmpty = require('lodash/isEmpty');
+import _map = require('lodash/map');
+import _max = require('lodash/max');
+import _min = require('lodash/min');
+import _some = require('lodash/some');
+import _values = require('lodash/values');
+
 
 import { DockingPoint } from './DockingPoint';
 
@@ -228,13 +237,13 @@ export
             alpha = 127;
         }
 
-        _.each(this.dockingPoints, (dockingPoint, key) => {
+        _each(this.dockingPoints, (dockingPoint, key) => {
             if (dockingPoint.child) {
                 dockingPoint.child.draw();
             } else {
                 // There is no child to paint, let's paint an empty docking point
                 //if (this.depth < 2) { // This stops docking points from being shown, but not from being used.
-                let drawThisOne = _.intersection(this.s.visibleDockingPointTypes, dockingPoint.type).length > 0;
+                let drawThisOne = _intersection(this.s.visibleDockingPointTypes, dockingPoint.type).length > 0;
                 let highlightThisOne = this.s.activeDockingPoint == dockingPoint;
 
                 if (drawThisOne || window.location.hash === "#debug") {
@@ -339,12 +348,12 @@ export
         }
         if (processChildren) {
             let dockingPoints: any = {};
-            _.each(this.dockingPoints, (dockingPoint, key) => {
+            _each(this.dockingPoints, (dockingPoint, key) => {
                 if (dockingPoint.child != null) {
                     dockingPoints[key] = dockingPoint.child.subtreeObject(processChildren, includeIds, minimal);
                 }
             });
-            if (!_.isEmpty(dockingPoints)) {
+            if (!_isEmpty(dockingPoints)) {
                 o.children = dockingPoints;
             }
         }
@@ -368,7 +377,7 @@ export
         let oldParent = this.parentWidget;
         this.currentPlacement = "";
         this.dockedTo = "";
-        _.each(this.parentWidget.dockingPoints, (dockingPoint) => {
+        _each(this.parentWidget.dockingPoints, (dockingPoint) => {
             if (dockingPoint.child == this) {
                 this.s.log.actions.push({
                     event: "UNDOCK_SYMBOL",
@@ -394,7 +403,7 @@ export
      */
     hit(p: p5.Vector): Widget {
         let w: Widget = null;
-        _.some(this.dockingPoints, dockingPoint => {
+        _some(this.dockingPoints, dockingPoint => {
             if (dockingPoint.child != null) {
                 w = dockingPoint.child.hit(p5.Vector.sub(p, this.position));
                 return w != null;
@@ -416,7 +425,7 @@ export
         let mainColor = this.isMainExpression ? this.p.color(0) : this.p.color(0, 0, 0, 127);
         this.isHighlighted = on;
         this.color = on ? this.p.color(51, 153, 255) : mainColor;
-        _.each(this.dockingPoints, dockingPoint => {
+        _each(this.dockingPoints, dockingPoint => {
             // Only recurse for turning off. This seems to improve usability.
             if (dockingPoint.child != null && !on) {
                 dockingPoint.child.highlight(on);
@@ -429,7 +438,7 @@ export
 	 * @returns {Widget[]} A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
-        return _.compact(_.map(_.values(this.dockingPoints), "child"));
+        return _compact(_map(_values(this.dockingPoints), "child"));
     }
 
     /**
@@ -592,10 +601,10 @@ export
         let thisBox = Rect.fromObject(this.boundingBox());
         let dpBoxes = [thisBox, ...this.dockingPointsBoxes];
 
-        let x = _.min(_.map(dpBoxes, b => { return b.x+ax }));
-        let y = _.min(_.map(dpBoxes, b => { return b.y+ay }));
-        let w = _.max(_.map(dpBoxes, b => { return b.x+ax+b.w }));
-        let h = _.max(_.map(dpBoxes, b => { return b.y+ay+b.h }));
+        let x = _min(_map(dpBoxes, b => { return b.x+ax }));
+        let y = _min(_map(dpBoxes, b => { return b.y+ay }));
+        let w = _max(_map(dpBoxes, b => { return b.x+ax+b.w }));
+        let h = _max(_map(dpBoxes, b => { return b.y+ay+b.h }));
 
         return new Rect(x-ax,y-ay,w-x,h-y);
     }

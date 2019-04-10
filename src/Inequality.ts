@@ -18,8 +18,15 @@ limitations under the License.
 /* tslint:disable: no-unused-variable */
 /* tslint:disable: comment-format */
 
+// @ts-ignore
 import * as p5 from "p5";
-import * as _ from 'lodash';
+import _each = require('lodash/each');
+import _intersection = require('lodash/intersection');
+import _map = require('lodash/map');
+import _reject = require('lodash/reject');
+import _some = require('lodash/some');
+import _uniq = require('lodash/uniq');
+import _without = require('lodash/without');
 
 import { Widget, Rect, SymbolSpec } from './Widget'
 import { Symbol } from './Symbol'
@@ -41,14 +48,6 @@ import { Particle } from './Particle';
 import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
-
-import * as fontIt from './assets/STIXGeneral-Italic.ttf';
-import * as fontUp from './assets/STIXGeneral-Regular.ttf';
-
-console.log("Italic: " + fontIt);
-console.log("Regular: " + fontUp);
-
-// This is where the fun starts
 
 // This is the "main" app with the update/render loop and all that jazz.
 export
@@ -227,7 +226,7 @@ export
         // We need a copy of this.symbols because assignment is done by reference because
         //     let a = this.symbols; a.shift();
         // destroys this.symbols.
-        let q: Array<Widget> = _.without(this.symbols.slice(0), this.movingSymbol);
+        let q: Array<Widget> = _without(this.symbols.slice(0), this.movingSymbol);
         while (q.length > 0) {
             let widget = q.shift();
             for (let e in widget.dockingPoints) {
@@ -245,7 +244,7 @@ export
         let minDistance = Infinity;
         let candidateDockingPoint: DockingPoint = null;
         let availablePoints = this._canvasDockingPoints.filter((e: DockingPoint) => {
-            return _.intersection(this.visibleDockingPointTypes, e.type).length > 0;
+            return _intersection(this.visibleDockingPointTypes, e.type).length > 0;
         });
         for (let dockingPoint of availablePoints) {
             let d = testPoint.dist(dockingPoint.absolutePosition);
@@ -276,7 +275,7 @@ export
 
             // Decide whether we should dock immediately
 
-            _.some(this.symbols, (symbol: Widget) => {
+            _some(this.symbols, (symbol: Widget) => {
                 this.activeDockingPoint = null;
 
                 symbol.highlight(false);
@@ -299,7 +298,7 @@ export
 
     commitPotentialSymbol = () => {
         // Make sure we have an active docking point, and that the moving symbol can dock to it.
-        if (this.activeDockingPoint != null && _.intersection(this.potentialSymbol.docksTo, this.activeDockingPoint.type).length > 0) {
+        if (this.activeDockingPoint != null && _intersection(this.potentialSymbol.docksTo, this.activeDockingPoint.type).length > 0) {
             this.activeDockingPoint.child = this.potentialSymbol;
             this.log.actions.push({
                 event: "DOCK_POTENTIAL_SYMBOL",
@@ -423,7 +422,7 @@ export
         this.movingSymbol = null;
         let index = -1;
         let movingSymbolDocksTo: Array<string> = [];
-        _.some(this.symbols, (symbol, i) => {
+        _some(this.symbols, (symbol, i) => {
             // .hit() propagates down the hierarchy
             let hitSymbol = symbol.hit(this.p.createVector(tx, ty));
             if (hitSymbol != null && hitSymbol.isDetachable) {
@@ -470,7 +469,7 @@ export
 
         // Trigger visibility attribute. TODO: We may want to rely on this in the future.
         for (let dp of this._canvasDockingPoints) {
-            dp.isVisible = _.intersection(this.visibleDockingPointTypes, dp.type).length > 0;
+            dp.isVisible = _intersection(this.visibleDockingPointTypes, dp.type).length > 0;
         }
         for (let symbol of this.symbols) {
             symbol.shakeIt();
@@ -513,7 +512,7 @@ export
             this.prevTouch.y = <number>ty;
 
             // Check if we are moving close to a docking point, and highlight it even more.
-            _.some(this.symbols, (symbol: Widget) => {
+            _some(this.symbols, (symbol: Widget) => {
                 this.activeDockingPoint = null;
 
                 // This is the point where the mouse/touch is.
@@ -556,8 +555,8 @@ export
             this.prevTouch = null;
 
             // Make sure we have an active docking point, and that the moving symbol can dock to it.
-            if (this.activeDockingPoint != null && _.intersection(this.movingSymbol.docksTo, this.activeDockingPoint.type).length > 0) {
-                this.symbols = _.without(this.symbols, this.movingSymbol);
+            if (this.activeDockingPoint != null && _intersection(this.movingSymbol.docksTo, this.activeDockingPoint.type).length > 0) {
+                this.symbols = _without(this.symbols, this.movingSymbol);
                 this.updateCanvasDockingPoints();
                 // Do the actual docking
                 this.activeDockingPoint.child = this.movingSymbol;
@@ -577,7 +576,7 @@ export
                     symbol: this.movingSymbol.subtreeObject(false, true, true),
                     timestamp: Date.now()
                 });
-                this.symbols = _.without(this.symbols, this.movingSymbol);
+                this.symbols = _without(this.symbols, this.movingSymbol);
                 this.updateCanvasDockingPoints();
             } else {
                 this.log.actions.push({
@@ -607,7 +606,7 @@ export
 
         let symbolWithMostChildren: Widget = null;
         let mostChildren = 0;
-        _.each(this.symbols, symbol => {
+        _each(this.symbols, symbol => {
             let numChildren = symbol.totalSymbolCount;
             if (numChildren > mostChildren) {
                 mostChildren = numChildren;
@@ -615,7 +614,7 @@ export
             }
         });
 
-        _.each(this.symbols, symbol => {
+        _each(this.symbols, symbol => {
             symbol.isMainExpression = (symbol == symbolWithMostChildren);
         });
         this.updateState();
@@ -625,7 +624,7 @@ export
 
     mouseMoved = () => {
         let p = this.p.createVector(this.p.mouseX, this.p.mouseY);
-        _.each(this.symbols, symbol => {
+        _each(this.symbols, symbol => {
             symbol.highlight(false);
             let hitSymbol = symbol.hit(p);
             if (hitSymbol) {
@@ -644,7 +643,7 @@ export
             let children = e.children;
             stack = stack.concat(children);
         }
-        return _.reject(_.uniq(list), i => { return i == ''; });
+        return _reject(_uniq(list), i => { return i == ''; });
     };
 
     onNewEditorState = (_state: object) => {
@@ -654,7 +653,7 @@ export
     updateState = (fromTextEntry = false) => {
         let symbolWithMostChildren: Widget;
         let mostChildren = 0;
-        _.each(this.symbols, symbol => {
+        _each(this.symbols, symbol => {
             let numChildren = symbol.totalSymbolCount;
             if (numChildren > mostChildren) {
                 mostChildren = numChildren;
@@ -663,7 +662,7 @@ export
         });
 
         if (symbolWithMostChildren) {
-            let flattenedExpression = _.map(this.flattenExpression(symbolWithMostChildren), e => { return undefined == e ? '' : e.replace(/,/g, ";") });
+            let flattenedExpression = _map(this.flattenExpression(symbolWithMostChildren), e => { return undefined == e ? '' : e.replace(/,/g, ";") });
             this.onNewEditorState({
                 result: {
                     "tex": symbolWithMostChildren.formatExpressionAs("latex").trim(),
@@ -673,7 +672,7 @@ export
                     // removes everything that is not truthy, so this should avoid empty strings.
                     "uniqueSymbols": flattenedExpression.join(', '),
                 },
-                symbols: _.map(this.symbols, s => s.subtreeObject()),
+                symbols: _map(this.symbols, s => s.subtreeObject()),
                 textEntry: fromTextEntry
             });
         } else {
@@ -687,7 +686,7 @@ export
 
     centre = (init = false) => {
         let top = this.height/Math.ceil(window.devicePixelRatio*2);
-        _.each(this.symbols, (symbol, i) => {
+        _each(this.symbols, (symbol, i) => {
             let sbox = symbol.subtreeDockingPointsBoundingBox;
             symbol.position = this.p.createVector(this.width/(Math.ceil(window.devicePixelRatio*2)) - sbox.center.x, top + sbox.center.y);
             top += sbox.h;

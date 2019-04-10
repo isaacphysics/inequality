@@ -21,7 +21,10 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import * as p5 from "p5";
-import * as _ from 'lodash';
+import _compact = require('lodash/compact');
+import _map = require('lodash/map');
+import _omit = require('lodash/omit');
+import _values = require('lodash/values');
 
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
@@ -318,6 +321,6 @@ export
      * @returns {Array<Widget>} A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
-        return _.compact(_.map(_.values(_.omit(this.dockingPoints, "subscript")), "child"));
+        return _compact(_map(_values(_omit(this.dockingPoints, "subscript")), "child"));
     }
 }

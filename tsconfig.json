@@ -6,6 +6,6 @@
     "allowJs": true,
     "sourceMap": true,
   },
-  "include": ["./custom.d.ts", "src"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

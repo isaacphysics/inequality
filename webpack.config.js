@@ -3,6 +3,9 @@ const path = require('path');
 module.exports = {
   entry: './src/inequality.ts',
   devtool: 'inline-source-map',
+  optimization: {
+    usedExports: true
+  },
   module: {
     rules: [
       {
@@ -13,7 +16,12 @@ module.exports = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
-          'file-loader'
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'fonts',
+            },
+          }
         ]
       }
     ]

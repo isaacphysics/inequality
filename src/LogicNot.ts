@@ -21,7 +21,7 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import * as p5 from "p5";
-import * as _ from 'lodash';
+
 
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
