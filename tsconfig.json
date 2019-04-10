@@ -3,7 +3,9 @@
     "target": "es5",
     "outDir": "./dist/",
     "noImplicitAny": true,
+    "allowJs": true,
+    "sourceMap": true,
   },
-  "include": ["src"],
+  "include": ["./custom.d.ts", "src"],
   "exclude": ["node_modules"]
 }

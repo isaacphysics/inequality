@@ -42,6 +42,12 @@ import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
 
+import * as fontIt from './assets/STIXGeneral-Italic.ttf';
+import * as fontUp from './assets/STIXGeneral-Regular.ttf';
+
+console.log("Italic: " + fontIt);
+console.log("Regular: " + fontUp);
+
 // This is where the fun starts
 
 // This is the "main" app with the update/render loop and all that jazz.
@@ -125,8 +131,8 @@ export
     }
 
     preload = () => {
-        this.font_it = this.p.loadFont("/assets/STIXGeneral-Italic.ttf");
-        this.font_up = this.p.loadFont("/assets/STIXGeneral-Regular.ttf");
+        this.font_it = this.p.loadFont(""+fontIt);
+        this.font_up = this.p.loadFont(""+fontUp);
     };
 
     loadTestCase = (s: Array<{ type: string, properties: any }>) => {
@@ -694,4 +700,12 @@ export
             });
         }
     };
+}
+
+export function makeInequality(width: number, height: number, initialSymbolsToParse: Array<{ type: string, properties: any }>, { editorMode = "math", textEntry = false } = {}) {
+    let sketch: Inequality;
+    let p = new p5((instance) => {
+        sketch = new Inequality(instance, 320, 240, [], { editorMode, textEntry });
+    });
+    return sketch;
 }
