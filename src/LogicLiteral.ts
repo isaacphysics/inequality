@@ -20,7 +20,7 @@ limitations under the License.
 /* tslint:disable: no-unused-variable */
 /* tslint:disable: comment-format */
 
-import * as p5 from "p5";
+import p5 from "p5";
 
 
 import { Widget, Rect } from './Widget'

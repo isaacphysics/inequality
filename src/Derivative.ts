@@ -21,7 +21,7 @@ limitations under the License.
 /* tslint:disable: comment-format */
 /* tslint:disable:  */
 
-import * as p5 from "p5";
+import p5 from "p5";
 
 
 import { Widget, Rect } from './Widget';

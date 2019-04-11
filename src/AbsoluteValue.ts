@@ -20,8 +20,7 @@ limitations under the License.
 /* tslint:disable: all */
 /* tslint:disable: comment-format */
 
-import * as p5 from "p5";
-
+import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
