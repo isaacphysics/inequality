@@ -19,7 +19,7 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 // @ts-ignore
-import * as p5 from "p5";
+import p5 from "p5";
 import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
 import _map = require('lodash/map');
