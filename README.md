@@ -9,3 +9,5 @@ This package is currently a little hard to integrate but worry not for instructi
 Somewhere.
 
 Maybe.
+
+Meanwhile, a demo is available at https://isaacphysics.org/equality (yes, we are aware of the naming irony here, that's what happens when you rewrite a legacy project).
