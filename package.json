@@ -14,7 +14,7 @@
   },
   "keywords": [],
   "author": "Andrea Franceschini <andrea.franceschini@gmail.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Morpheu5/Inequality/issues"
   },
