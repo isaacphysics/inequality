@@ -2,8 +2,8 @@
   "name": "inequality",
   "version": "1.0.0",
   "description": "A symbolic editor for the web",
-  "private": true,
   "main": "dist/bundle.js",
+  "files": ["dist"],
   "scripts": {
     "dev": "webpack --watch --mode development",
     "build": "webpack --mode production"

@@ -6,9 +6,6 @@ module.exports = {
   devtool: 'inline-source-map',
   optimization: {
     usedExports: true,
-    splitChunks: {
-      chunks: 'all'
-    }
   },
   plugins: [
     new DashboardPlugin(),
@@ -43,7 +40,7 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'Inequality',
+    library: 'inequality',
     libraryTarget: 'umd'
   }
 };

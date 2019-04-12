@@ -18,7 +18,6 @@ limitations under the License.
 /* tslint:disable: no-unused-variable */
 /* tslint:disable: comment-format */
 
-// @ts-ignore
 import p5 from "p5";
 import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
@@ -105,6 +104,8 @@ export
 
     public editorMode: string;
     public textEntry: boolean;
+    private fontItalicPath: string;
+    private fontRegularPath: string;
 
     constructor(
         private p: p5,
@@ -113,7 +114,9 @@ export
         private initialSymbolsToParse: Array<{ type: string, properties: any }>,
         {
             editorMode = "math",
-            textEntry = false
+            textEntry = false,
+            fontItalicPath = '',
+            fontRegularPath = ''
         } = {}
     ) {
         this.p.preload = this.preload;
@@ -127,11 +130,13 @@ export
 
         this.editorMode = editorMode;
         this.textEntry = textEntry;
+        this.fontItalicPath = fontItalicPath;
+        this.fontRegularPath = fontRegularPath;
     }
 
     preload = () => {
-        this.font_it = this.p.loadFont(require("./assets/STIXGeneral-Italic.ttf"));
-        this.font_up = this.p.loadFont(require("./assets/STIXGeneral-Regular.ttf"));
+        this.font_it = this.p.loadFont(this.fontItalicPath);
+        this.font_up = this.p.loadFont(this.fontRegularPath);
     };
 
     loadTestCase = (s: Array<{ type: string, properties: any }>) => {
@@ -701,10 +706,26 @@ export
     };
 }
 
-export function makeInequality(width: number, height: number, initialSymbolsToParse: Array<{ type: string, properties: any }>, { editorMode = "math", textEntry = false } = {}) {
+export function makeInequality(
+    element: any,
+    width: number,
+    height: number,
+    initialSymbolsToParse: Array<{ type: string, properties: any }>,
+    {
+        editorMode = "math",
+        textEntry = false,
+        fontItalicPath = '',
+        fontRegularPath = ''
+    } = {}) {
     let sketch: Inequality;
     let p = new p5((instance: p5) => {
-        sketch = new Inequality(instance, 320, 240, [], { editorMode, textEntry });
-    });
-    return sketch;
+        sketch = new Inequality(instance, width, height, initialSymbolsToParse, {
+            editorMode,
+            textEntry,
+            fontItalicPath,
+            fontRegularPath
+        });
+        return sketch;
+    }, element);
+    return { sketch, p };
 }
