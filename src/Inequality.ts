@@ -143,6 +143,9 @@ export
         this.symbols = [];
         this.initialSymbolsToParse = s;
         try {
+            if (!Array.isArray(this.initialSymbolsToParse)) {
+                throw "Initial symbols must be an array, got " + this.initialSymbolsToParse + " instead";
+            }
             for (const w of this.initialSymbolsToParse) {
                 this.parseSubtreeObject(w);
             }
@@ -193,6 +196,9 @@ export
         this.prevTouch = this.p.createVector(0, 0);
 
         try {
+            if (!Array.isArray(this.initialSymbolsToParse)) {
+                throw "Initial symbols must be an array, got " + this.initialSymbolsToParse + " instead";
+            }
             for (const s of this.initialSymbolsToParse) {
                 this.parseSubtreeObject(s);
             };
@@ -710,7 +716,7 @@ export function makeInequality(
     element: any,
     width: number,
     height: number,
-    initialSymbolsToParse: Array<{ type: string, properties: any }>,
+    initialSymbolsToParse: Array<{ type: string, properties: any }> = [],
     {
         editorMode = "math",
         textEntry = false,
