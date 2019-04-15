@@ -1,24 +1,27 @@
 {
   "name": "inequality",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "A symbolic editor for the web",
+  "private": false,
   "main": "dist/bundle.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "webpack --watch --mode development",
     "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Morpheu5/Inequality.git"
+    "url": "git+https://github.com/isaacphysics/inequality.git"
   },
   "keywords": [],
   "author": "Andrea Franceschini <andrea.franceschini@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Morpheu5/Inequality/issues"
+    "url": "https://github.com/isaacphysics/inequality/issues"
   },
-  "homepage": "https://github.com/Morpheu5/Inequality#readme",
+  "homepage": "https://github.com/isaacphysics/inequality#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.123",
     "@types/node": "^11.13.2",
