@@ -25,6 +25,7 @@ import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
+import { LogicBinaryOperation } from "./LogicBinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
 
@@ -184,11 +185,12 @@ export
             } else {
                 expression += lhs + rhs;
             }
-            if (this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof BinaryOperation || this.dockingPoints["right"].child instanceof Relation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            let rightChild = this.dockingPoints["right"].child;
+            if (rightChild != null) {
+                if (rightChild instanceof BinaryOperation || rightChild instanceof LogicBinaryOperation || rightChild instanceof Relation) {
+                    expression += rightChild.formatExpressionAs(format);
                 } else {
-                    expression += " * " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " * " + rightChild.formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
