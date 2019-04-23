@@ -1,12 +1,13 @@
 {
   "name": "inequality",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "A symbolic equation editor for the web",
   "private": false,
-  "main": "dist/bundle.js",
+  "main": "./dist/bundle.js",
   "files": [
     "dist"
   ],
+  "types": "./dist/Inequality.d.ts",
   "scripts": {
     "dev": "webpack --watch --mode development",
     "build": "webpack --mode production"
