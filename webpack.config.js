@@ -3,7 +3,7 @@ const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = {
   entry: './src/inequality.ts',
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   optimization: {
     usedExports: true,
   },

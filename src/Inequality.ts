@@ -27,7 +27,7 @@ import _some = require('lodash/some');
 import _uniq = require('lodash/uniq');
 import _without = require('lodash/without');
 
-import { Widget, Rect, SymbolSpec } from './Widget'
+import { Widget, Rect, WidgetSpec } from './Widget'
 import { Symbol } from './Symbol'
 import { BinaryOperation } from './BinaryOperation';
 import { Fraction } from './Fraction';
@@ -268,7 +268,7 @@ export
         return minDistance <= this.baseFontSize*1.5 ? candidateDockingPoint : null;
     };
 
-    updatePotentialSymbol = (spec: SymbolSpec, x?: number, y?: number) => {
+    updatePotentialSymbol = (spec: WidgetSpec, x?: number, y?: number) => {
         // NB: This logic requires spec to be briefly set to null when switching between potential symbol types.
         if (spec) {
             if (!this.potentialSymbol) {
@@ -348,7 +348,7 @@ export
         this.updateState(fromTextEntry);
     };
 
-    _parseSubtreeObject = (node: SymbolSpec, parseChildren = true): Widget => {
+    _parseSubtreeObject = (node: WidgetSpec, parseChildren = true): Widget => {
         let w: Widget = null;
         switch (node.type) {
             case "Symbol":
@@ -735,3 +735,5 @@ export function makeInequality(
     }, element);
     return { sketch, p };
 }
+
+export { WidgetSpec } from "./Widget";

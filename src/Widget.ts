@@ -98,10 +98,11 @@ export
     }
 }
 
-export class SymbolSpec {
+export type WidgetSpec = {
     type: string;
     properties: any;
-    children?: Array<SymbolSpec>;
+    children?: Array<WidgetSpec>;
+    position?: { x: number, y: number };
 }
 
 /** A base class for anything visible, draggable, and dockable. */
