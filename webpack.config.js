@@ -1,9 +1,9 @@
 const path = require('path');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 
-module.exports = {
+module.exports = (_env, argv) => { return {
   entry: './src/inequality.ts',
-  devtool: 'eval-source-map',
+  devtool: argv.mode === 'development' ? 'eval-source-map' : false,
   optimization: {
     usedExports: true,
   },
@@ -43,4 +43,4 @@ module.exports = {
     library: 'inequality',
     libraryTarget: 'umd'
   }
-};
+}};
