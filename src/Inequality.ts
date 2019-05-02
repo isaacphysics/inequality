@@ -268,7 +268,7 @@ export
         return minDistance <= this.baseFontSize*1.5 ? candidateDockingPoint : null;
     };
 
-    updatePotentialSymbol = (spec: WidgetSpec, x?: number, y?: number) => {
+    updatePotentialSymbol = (spec: WidgetSpec | null = null, x?: number, y?: number) => {
         // NB: This logic requires spec to be briefly set to null when switching between potential symbol types.
         if (spec) {
             if (!this.potentialSymbol) {
