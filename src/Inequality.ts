@@ -333,6 +333,19 @@ export
         this.p.frameRate(7);
     };
 
+    abortPotentialSymbol = () => {
+        this.log.actions.push({
+            event: "TRASH_SYMBOL",
+            symbol: this.potentialSymbol.subtreeObject(false, true, true),
+            timestamp: Date.now()
+        });
+        this.symbols = _without(this.symbols, this.movingSymbol);
+        this.updatePotentialSymbol(null);
+        this.updateCanvasDockingPoints();
+
+        this.p.frameRate(7);
+    };
+
     parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false) => {
         if (root) {
             if (clearExistingSymbols) {
@@ -560,7 +573,6 @@ export
             // Close the menu when touching the canvas
             this.onCloseMenus();
         }
-
         if (this.movingSymbol != null) {
             // When touches end, mark the symbol as not moving.
             this.prevTouch = null;

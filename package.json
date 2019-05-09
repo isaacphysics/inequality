@@ -1,6 +1,6 @@
 {
   "name": "inequality",
-  "version": "0.9.8",
+  "version": "0.9.10",
   "description": "A symbolic equation editor for the web",
   "private": false,
   "main": "./dist/bundle.js",
@@ -24,7 +24,10 @@
   },
   "homepage": "https://github.com/isaacphysics/inequality#readme",
   "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "@types/node": "^11.13.2",
+    "babel-loader": "^8.0.5",
     "file-loader": "^3.0.1",
     "ts-loader": "^5.3.3",
     "typescript": "^3.4.2",
@@ -37,5 +40,10 @@
     "@types/p5": "^0.7.2",
     "lodash": "^4.17.11",
     "p5": "^0.8.0"
-  }
+  },
+  "browserslist": [
+    "> 5%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
