@@ -114,6 +114,7 @@ export
         private initialSymbolsToParse: Array<{ type: string, properties: any }>,
         {
             editorMode = "math",
+            logicSyntax = "logic",
             textEntry = false,
             fontItalicPath = '',
             fontRegularPath = ''
@@ -129,6 +130,7 @@ export
         this.p.windowResized = this.windowResized;
 
         this.editorMode = editorMode;
+        this.logicSyntax = logicSyntax;
         this.textEntry = textEntry;
         this.fontItalicPath = fontItalicPath;
         this.fontRegularPath = fontRegularPath;
@@ -173,7 +175,7 @@ export
     setup = () => {
         this.p.frameRate(7);
 
-        this.logicSyntax = this.logicSyntax || 'logic';
+        this.logicSyntax = this.logicSyntax;
 
         switch (this.editorMode) {
             case 'maths':
@@ -731,6 +733,7 @@ export function makeInequality(
     initialSymbolsToParse: Array<{ type: string, properties: any }> = [],
     {
         editorMode = "math",
+        logicSyntax = "logic",
         textEntry = false,
         fontItalicPath = '',
         fontRegularPath = ''
@@ -739,6 +742,7 @@ export function makeInequality(
     let p = new p5((instance: p5) => {
         sketch = new Inequality(instance, width, height, initialSymbolsToParse, {
             editorMode,
+            logicSyntax,
             textEntry,
             fontItalicPath,
             fontRegularPath
