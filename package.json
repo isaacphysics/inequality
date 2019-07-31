@@ -1,6 +1,6 @@
 {
   "name": "inequality",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "description": "A symbolic equation editor for the web",
   "private": false,
   "main": "./dist/bundle.js",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@types/lodash": "^4.14.123",
     "@types/p5": "^0.7.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "p5": "^0.8.0"
   },
   "browserslist": [
