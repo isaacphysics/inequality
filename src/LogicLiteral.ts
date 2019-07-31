@@ -22,11 +22,11 @@ limitations under the License.
 
 import p5 from "p5";
 
-
 import { Widget, Rect } from './Widget'
-import { BinaryOperation } from "./BinaryOperation";
-import { DockingPoint } from "./DockingPoint";
-import { Relation } from "./Relation";
+import { LogicBinaryOperation } from './LogicBinaryOperation';
+import { LogicNot } from './LogicNot';
+import { DockingPoint } from './DockingPoint';
+import { Relation } from './Relation';
 
 /** A class for representing numbers */
 export
