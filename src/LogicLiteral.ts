@@ -111,13 +111,13 @@ export
         } else if (format == "python") {
             expression = "" + this.getFullText("python");
             if (this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
-                } else if (this.dockingPoints["right"].child instanceof Relation) {
+                if (this.dockingPoints["right"].child instanceof LogicBinaryOperation ||
+                    this.dockingPoints["right"].child instanceof LogicNot ||
+                    this.dockingPoints["right"].child instanceof Relation) {
                     expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
-                    // WARNING This assumes it's a "Symbol", hence produces a multiplication
-                    expression += "*" + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    // WARNING This should not happen.
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "mathml") {
