@@ -271,6 +271,7 @@ export
     };
 
     updatePotentialSymbol = (spec: WidgetSpec | null = null, x?: number, y?: number) => {
+        console.log(this.p.frameRate());
         // NB: This logic requires spec to be briefly set to null when switching between potential symbol types.
         if (spec) {
             if (!this.potentialSymbol) {
@@ -280,8 +281,8 @@ export
                     symbol: this.potentialSymbol.subtreeObject(false, true, true),
                     timestamp: Date.now()
                 });
-                this.visibleDockingPointTypes = this.potentialSymbol.docksTo;
             }
+            this.visibleDockingPointTypes = this.potentialSymbol.docksTo;
             this.potentialSymbol.position.x = x - this.potentialSymbol.boundingBox().w * 0.5;
             this.potentialSymbol.position.y = y;
             this.potentialSymbol.shakeIt();
