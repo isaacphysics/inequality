@@ -271,7 +271,6 @@ export
     };
 
     updatePotentialSymbol = (spec: WidgetSpec | null = null, x?: number, y?: number) => {
-        console.log(this.p.frameRate());
         // NB: This logic requires spec to be briefly set to null when switching between potential symbol types.
         if (spec) {
             if (!this.potentialSymbol) {
