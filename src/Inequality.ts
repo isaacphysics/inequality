@@ -330,6 +330,7 @@ export
         }
         this.updatePotentialSymbol(null);
         this.updateState();
+        this.activeDockingPoint = null;
         this.updateCanvasDockingPoints();
 
         this.p.frameRate(7);
@@ -341,6 +342,7 @@ export
             symbol: this.potentialSymbol.subtreeObject(false, true, true),
             timestamp: Date.now()
         });
+        this.activeDockingPoint = null;
         this.symbols = _without(this.symbols, this.movingSymbol);
         this.updatePotentialSymbol(null);
         this.updateCanvasDockingPoints();
@@ -610,12 +612,10 @@ export
                     timestamp: Date.now()
                 });
             }
+            this.movingSymbol = null;    
+            this.activeDockingPoint = null;
         }
 
-        this.updateState();
-
-        this.movingSymbol = null;
-        this.activeDockingPoint = null;
         this.visibleDockingPointTypes = [];
         for (let dp of this._canvasDockingPoints) {
             dp.isVisible = false; // TODO Rely on this in the future maybe.
