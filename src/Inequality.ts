@@ -223,6 +223,8 @@ export
     };
 
     draw = () => {
+        if (!this.p) return;
+        
         this.p.clear();
         for (const symbol of this.symbols) {
             symbol.shakeIt();
@@ -352,7 +354,7 @@ export
 
     parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false) => {
         if (root) {
-            if (clearExistingSymbols) {
+            if (clearExistingSymbols && this.symbols && this.symbols.length > 0) {
                 this.symbols.length = 0;
             }
             let w: Widget = this._parseSubtreeObject(root);
