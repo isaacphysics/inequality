@@ -100,6 +100,7 @@ export
                 this.latexSymbol = '> ';
                 this.mathmlSymbol = '&gt;';
                 break;
+            case 'equiv':
             case '=':
                 this.relation = '=';
                 this.pythonSymbol = '==';
