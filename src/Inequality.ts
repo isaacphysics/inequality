@@ -352,7 +352,7 @@ export
         this.p.frameRate(7);
     };
 
-    parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false) => {
+    parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false, withUserInput = '') => {
         if (root) {
             if (clearExistingSymbols && this.symbols && this.symbols.length > 0) {
                 this.symbols.length = 0;
@@ -364,7 +364,7 @@ export
             this.updateCanvasDockingPoints();
             w.shakeIt();
         }
-        this.updateState(fromTextEntry);
+        this.updateState(fromTextEntry, withUserInput);
     };
 
     _parseSubtreeObject = (node: WidgetSpec, parseChildren = true): Widget => {
@@ -677,7 +677,7 @@ export
         console.error('Unoverridden onNewEditorState called');
     }
 
-    updateState = (fromTextEntry = false) => {
+    updateState = (fromTextEntry = false, withUserInput = '') => {
         let symbolWithMostChildren: Widget;
         let mostChildren = 0;
         _each(this.symbols, symbol => {
@@ -700,7 +700,8 @@ export
                     "uniqueSymbols": flattenedExpression.join(', '),
                 },
                 symbols: _map(this.symbols, s => s.subtreeObject()),
-                textEntry: fromTextEntry
+                textEntry: fromTextEntry,
+                userInput: withUserInput
             });
         } else {
             this.onNewEditorState({
@@ -713,7 +714,7 @@ export
 
     centre = (init = false) => {
         let top = this.height/Math.ceil(window.devicePixelRatio*2);
-        _each(this.symbols, (symbol, i) => {
+        _each(this.symbols, (symbol, i: number) => {
             let sbox = symbol.subtreeDockingPointsBoundingBox;
             symbol.position = this.p.createVector(this.width/(Math.ceil(window.devicePixelRatio*2)) - sbox.center.x, top + sbox.center.y);
             top += sbox.h;
