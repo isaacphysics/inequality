@@ -124,9 +124,11 @@ export
         this.p.setup = this.setup;
         this.p.draw = this.draw;
         this.p.touchStarted = this.touchStarted;
+        this.p.mousePressed = this.touchStarted;
         this.p.touchMoved = this.touchMoved;
-        this.p.touchEnded = this.touchEnded;
         this.p.mouseMoved = this.mouseMoved;
+        this.p.touchEnded = this.touchEnded;
+        this.p.mouseReleased = this.touchEnded;
         this.p.windowResized = this.windowResized;
 
         this.editorMode = editorMode;
