@@ -230,11 +230,11 @@ export
         this.p.clear();
         for (const symbol of this.symbols) {
             symbol.shakeIt();
-            symbol.draw();
+            symbol.draw(symbol === this.movingSymbol);
         };
 
         if (this.potentialSymbol) {
-            this.potentialSymbol.draw();
+            this.potentialSymbol.draw(true);
         }
     };
 

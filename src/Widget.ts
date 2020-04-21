@@ -33,6 +33,7 @@ import _values = require('lodash/values');
 
 
 import { DockingPoint } from './DockingPoint';
+import { Inequality } from './Inequality';
 
 // This is meant to be a static global thingie for uniquely identifying widgets/symbols
 // This may very well be a relic of my C++ multi-threaded past, but it served me well so far...
@@ -231,7 +232,7 @@ export
     }
 
     /** Paints the widget on the canvas. */
-    draw() {
+    draw(hideDockingPoints = false) {
         this.p.translate(this.position.x, this.position.y);
         let alpha = 255;
         if (this.s.movingSymbol != null && this.id == this.s.movingSymbol.id) {
@@ -240,8 +241,9 @@ export
 
         _each(this.dockingPoints, (dockingPoint, key) => {
             if (dockingPoint.child) {
-                dockingPoint.child.draw();
+                dockingPoint.child.draw(hideDockingPoints);
             } else {
+                if (hideDockingPoints) return;
                 // There is no child to paint, let's paint an empty docking point
                 //if (this.depth < 2) { // This stops docking points from being shown, but not from being used.
                 let drawThisOne = _intersection(this.s.visibleDockingPointTypes, dockingPoint.type).length > 0;
