@@ -715,10 +715,10 @@ export
     };
 
     centre = (init = false) => {
-        let top = this.height/Math.ceil(window.devicePixelRatio*2);
+        let top = window.innerHeight/2;
         _each(this.symbols, (symbol, i: number) => {
             let sbox = symbol.subtreeDockingPointsBoundingBox;
-            symbol.position = this.p.createVector(this.width/(Math.ceil(window.devicePixelRatio*2)) - sbox.center.x, top + sbox.center.y);
+            symbol.position = this.p.createVector(window.innerWidth/2 - sbox.center.x, top + sbox.center.y);
             top += sbox.h;
             symbol.shakeIt();
         });
