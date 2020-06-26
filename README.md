@@ -23,8 +23,8 @@ let eqnEditorElement = document.querySelector('.equation-editor')[0];
 
 let { sketch, p } = makeInequality(
     eqnEditorElement,
-    eqnEditorElement.width() * Math.ceil(window.devicePixelRatio),
-    eqnEditorElement.height() * Math.ceil(window.devicePixelRatio),
+    eqnEditorElement.width(),
+    eqnEditorElement.height(),
     [], // place your initial symbols here
     {
         fontItalicPath: 'assets/STIXGeneral-Italic.ttf', // Yes, this is a little awkward but p5 wants to load fonts from paths...
