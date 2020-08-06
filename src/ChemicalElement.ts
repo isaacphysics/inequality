@@ -134,7 +134,7 @@ export
                 }
                 else {
                     // WARNING This assumes it's a ChemicalElement, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {

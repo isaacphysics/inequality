@@ -151,7 +151,7 @@ export
                     expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Symbol, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "python") {

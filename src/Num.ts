@@ -100,10 +100,10 @@ export
             }
             if (this.right && this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Number, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "mhchem") {

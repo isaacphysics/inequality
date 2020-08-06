@@ -106,7 +106,7 @@ export
         if (format == "latex") {
             expression = this.getFullText("latex");
             if (this.right && this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
             expression = "" + this.getFullText("python");

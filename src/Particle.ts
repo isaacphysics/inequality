@@ -54,12 +54,7 @@ export
     }
 
     token(): string {
-        // TODO Handle greek elements
-        let e = this.particle;
-        // if (this.dockingPoints['subscript'].child) {
-        //     e += '_' + this.dockingPoints['subscript'].child.formatExpressionAs('subscript');
-        // }
-        return e;
+        return this.type;
     }
 
     /**
@@ -178,8 +173,8 @@ export
                 else if (this.dockingPoints["right"].child instanceof Relation) {
                     expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
-                    // WARNING This assumes it's a ChemicalElement, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    // WARNING This assumes it's a ChemicalElement, hence produces a "multiplication"
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
@@ -218,7 +213,7 @@ export
                     expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a ChemicalElement, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         }

@@ -137,10 +137,10 @@ class Differential extends Widget {
             }
             if (this.dockingPoints["argument"].child != null) {
                 if (this.dockingPoints["argument"].child instanceof BinaryOperation) {
-                    expression += this.dockingPoints["argument"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["argument"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Differential, hence produces a multiplication
-                    expression += this.dockingPoints["argument"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["argument"].child.formatExpressionAs(format);
                 }
             }
             // AAARGH! Curses, you Leibniz!
@@ -148,7 +148,7 @@ class Differential extends Widget {
                 expression += "^{" + this.dockingPoints["order"].child.formatExpressionAs(format) + "}";
             }
             if (this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
             if (this.letter == "δ") {
