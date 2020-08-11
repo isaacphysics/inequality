@@ -102,18 +102,21 @@ export
                 this.mhchemSymbol = '\\antineutrino';
                 this.latexSymbol = '\\bar{\\nu}';
                 break;
+            case 'p':
             case 'proton':
                 this.particle = 'p';
                 this.pythonSymbol = '\\proton';
                 this.mhchemSymbol = '\\proton';
                 this.latexSymbol = '\\text{p}';
                 break;
+            case 'n':
             case 'neutron':
                 this.particle = 'n';
                 this.pythonSymbol = '\\neutron';
                 this.mhchemSymbol = '\\neutron';
                 this.latexSymbol = '\\text{n}';
                 break;
+            case 'e':
             case 'electron':
                 this.particle = 'e';
                 this.pythonSymbol = '\\electron';
