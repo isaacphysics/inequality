@@ -1,6 +1,6 @@
 {
   "name": "inequality",
-  "version": "0.9.24",
+  "version": "0.9.25",
   "description": "A symbolic equation editor for the web",
   "private": false,
   "main": "./dist/bundle.js",
