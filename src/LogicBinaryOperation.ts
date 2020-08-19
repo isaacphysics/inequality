@@ -69,6 +69,11 @@ export
                 this.pythonSymbol = '|';
                 this.mathmlSymbol = '∨';
                 break;
+            case 'xor':
+                this.latexSymbol = '\\veebar';
+                this.pythonSymbol = '^';
+                this.mathmlSymbol = '⊻';
+                break;
             default:
                 this.latexSymbol = this.pythonSymbol = this.mathmlSymbol = this.operation;
                 break;
@@ -85,7 +90,12 @@ export
                 this.pythonSymbol = '|';
                 this.mathmlSymbol = '+';
                 break;
-            default:
+            case 'xor':
+                this.latexSymbol = '\\oplus';
+                this.pythonSymbol = '^';
+                this.mathmlSymbol = '⊕';
+                break;
+                default:
                 this.latexSymbol = this.pythonSymbol = this.mathmlSymbol = this.operation;
                 break;
             }
