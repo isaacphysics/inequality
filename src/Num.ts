@@ -103,7 +103,7 @@ export
                     expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Number, hence produces a multiplication
-                    expression += "\\cdot" + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "mhchem") {
@@ -116,7 +116,7 @@ export
                     expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Number, hence produces a multiplication
-                    expression += "\\cdot" + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
 
