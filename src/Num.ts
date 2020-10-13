@@ -113,6 +113,8 @@ export
             if (this.right && this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof Num) {
                     expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                } else if (this.dockingPoints["right"].child instanceof BinaryOperation) {
+                    expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
