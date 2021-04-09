@@ -111,7 +111,7 @@ export
         private p: p5,
         private width: number,
         private height: number,
-        private initialSymbolsToParse: Array<{ type: string, properties: any }>,
+        private initialSymbolsToParse: Array<WidgetSpec>,
         {
             editorMode = "math",
             logicSyntax = "logic",
@@ -143,7 +143,7 @@ export
         this.font_up = this.p.loadFont(this.fontRegularPath);
     };
 
-    loadTestCase = (s: Array<{ type: string, properties: any }>) => {
+    loadTestCase = (s: Array<WidgetSpec>) => {
         this.symbols = [];
         this.initialSymbolsToParse = s;
         try {

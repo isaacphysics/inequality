@@ -3,7 +3,7 @@ const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = (_env, argv) => { return {
   entry: './src/inequality.ts',
-  devtool: argv.mode === 'development' ? 'eval-source-map' : false,
+  devtool: argv.mode === 'development' ? 'source-map' : false,
   optimization: {
     usedExports: true,
   },
@@ -32,15 +32,17 @@ module.exports = (_env, argv) => { return {
   },
   resolve: {
     modules: [path.resolve(__dirname), 'node_modules'],
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: [ '.ts', '.js' ],
     alias: {
-      'p5': 'node_modules/p5/lib/p5.min.js'
+      'p5': 'p5/lib/p5.min.js'
     }
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    library: 'inequality',
-    libraryTarget: 'umd'
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'lib'),
+    library: {
+      name: 'inequality',
+      type: 'umd',
+    }
   }
 }};

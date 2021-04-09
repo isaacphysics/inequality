@@ -3,11 +3,11 @@
   "version": "0.9.29",
   "description": "A symbolic equation editor for the web",
   "private": false,
-  "main": "./dist/bundle.js",
+  "main": "./lib/main.js",
   "files": [
-    "dist"
+    "lib"
   ],
-  "types": "./dist/Inequality.d.ts",
+  "types": "./lib/src/Inequality.d.ts",
   "scripts": {
     "dev": "webpack --watch --mode development",
     "build": "webpack --mode production",

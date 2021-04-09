@@ -20,7 +20,7 @@ limitations under the License.
 /* tslint:disable: no-unused-variable */
 /* tslint:disable: comment-format */
 
-import p5 = require('p5');
+import p5 from 'p5';
 import _compact = require('lodash/compact');
 import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
@@ -104,6 +104,7 @@ export type WidgetSpec = {
     properties: any;
     children?: Array<WidgetSpec>;
     position?: { x: number, y: number };
+    expression?: any;
 }
 
 /** A base class for anything visible, draggable, and dockable. */
