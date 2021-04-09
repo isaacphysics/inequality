@@ -238,29 +238,50 @@ export
         let a = m * this.s.baseFontSize/5;
         let b = m * (3+this.s.baseFontSize)/5;
         let c = Math.sqrt(4 * m + 1);
-        // LHS
-        this.p.beginShape();
-        this.p.vertex(      box.x + b, -box.h/2 + m);
-        this.p.bezierVertex(box.x + c, -box.h/2 + a,
-                            box.x + c,  box.h/2 - a,
-                            box.x + b,  box.h/2 - m);
-        this.p.vertex(      box.x + a,  box.h/2);
-        this.p.bezierVertex(box.x - c,  box.h/2 - a,
-                            box.x - c, -box.h/2 + a,
-                            box.x + a, -box.h/2);
-        this.p.endShape();
+        if (this.type === 'round') {
+            // LHS
+            this.p.beginShape();
+            this.p.vertex(      box.x + b, -box.h/2 + m);
+            this.p.bezierVertex(box.x + c, -box.h/2 + a,
+                                box.x + c,  box.h/2 - a,
+                                box.x + b,  box.h/2 - m);
+            this.p.vertex(      box.x + a,  box.h/2);
+            this.p.bezierVertex(box.x - c,  box.h/2 - a,
+                                box.x - c, -box.h/2 + a,
+                                box.x + a, -box.h/2);
+            this.p.endShape();
 
-        // RHS
-        this.p.beginShape();
-        this.p.vertex(      box.w/2 - b, -box.h/2 + m);
-        this.p.bezierVertex(box.w/2 - c, -box.h/2 + a,
-                            box.w/2 - c,  box.h/2 - a,
-                            box.w/2 - b,  box.h/2 - m);
-        this.p.vertex(      box.w/2 - a,  box.h/2);
-        this.p.bezierVertex(box.w/2 + c,  box.h/2 - a,
-                            box.w/2 + c, -box.h/2 + a,
-                            box.w/2 - a, -box.h/2);
-        this.p.endShape();
+            // RHS
+            this.p.beginShape();
+            this.p.vertex(      box.w/2 - b, -box.h/2 + m);
+            this.p.bezierVertex(box.w/2 - c, -box.h/2 + a,
+                                box.w/2 - c,  box.h/2 - a,
+                                box.w/2 - b,  box.h/2 - m);
+            this.p.vertex(      box.w/2 - a,  box.h/2);
+            this.p.bezierVertex(box.w/2 + c,  box.h/2 - a,
+                                box.w/2 + c, -box.h/2 + a,
+                                box.w/2 - a, -box.h/2);
+            this.p.endShape();
+        } else if (this.type === 'square') {
+            // LHS
+            this.p.noFill().stroke(this.color).strokeWeight(2).strokeJoin(this.p.MITER).strokeCap(this.p.SQUARE);
+            this.p.beginShape();
+            this.p.vertex(      box.x + b, -box.h/2 + m);
+            this.p.vertex(      box.x + c, -box.h/2 + m);
+            this.p.vertex(      box.x + c,  box.h/2 - m);
+            this.p.vertex(      box.x + b,  box.h/2 - m);
+
+            this.p.endShape();
+
+            // RHS
+            this.p.beginShape();
+            this.p.vertex(      box.w/2 - b, -box.h/2 + m);
+            this.p.vertex(      box.w/2 - c, -box.h/2 + m);
+            this.p.vertex(      box.w/2 - c,  box.h/2 - m);
+            this.p.vertex(      box.w/2 - b,  box.h/2 - m);
+
+            this.p.endShape();
+        }
 
         this.p.strokeWeight(1);
     }
