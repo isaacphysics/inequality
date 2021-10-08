@@ -32,10 +32,7 @@ module.exports = (_env, argv) => { return {
   },
   resolve: {
     modules: [path.resolve(__dirname), 'node_modules'],
-    extensions: [ '.ts', '.js' ],
-    // alias: {
-    //   'p5': 'p5/lib/p5.min.js'
-    // }
+    extensions: [ '.ts', '.js' ]
   },
   output: {
     filename: '[name].js',
