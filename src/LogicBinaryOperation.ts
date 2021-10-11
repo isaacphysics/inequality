@@ -39,10 +39,6 @@ export
     protected mathmlSymbol: string;
     protected pythonSymbol: string;
 
-    get typeAsString(): string {
-        return "LogicBinaryOperation";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

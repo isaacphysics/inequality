@@ -29,6 +29,8 @@ import _values = require('lodash/values');
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
+import { Derivative } from "./Derivative";
+import { Relation } from "./Relation";
 
 /** A class for representing variables and constants (aka, letters). */
 export
@@ -36,10 +38,6 @@ class Differential extends Widget {
 
     public s: any;
     protected letter: string;
-
-    get typeAsString(): string {
-        return "Differential";
-    }
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -71,7 +69,7 @@ class Differential extends Widget {
     get sonOfADerivative() {
         let p = this.parentWidget;
         while (null !== p) {
-            if (p.typeAsString === 'Derivative') {
+            if (p instanceof Derivative) {
                 return true;
             }
             p = this.parentWidget;
@@ -87,7 +85,7 @@ class Differential extends Widget {
     get orderNeedsMoving(): boolean {
         let w: Widget = this;
         while (null !== w.parentWidget) {
-            if (w.parentWidget.typeAsString === 'Derivative' && w.dockedTo === 'denominator') {
+            if (w.parentWidget instanceof Derivative && w.dockedTo === 'denominator') {
                 return true;
             }
             w = w.parentWidget;
@@ -172,9 +170,8 @@ class Differential extends Widget {
                 }
             }
             if (this.dockingPoints["right"].child != null) {
-                let op = (this.dockingPoints["right"].child.typeAsString == 'Relation' ||
-                      this.dockingPoints["right"].child.typeAsString == 'BinaryOperation')
-                      ? '' : ' * ';
+                let op = (this.dockingPoints["right"].child instanceof Relation ||
+                          this.dockingPoints["right"].child instanceof BinaryOperation) ? '' : ' * ';
                 expression += op + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
 

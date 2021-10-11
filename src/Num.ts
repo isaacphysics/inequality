@@ -39,10 +39,6 @@ export
     protected right = this.dockingPoints.hasOwnProperty("right");
     protected superscript = this.dockingPoints.hasOwnProperty("superscript");
 
-    get typeAsString(): string {
-        return "Num";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

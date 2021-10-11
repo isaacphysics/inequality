@@ -34,10 +34,6 @@ export
     public s: any;
     private width: number;
 
-    get typeAsString(): string {
-        return "Fraction";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

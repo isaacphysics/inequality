@@ -38,11 +38,6 @@ export
     protected latexSymbol: string;
     protected mhchemSymbol: string;
 
-
-    get typeAsString(): string {
-        return "StateSymbol";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

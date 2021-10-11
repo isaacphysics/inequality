@@ -39,10 +39,6 @@ export
     private pythonSymbol: Object;
     private mathmlSymbol: Object;
 
-    get typeAsString(): string {
-        return "LogicNot";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

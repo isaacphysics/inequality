@@ -41,10 +41,6 @@ export
     private mathmlSymbol: { lhs: string, rhs: string };
     private glyph: { lhs: string, rhs: string };
 
-    get typeAsString(): string {
-        return "Brackets";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

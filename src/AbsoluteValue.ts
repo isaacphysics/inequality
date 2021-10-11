@@ -35,10 +35,6 @@ export
     private type: string;
     private glyph: Object;
 
-    get typeAsString(): string {
-        return "AbsoluteValue";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

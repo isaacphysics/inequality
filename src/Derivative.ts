@@ -27,15 +27,12 @@ import p5 from "p5";
 import { Widget, Rect } from './Widget';
 import { DockingPoint } from "./DockingPoint";
 import { Num } from "./Num";
+import { Differential } from "./Differential";
 
 export
     class Derivative extends Widget {
     public s: any;
     private width: number;
-
-    get typeAsString(): string {
-        return "Derivative";
-    }
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -88,8 +85,10 @@ export
                 }
             }
         } else if (format == "python") {
-            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null &&
-                this.dockingPoints["numerator"].child.typeAsString == "Differential" && this.dockingPoints["denominator"].child.typeAsString == "Differential") {
+            if (this.dockingPoints["numerator"].child != null &&
+                this.dockingPoints["denominator"].child != null &&
+                this.dockingPoints["numerator"].child instanceof Differential &&
+                this.dockingPoints["denominator"].child instanceof Differential) {
                 expression += "Derivative(";
                 if (this.dockingPoints["numerator"].child.dockingPoints["argument"].child != null) {
                     expression += this.dockingPoints["numerator"].child.dockingPoints["argument"].child.formatExpressionAs(format) + ", ";
@@ -100,11 +99,11 @@ export
                 let list = [];
                 while(stack.length > 0) {
                     let e = stack.shift();
-                    if (e.typeAsString == "Differential") {
+                    if (e instanceof Differential) {
                         // WARNING: This stops at the first non-Differential, which is kinda OK, but may confuse people.
                         let o = 1;
                         let o_child: Widget = e.dockingPoints["order"].child;
-                        if (o_child != null && o_child.typeAsString == "Num") {
+                        if (o_child != null && o_child instanceof Num) {
                             o = parseInt((o_child as Num).getFullText());
                         }
                         do {

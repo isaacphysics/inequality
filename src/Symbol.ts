@@ -32,6 +32,7 @@ import { DockingPoint } from "./DockingPoint";
 import { Relation } from "./Relation";
 import { Num } from "./Num";
 import { LogicBinaryOperation } from "./LogicBinaryOperation";
+import { Differential } from "./Differential";
 
 /** A class for representing variables and constants (aka, letters). */
 export
@@ -42,6 +43,7 @@ export
     protected modifier: string;
 
     get typeAsString(): string {
+        // This one is necessary as Symbol is a thing in Javascript and TypeScript mangles this class' name
         return "Symbol";
     }
 
@@ -80,7 +82,7 @@ export
      */
     get sonOfADifferential(): boolean {
         let p = this.parentWidget;
-        return p && p.typeAsString == 'Differential' && this != p.dockingPoints["right"].child;
+        return p && p instanceof Differential && this != p.dockingPoints["right"].child;
     }
 
     public constructor(p: any, s: any, letter: string, modifier = "") {

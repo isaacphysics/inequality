@@ -38,10 +38,6 @@ export
     public s: any;
     protected element: string;
 
-    get typeAsString(): string {
-        return "ChemicalElement";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

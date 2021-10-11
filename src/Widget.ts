@@ -200,7 +200,7 @@ export
      * @returns {string}
      */
     get typeAsString(): string {
-        return "Widget";
+        return this.constructor.name;
     }
 
     constructor(p: any, public s: any, mode: string = 'maths') {

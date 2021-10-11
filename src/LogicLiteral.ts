@@ -36,10 +36,6 @@ export
     private value: boolean;
     protected right = this.dockingPoints.hasOwnProperty("right");
 
-    get typeAsString(): string {
-        return "LogicLiteral";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

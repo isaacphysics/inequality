@@ -36,10 +36,6 @@ export
 
     private baseHeight: number;
 
-    get typeAsString(): string {
-        return "Radix";
-    }
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *

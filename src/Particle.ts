@@ -42,10 +42,6 @@ export
     protected particle: string;
     protected mhchemSymbol: string;
 
-    get typeAsString(): string {
-        return "Particle";
-    }
-
     properties(): Object {
         return {
             particle: this.particle,
