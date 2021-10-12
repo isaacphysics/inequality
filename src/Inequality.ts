@@ -303,6 +303,8 @@ export
                         }
                     }
                     symbol.shakeIt();
+
+                    return false;
                 });
             }
 
@@ -486,6 +488,8 @@ export
                 // Array.some requires this to break out of the loop.
                 return true;
             }
+
+            return false;
         });
 
         // Put the moving symbol on top (bottom?) of the list (this only works with roots,
@@ -547,7 +551,6 @@ export
             // Check if we are moving close to a docking point, and highlight it even more.
             this.symbols.some((symbol: Widget) => {
                 this.activeDockingPoint = null;
-
                 // This is the point where the mouse/touch is.
                 // let touchPoint = this.p.createVector(tx, ty);
                 // This is less refined than doing the proximity detection thing, but works much better (#4)
@@ -559,6 +562,8 @@ export
                         return true;
                     }
                 }
+
+                return false;
             });
 
             this.onNotifySymbolDrag(tx, ty);

@@ -417,6 +417,7 @@ export
                 w = dockingPoint.child.hit(p5.Vector.sub(p, this.position));
                 return w != null;
             }
+            return false;
         });
         if (w != null) {
             return w;
