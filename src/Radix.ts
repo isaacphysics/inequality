@@ -127,7 +127,7 @@ export
         return expression;
     }
 
-    properties(): Object {
+    properties(): Nullable<Object> {
         return null;
     }
 
@@ -137,7 +137,7 @@ export
 
     /** Paints the widget on the canvas. */
     _draw(): void {
-        let b = new Rect(this.boundingBox().x, this.boundingBox().y, this._radixCharacterBox.w, this.boundingBox().h);
+        let b = new Rect(this.boundingBox().x, this.boundingBox().y, this._radixCharacterBox?.w ?? 0, this.boundingBox().h);
 
         this.p.fill(this.color).noStroke();
         this.p.beginShape();
@@ -173,12 +173,12 @@ export
      */
     boundingBox(): Rect {
         // Half the x-box width is a nice beautification addition, but requires expanding the bounding box. See _shakeIt().
-        let width = this._radixCharacterBox.w + this._argumentBox.w + this.s.xBox_w/2;
-        let height = Math.max(this._radixCharacterBox.h, this._argumentBox.h);
-        return new Rect(-this._radixCharacterBox.w, -height/2 + this.dockingPoint.y, width, height);
+        let width = (this._radixCharacterBox?.w ?? 0) + this._argumentBox.w + this.s.xBox_w/2;
+        let height = Math.max((this._radixCharacterBox?.h ?? 0), this._argumentBox.h);
+        return new Rect(-(this._radixCharacterBox?.w ?? 0), -height/2 + this.dockingPoint.y, width, height);
     }
 
-    get _radixCharacterBox(): Rect {
+    get _radixCharacterBox(): Nullable<Rect> {
         return Rect.fromObject(this.s.font_up.textBounds("\u221A", 0, 0, this.scale * this.s.baseFontSize));
     }
 

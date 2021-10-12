@@ -111,7 +111,7 @@ export
         return expression;
     }
 
-    properties(): Object {
+    properties(): Nullable<Object> {
         return null;
     }
 

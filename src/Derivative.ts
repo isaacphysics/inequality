@@ -102,7 +102,7 @@ export
                     if (e instanceof Differential) {
                         // WARNING: This stops at the first non-Differential, which is kinda OK, but may confuse people.
                         let o = 1;
-                        let o_child: Widget = e.dockingPoints["order"].child;
+                        let o_child: Nullable<Widget> = e.dockingPoints["order"].child;
                         if (o_child != null && o_child instanceof Num) {
                             o = parseInt((o_child as Num).getFullText());
                         }
@@ -140,7 +140,7 @@ export
         return expression;
     }
 
-    properties(): Object {
+    properties(): Nullable<Object> {
         return null;
     }
 

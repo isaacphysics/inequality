@@ -33,6 +33,7 @@ import { Relation } from "./Relation";
 import { Num } from "./Num";
 import { LogicBinaryOperation } from "./LogicBinaryOperation";
 import { Differential } from "./Differential";
+import { isDefined } from "./utils";
 
 /** A class for representing variables and constants (aka, letters). */
 export
@@ -82,7 +83,7 @@ export
      */
     get sonOfADifferential(): boolean {
         let p = this.parentWidget;
-        return p && p instanceof Differential && this != p.dockingPoints["right"].child;
+        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child;
     }
 
     public constructor(p: any, s: any, letter: string, modifier = "") {

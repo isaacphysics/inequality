@@ -27,6 +27,7 @@ import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
+import { isDefined } from "./utils";
 
 /** Functions. */
 export
@@ -270,17 +271,17 @@ export
         let superscriptBox = this._superscriptBox;
         let subscriptBox = this._subscriptBox;
 
-        let width = this._nameBox.w + Math.max(superscriptBox.w, subscriptBox.w) + 40*this.scale + argumentBox.w;
-        let height = Math.max(this._baseBox.h, argumentBox.h);
+        let width = (this._nameBox?.w ?? 0) + Math.max(superscriptBox.w, subscriptBox.w) + 40*this.scale + argumentBox.w;
+        let height = Math.max(this._baseBox?.h ?? 0, argumentBox.h);
 
-        return new Rect(-this._nameBox.w, -height/2 + this.dockingPoint.y, width, height);
+        return new Rect(-(this._nameBox?.w ?? 0), -height/2 + this.dockingPoint.y, width, height);
     }
 
-    get _baseBox(): Rect {
+    get _baseBox(): Nullable<Rect> {
         return Rect.fromObject(this.s.font_up.textBounds(this.name + '()', 0, 0, this.scale * this.s.baseFontSize));
     }
 
-    get _nameBox(): Rect {
+    get _nameBox(): Nullable<Rect> {
         return Rect.fromObject(this.s.font_up.textBounds(this.name, 0, 0, this.scale * this.s.baseFontSize));
     }
 
@@ -300,7 +301,7 @@ export
 
         // See Fn::boundingBox()
         // The Math.min() here is to limit how much the brackets expand vertically.
-        let height = Math.min(Math.max(this._baseBox.h, argumentBox.h), this.s.mBox_h*3);
+        let height = Math.min(Math.max(this._baseBox?.h ?? 0, argumentBox.h), this.s.mBox_h*3);
 
         let bracketsX = Math.max(superscriptBox.w, subscriptBox.w);
         let bracketsW = 40*this.scale + argumentBox.w;
@@ -335,31 +336,31 @@ export
 
         let thisBox = this.boundingBox();
 
-        if (this.dockingPoints["superscript"]) {
+        if (isDefined(this.dockingPoints["superscript"])) {
             let dp = this.dockingPoints["superscript"];
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = child.leftBound;
                 child.position.y = -this.scale*this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
             } else {
-                dp.position.x = thisBox.x + this._nameBox.w + dp.size/2;
+                dp.position.x = thisBox.x + (this._nameBox?.w ?? 0) + dp.size/2;
                 dp.position.y = -this.scale * this.s.mBox_h;
             }
         }
 
-        if (this.dockingPoints["subscript"]) {
+        if (isDefined(this.dockingPoints["subscript"])) {
             let dp = this.dockingPoints["subscript"];
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = child.leftBound;
                 child.position.y = child.topBound;
             } else {
-                dp.position.x = thisBox.x + this._nameBox.w + dp.size/2;
+                dp.position.x = thisBox.x + (this._nameBox?.w ?? 0) + dp.size/2;
                 dp.position.y = 0;
             }
         }
 
-        if (this.dockingPoints["argument"]) {
+        if (isDefined(this.dockingPoints["argument"])) {
             let dp = this.dockingPoints["argument"];
             if (dp.child) {
                 let child = dp.child;
@@ -371,7 +372,7 @@ export
             }
         }
 
-        if (this.dockingPoints["right"]) {
+        if (isDefined(this.dockingPoints["right"])) {
             let dp = this.dockingPoints["right"];
             if (dp.child) {
                 let child = dp.child;

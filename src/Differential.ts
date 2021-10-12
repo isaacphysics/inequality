@@ -31,6 +31,7 @@ import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
 import { Derivative } from "./Derivative";
 import { Relation } from "./Relation";
+import { isDefined } from "./utils";
 
 /** A class for representing variables and constants (aka, letters). */
 export
@@ -84,7 +85,7 @@ class Differential extends Widget {
      */
     get orderNeedsMoving(): boolean {
         let w: Widget = this;
-        while (null !== w.parentWidget) {
+        while (isDefined(w.parentWidget)) {
             if (w.parentWidget instanceof Derivative && w.dockedTo === 'denominator') {
                 return true;
             }

@@ -22,9 +22,8 @@ limitations under the License.
 
 import p5 from "p5";
 
-
-import { Widget, Rect } from './Widget';
 import { DockingPoint } from "./DockingPoint";
+import { BinaryOperation } from "./BinaryOperation";
 
 /**
  * Boolean Logic Binary operations, such as ANDs and ORs.
@@ -32,7 +31,7 @@ import { DockingPoint } from "./DockingPoint";
  * BE EXTRA CAREFUL with the minus sign: use "−" (U+2212), not just a dash.
  */
 export
-    class LogicBinaryOperation extends Widget {
+    class LogicBinaryOperation extends BinaryOperation {
     public s: any;
     protected operation: string;
     protected latexSymbol: string;
@@ -50,7 +49,7 @@ export
 
     // TODO: Add support for BinarySyntax
     constructor(p: any, s: any, operation: string) {
-        super(p, s);
+        super(p, s, operation);
         this.s = s;
         this.operation = operation;
         if (this.s.logicSyntax == 'logic') {
@@ -146,16 +145,6 @@ export
         return expression;
     }
 
-    properties(): Object {
-        return {
-            operation: this.operation
-        };
-    }
-
-    token(): string {
-        return '';
-    }
-
     /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
@@ -165,39 +154,5 @@ export
             .textAlign(this.p.CENTER, this.p.BASELINE)
             .text(this.mathmlSymbol, 0, 0);
         this.p.strokeWeight(1);
-    }
-
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
-    boundingBox(): Rect {
-        let s = 'm';
-        let box = this.s.font_up.textBounds(s, 0, 0, this.scale*this.s.baseFontSize*0.8);
-        return new Rect(-box.w/2, box.y, box.w, box.h);
-    }
-
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
-    _shakeIt(): void {
-        this._shakeItDown();
-        let thisBox = this.boundingBox();
-
-        if (this.dockingPoints["right"]) {
-            let dp = this.dockingPoints["right"];
-            if (dp.child) {
-                let child = dp.child;
-                child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/4;
-                child.position.y = this.dockingPoint.y - child.dockingPoint.y;
-            } else {
-                dp.position.x = thisBox.x + thisBox.w + dp.size;
-                dp.position.y = -this.scale*this.s.xBox_h/2;
-            }
-        }
     }
 }

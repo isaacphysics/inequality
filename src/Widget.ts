@@ -34,6 +34,7 @@ import _values = require('lodash/values');
 
 import { DockingPoint } from './DockingPoint';
 import { Inequality } from './Inequality';
+import { isDefined } from './utils';
 
 // This is meant to be a static global thingie for uniquely identifying widgets/symbols
 // This may very well be a relic of my C++ multi-threaded past, but it served me well so far...
@@ -57,9 +58,9 @@ export
      * Factory to produce a Rect from an object with the appropriate keys.
      * 
      * @param box An object with keys `x`, `y`, `w`, and `h`.
-     * @returns {Rect} A Rect corresponding to the `box` parameter.
+     * @returns {Rect} A Rect corresponding to the `box` parameter. null if box does not have the right parameters.
      */
-    static fromObject(box: any): Rect {
+    static fromObject(box: any): Nullable<Rect> {
         if (box.hasOwnProperty("x") && box.hasOwnProperty("y") && box.hasOwnProperty("w") && box.hasOwnProperty("h")) {
             return new Rect(box.x, box.y, box.w, box.h);
         } else {
@@ -146,7 +147,7 @@ export
     mode: string;
 
     /** Convenience pointer to this widget's parent */
-    parentWidget: Widget = null;
+    parentWidget?: Nullable<Widget> = null;
 
     isHighlighted = false;
     mustExpand = false;
@@ -163,7 +164,7 @@ export
     }
 
     /** The color used to draw this Widget */
-    color?: p5.Color = null;
+    color?: Nullable<p5.Color> = null;
     isMainExpression = false;
     currentPlacement = "";
 
@@ -370,30 +371,33 @@ export
 
     /** Specific widgets have their own properties */
     // FIXME Could turn this into a `properties` getter maybe?
-    abstract properties(): object;
+    abstract properties(): Nullable<Object>;
 
-    _properties(): Object {
+    _properties(): Nullable<Object> {
         return this.properties();
     }
 
     /** Removes this widget from its parent. Also, shakes it. */
     removeFromParent() {
+        if (!isDefined(this.parentWidget)) return;
+
         let oldParent = this.parentWidget;
         this.currentPlacement = "";
         this.dockedTo = "";
-        _each(this.parentWidget.dockingPoints, (dockingPoint) => {
-            if (dockingPoint.child == this) {
+        for(let k in this.parentWidget.dockingPoints) {
+            let dockingPoint = this.parentWidget?.dockingPoints[k];
+            if (dockingPoint?.child == this) {
                 this.s.log.actions.push({
                     event: "UNDOCK_SYMBOL",
                     symbol: this.subtreeObject(false, true, true),
-                    parent: this.parentWidget.subtreeObject(false, true, true),
+                    parent: this.parentWidget?.subtreeObject(false, true, true),
                     dockingPoint: dockingPoint.name,
                     timestamp: Date.now()
                 });
                 dockingPoint.child = null;
                 this.parentWidget = null;
             }
-        });
+        };
         this.shakeIt(); // Our size may have changed. Shake it.
         oldParent.shakeIt(); // Our old parent should update. Shake it.
     }
@@ -405,9 +409,10 @@ export
 	 * @param p The hit point
 	 * @returns {Widget} This widget, if hit; null if not.
      */
-    hit(p: p5.Vector): Widget {
-        let w: Widget = null;
-        _some(this.dockingPoints, dockingPoint => {
+    hit(p: p5.Vector): Nullable<Widget> {
+        let w: Nullable<Widget> = null;
+        Object.entries(this.dockingPoints).some(entry => {
+            const dockingPoint = entry[1];
             if (dockingPoint.child != null) {
                 w = dockingPoint.child.hit(p5.Vector.sub(p, this.position));
                 return w != null;
@@ -603,12 +608,12 @@ export
         let ax = this.position.x;
         let ay = this.position.y;
         let thisBox = Rect.fromObject(this.boundingBox());
-        let dpBoxes = [thisBox, ...this.dockingPointsBoxes];
+        let dpBoxes = [thisBox, ...this.dockingPointsBoxes].filter(b => isDefined(b)) as Array<Rect>;
 
-        let x = _min(_map(dpBoxes, b => { return b.x+ax }));
-        let y = _min(_map(dpBoxes, b => { return b.y+ay }));
-        let w = _max(_map(dpBoxes, b => { return b.x+ax+b.w }));
-        let h = _max(_map(dpBoxes, b => { return b.y+ay+b.h }));
+        let x = Math.min(...dpBoxes.map(b => { return b.x+ax }));
+        let y = Math.min(...dpBoxes.map(b => { return b.y+ay }));
+        let w = Math.max(...dpBoxes.map(b => { return b.x+ax+b.w }));
+        let h = Math.max(...dpBoxes.map(b => { return b.y+ay+b.h }));
 
         return new Rect(x-ax,y-ay,w-x,h-y);
     }

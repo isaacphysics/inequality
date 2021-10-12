@@ -74,6 +74,7 @@ export
                     return this.value ? '1' : '1';
             }
         }
+        return 'LogicLiteral::getFullText error';
     }
 
     /**

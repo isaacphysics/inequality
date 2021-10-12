@@ -90,7 +90,7 @@ export
         // TODO Triple check
         let expression = "";
         if (format == "latex") {
-            let lhs: string, rhs: string;
+            let lhs = '', rhs = '';
             if (this.s.logicSyntax == 'logic') {
                 lhs = '('; rhs = ')';
             } else if (this.s.logicSyntax == 'binary') {
@@ -204,7 +204,7 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box: Rect = null;
+        let box = new Rect(0, 0, 0, 0);
         let yShift: number = 0;
         if (this.s.logicSyntax == 'logic') {
             box = this.s.font_up.textBounds("¬()", 0, 0, this.scale * this.s.baseFontSize);

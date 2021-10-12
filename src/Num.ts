@@ -197,7 +197,7 @@ export
 
         let thisBox = this.boundingBox();
 
-        let superscriptWidth: number;
+        let superscriptWidth = 0;
         if (this.dockingPoints["superscript"]) {
             let dp = this.dockingPoints["superscript"];
             if (dp.child) {
