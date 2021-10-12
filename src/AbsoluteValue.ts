@@ -32,8 +32,6 @@ export
     class AbsoluteValue extends Widget {
 
     public s: any;
-    private type: string;
-    private glyph: Object;
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -149,9 +147,7 @@ export
     }
 
     properties(): Object {
-        return {
-            type: this.type
-        };
+        return {};
     }
 
     token(): string {

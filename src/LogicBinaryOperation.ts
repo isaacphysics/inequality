@@ -94,6 +94,8 @@ export
                 this.latexSymbol = this.pythonSymbol = this.mathmlSymbol = this.operation;
                 break;
             }
+        } else {
+            this.latexSymbol = this.pythonSymbol = this.mathmlSymbol = 'WRONG LOGIC SYNTAX';
         }
 
         this.docksTo = ['operator', 'operator_brackets'];

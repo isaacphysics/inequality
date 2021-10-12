@@ -35,10 +35,10 @@ export
     public s: any;
     protected relationString: string;
     protected relation: string;
-    protected pythonSymbol: string;
+    protected pythonSymbol: string = ''; // WARNING: This should be initialized in the constructor
     protected latexSymbol: string;
-    protected mhchemSymbol: string;
-    protected mathmlSymbol: string;
+    protected mhchemSymbol: string = ''; // WARNING: This should be initialized in the constructor
+    protected mathmlSymbol: string = ''; // WARNING: This should be initialized in the constructor
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.

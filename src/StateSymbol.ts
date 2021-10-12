@@ -34,7 +34,6 @@ export
     public s: any;
     protected stateString: string;
     protected state: string;
-    protected pythonSymbol: string;
     protected latexSymbol: string;
     protected mhchemSymbol: string;
 

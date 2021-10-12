@@ -34,10 +34,9 @@ export
     class LogicNot extends Widget {
 
     public s: any;
-    private type: string;
     private latexSymbol: Object;
     private pythonSymbol: Object;
-    private mathmlSymbol: Object;
+    private mathmlSymbol: Object = ''; // WARNING: This should be initialized in the constructor
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -133,9 +132,7 @@ export
     }
 
     properties(): Object {
-        return {
-            type: this.type
-        };
+        return {};
     }
 
     token(): string {
