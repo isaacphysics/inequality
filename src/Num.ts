@@ -35,7 +35,6 @@ export
 
     public s: any;
     private significand: string;
-    private num_font_size: number;
     protected right = this.dockingPoints.hasOwnProperty("right");
     protected superscript = this.dockingPoints.hasOwnProperty("superscript");
 
@@ -49,17 +48,16 @@ export
     }
 
 
-    constructor(p: any, s: any, significand: string, exponent: string) {
+    constructor(p: any, s: any, significand: string, _exponent: string) {
         super(p, s);
         this.significand = significand;
-        this.num_font_size = 50;
         this.s = s;
 
 
         this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'particle', 'relation', 'operator_brackets', 'differential_order', 'differential_argument'];
     }
 
-    getFullText(type?: string): string {
+    getFullText(_type?: string): string {
         return this.significand;
     }
 

@@ -32,7 +32,6 @@ import { DockingPoint } from "./DockingPoint";
 export
     class Fraction extends Widget {
     public s: any;
-    private width: number;
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -46,7 +45,6 @@ export
     constructor(p: any, s: any) {
         super(p, s);
         this.s = s;
-        this.width = 0;
 
         this.docksTo = ['operator', 'symbol', 'exponent', 'operator_brackets', 'relation', 'differential_argument'];
     }

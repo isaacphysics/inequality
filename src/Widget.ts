@@ -26,14 +26,9 @@ import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
 import _isEmpty = require('lodash/isEmpty');
 import _map = require('lodash/map');
-import _max = require('lodash/max');
-import _min = require('lodash/min');
-import _some = require('lodash/some');
 import _values = require('lodash/values');
 
-
 import { DockingPoint } from './DockingPoint';
-import { Inequality } from './Inequality';
 import { isDefined } from './utils';
 
 // This is meant to be a static global thingie for uniquely identifying widgets/symbols
@@ -229,7 +224,7 @@ export
 	 * @param format A string to specify the output format. Supports: latex, python.
 	 * @returns {string} The expression in the specified format.
      */
-    formatExpressionAs(format: string): string {
+    formatExpressionAs(_format: string): string {
         return "";
     }
 
@@ -241,7 +236,7 @@ export
             alpha = 127;
         }
 
-        _each(this.dockingPoints, (dockingPoint, key) => {
+        _each(this.dockingPoints, (dockingPoint, _key) => {
             if (dockingPoint.child) {
                 dockingPoint.child.draw(hideDockingPoints);
             } else {

@@ -36,7 +36,7 @@ export
     public s: any;
     private latexSymbol: Object;
     private pythonSymbol: Object;
-    private mathmlSymbol: Object = ''; // WARNING: This should be initialized in the constructor
+    // private mathmlSymbol: Object = ''; // WARNING: This should be initialized in the constructor
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -58,7 +58,7 @@ export
             this.latexSymbol = '\\overline';
         }
         this.pythonSymbol = '~';
-        this.mathmlSymbol = '¬'
+        // this.mathmlSymbol = '¬'
         this.docksTo = ['symbol', 'relation'];
     }
 

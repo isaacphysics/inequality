@@ -39,7 +39,6 @@ export
     private pythonSymbol: { lhs: string, rhs: string };
     private mhchemSymbol: { lhs: string, rhs: string };
     private mathmlSymbol: { lhs: string, rhs: string };
-    private glyph: { lhs: string, rhs: string };
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -60,7 +59,7 @@ export
                     lhs: '\\left(',
                     rhs: '\\right)'
                 };
-                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = this.glyph = {
+                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = {
                     lhs: '(',
                     rhs: ')'
                 }
@@ -70,7 +69,7 @@ export
                     lhs: '\\left[',
                     rhs: '\\right]'
                 };
-                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = this.glyph = {
+                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = {
                     lhs: '[',
                     rhs: ']'
                 }
@@ -80,13 +79,13 @@ export
                     lhs: '\\left{',
                     rhs: '\\right}'
                 };
-                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = this.glyph = {
+                this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = {
                     lhs: '{',
                     rhs: '}'
                 };
                 break;
             default:
-                this.latexSymbol = this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = this.glyph = { lhs: '', rhs: '' };
+                this.latexSymbol = this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = { lhs: '', rhs: '' };
         }
         this.docksTo = ['symbol', 'exponent', 'subscript', 'chemical_element', 'relation', 'differential_argument'];
         if (this.s.editorMode != 'logic') {

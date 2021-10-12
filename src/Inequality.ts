@@ -572,7 +572,7 @@ export
 
     onCloseMenus = () => { /* Override this on the outside if needed */ };
 
-    onNotifySymbolDrag = (x: number, y: number) => { /* Override this on the outside if needed */ };
+    onNotifySymbolDrag = (_x: number, _y: number) => { /* Override this on the outside if needed */ };
 
     isUserPrivileged = () => { return false }; /* Override this on the outside if needed */
 

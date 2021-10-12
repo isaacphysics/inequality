@@ -34,8 +34,6 @@ export
 
     public s: any;
 
-    private baseHeight: number;
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *
@@ -50,7 +48,6 @@ export
         this.s = s;
 
         this.docksTo = ['symbol', 'operator', 'exponent', 'operator_brackets', 'relation', 'differential_argument'];
-        this.baseHeight = this.s.font_up.textBounds("\u221A", 0, 0, this.scale * this.s.baseFontSize).h;
     }
 
     /**
@@ -64,8 +61,6 @@ export
     generateDockingPoints() {
         let box = this.boundingBox();
         let descent = this.position.y - (box.y + box.h);
-        let pBox = this.s.font_it.textBounds("(", 0, 0, this.scale * this.s.baseFontSize);
-
         this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.xBox_w/2, -this.s.xBox_h/2), 1, ["symbol"], "argument");
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox_w/2, -this.s.xBox_h/2), 1, ["operator"], "right");
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox_w/2, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");

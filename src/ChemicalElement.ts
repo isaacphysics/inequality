@@ -88,7 +88,7 @@ export
     formatExpressionAs(format: string): string {
         let expression = "\\text{" + this.element + "}";
 
-        let isParticle = (this.element[0] != '\\');
+        // const isParticle = (this.element[0] != '\\');
         if (format == "latex") {
             expression = "\\text{" + this.element + "}";
             // Need to remove this so that we can append the element to mass/proton numbers
@@ -144,8 +144,6 @@ export
             if (this.dockingPoints["right"].child != null) {
                 expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
-        // } else if (format == "python") {
-        //     expression = "";
         } else if (format == "mathml") {
             let m_superscript = this.dockingPoints['superscript'].child != null ? "<mrow>" + this.dockingPoints['superscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
             let m_subscript = this.dockingPoints['subscript'].child != null ? "<mrow>" + this.dockingPoints['subscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
