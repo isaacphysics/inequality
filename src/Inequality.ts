@@ -19,13 +19,8 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import p5 from "p5";
-import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
-import _map = require('lodash/map');
-import _reject = require('lodash/reject');
-import _some = require('lodash/some');
-import _uniq = require('lodash/uniq');
-import _without = require('lodash/without');
+import { isDefined } from "./utils";
 
 import { Widget, Rect, WidgetSpec } from './Widget'
 import { Symbol } from './Symbol'
@@ -43,29 +38,27 @@ import { Relation } from './Relation';
 import { ChemicalElement } from './ChemicalElement';
 import { StateSymbol } from './StateSymbol';
 import { Particle } from './Particle';
-
 import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
-import { isDefined } from "./utils";
 
 // This is the "main" app with the update/render loop and all that jazz.
 export
     class Inequality {
-    symbols: Array<Widget>;
-    movingSymbol?: Nullable<Widget> = null;
-    potentialSymbol?: Nullable<Widget> = null;
-    initialTouch?: Nullable<p5.Vector> = null;
-    prevTouch?: Nullable<p5.Vector> = null;
+    symbols: Array<Widget> = [];
+    movingSymbol?: Nullable<Widget>;
+    potentialSymbol?: Nullable<Widget>;
+    initialTouch?: Nullable<p5.Vector>;
+    prevTouch?: Nullable<p5.Vector>;
 
-    xBox?: Nullable<Rect> = null;
+    xBox?: Nullable<Rect>;
     get xBox_w(): number {
         return this.xBox?.w ?? 0;
     }
     get xBox_h(): number {
         return this.xBox?.h ?? 0;
     }
-    mBox?: Nullable<Rect> = null;
+    mBox?: Nullable<Rect>;
     get mBox_w(): number {
         return this.mBox?.w ?? 0;
     }
@@ -90,11 +83,11 @@ export
         }
     };
 
-    font_it?: Nullable<p5.Font> = null;
-    font_up?: Nullable<p5.Font> = null;
+    font_it?: Nullable<p5.Font>;
+    font_up?: Nullable<p5.Font>;
 
     visibleDockingPointTypes: Array<string> = [];
-    activeDockingPoint?: Nullable<DockingPoint> = null;
+    activeDockingPoint?: Nullable<DockingPoint>;
     private _canvasDockingPoints: Array<DockingPoint> = [];
 
     logicSyntax?: Nullable<string> = null;
@@ -245,7 +238,7 @@ export
         // We need a copy of this.symbols because assignment is done by reference because
         //     let a = this.symbols; a.shift();
         // destroys this.symbols.
-        let q = this.symbols.filter(w => w.id !== this.movingSymbol?.id ?? -1);
+        let q = this.symbols.filter(w => w !== this.movingSymbol);
         while (q.length > 0) {
             let widget = q.shift() as Widget;
             for (let e in widget.dockingPoints) {
@@ -353,7 +346,7 @@ export
             timestamp: Date.now()
         });
         this.activeDockingPoint = null;
-        this.symbols = this.symbols.filter(w => w.id !== this.movingSymbol?.id ?? -1)
+        this.symbols = this.symbols.filter(w => w !== this.movingSymbol)
         this.updatePotentialSymbol(null);
         this.updateCanvasDockingPoints();
 
@@ -462,7 +455,7 @@ export
         this.movingSymbol = null;
         let index = -1;
         let movingSymbolDocksTo: Array<string> = [];
-        _some(this.symbols, (symbol, i) => {
+        this.symbols.some((symbol, i) => {
             // .hit() propagates down the hierarchy
             let hitSymbol = symbol.hit(this.p.createVector(tx, ty));
             if (hitSymbol != null && hitSymbol.isDetachable) {
@@ -558,7 +551,7 @@ export
                 // This is the point where the mouse/touch is.
                 // let touchPoint = this.p.createVector(tx, ty);
                 // This is less refined than doing the proximity detection thing, but works much better (#4)
-                if (isDefined(symbol) && symbol.id != (this.movingSymbol?.id ?? -1)) {
+                if (isDefined(symbol) && symbol !== this.movingSymbol) {
                     symbol.highlight(false);
                     symbol.contractDockingPoints();
                     if (this.activeDockingPoint = this.findClosestDockingPoint(this.p.createVector(this.p.mouseX, this.p.mouseY))) {
@@ -595,7 +588,7 @@ export
 
             // Make sure we have an active docking point, and that the moving symbol can dock to it.
             if (this.activeDockingPoint != null && _intersection(this.movingSymbol.docksTo, this.activeDockingPoint.type).length > 0) {
-                this.symbols = _without(this.symbols, this.movingSymbol);
+                this.symbols = this.symbols.filter(w => w !== this.movingSymbol);
                 this.updateCanvasDockingPoints();
                 // Do the actual docking
                 this.activeDockingPoint.child = this.movingSymbol;
@@ -615,7 +608,7 @@ export
                     symbol: this.movingSymbol.subtreeObject(false, true, true),
                     timestamp: Date.now()
                 });
-                this.symbols = _without(this.symbols, this.movingSymbol);
+                this.symbols = this.symbols.filter(w => w !== this.movingSymbol);
                 this.updateCanvasDockingPoints();
             } else {
                 this.log?.actions.push({
@@ -643,17 +636,16 @@ export
 
         let symbolWithMostChildren: Nullable<Widget> = null;
         let mostChildren = 0;
-        _each(this.symbols, symbol => {
+        for(const symbol of this.symbols) {
             let numChildren = symbol.totalSymbolCount;
             if (numChildren > mostChildren) {
                 mostChildren = numChildren;
                 symbolWithMostChildren = symbol;
             }
-        });
-
-        _each(this.symbols, symbol => {
-            symbol.isMainExpression = (symbol == symbolWithMostChildren);
-        });
+        }
+        for (const symbol of this.symbols) {
+            symbol.isMainExpression = (symbol === symbolWithMostChildren);
+        }
         this.updateState();
 
         this.p.frameRate(7);
@@ -661,14 +653,14 @@ export
 
     mouseMoved = () => {
         let p = this.p.createVector(this.p.mouseX, this.p.mouseY);
-        _each(this.symbols, symbol => {
+        for (const symbol of this.symbols) {
             symbol.highlight(false);
             let hitSymbol = symbol.hit(p);
             if (hitSymbol) {
                 // Hey, we hit a symbol! :)
                 hitSymbol.highlight(true);
             }
-        });
+        }
     };
 
     flattenExpression = (w: Widget) => {
@@ -680,7 +672,7 @@ export
             let children = e.children;
             stack = stack.concat(children);
         }
-        return _reject(_uniq(list), i => { return i == ''; });
+        return [...new Set(list)].filter(i => { return i !== ''; });
     };
 
     onNewEditorState = (_state: object) => {
@@ -690,8 +682,8 @@ export
     updateState = (fromTextEntry = false, withUserInput = '') => {
         let symbolWithMostChildren: Nullable<Widget>;
         let mostChildren = 0;
-        for(let symbol of this.symbols) {
-            let numChildren = symbol.totalSymbolCount;
+        for(const symbol of this.symbols) {
+            const numChildren = symbol.totalSymbolCount;
             if (numChildren > mostChildren) {
                 mostChildren = numChildren;
                 symbolWithMostChildren = symbol;
@@ -699,7 +691,7 @@ export
         };
 
         if (isDefined(symbolWithMostChildren)) {
-            let flattenedExpression = _map(this.flattenExpression(symbolWithMostChildren), e => { return undefined == e ? '' : e.replace(/,/g, ";") });
+            const flattenedExpression = this.flattenExpression(symbolWithMostChildren).map(e => isDefined(e) ? e.replace(/,/g, ";") : '');
             this.onNewEditorState({
                 result: {
                     "tex": symbolWithMostChildren.formatExpressionAs("latex").trim(),
@@ -709,7 +701,7 @@ export
                     // removes everything that is not truthy, so this should avoid empty strings.
                     "uniqueSymbols": flattenedExpression.join(', '),
                 },
-                symbols: _map(this.symbols, s => s.subtreeObject()),
+                symbols: this.symbols.map(s => s.subtreeObject()),
                 textEntry: fromTextEntry,
                 userInput: withUserInput
             });
@@ -724,12 +716,12 @@ export
 
     centre = (init = false) => {
         let top = window.innerHeight/2;
-        _each(this.symbols, (symbol, i: number) => {
-            let sbox = symbol.subtreeDockingPointsBoundingBox;
+        for (const symbol of this.symbols) {
+            const sbox = symbol.subtreeDockingPointsBoundingBox;
             symbol.position = this.p.createVector(window.innerWidth/2 - sbox.center.x, top + sbox.center.y);
             top += sbox.h;
             symbol.shakeIt();
-        });
+        }
         if (!init) {
             this.log?.actions.push({
                 event: "CENTRE_SYMBOLS",
