@@ -21,12 +21,9 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import p5 from 'p5';
-import _compact = require('lodash/compact');
 import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
 import _isEmpty = require('lodash/isEmpty');
-import _map = require('lodash/map');
-import _values = require('lodash/values');
 
 import { DockingPoint } from './DockingPoint';
 import { isDefined } from './utils';
@@ -236,7 +233,8 @@ export
             alpha = 127;
         }
 
-        _each(this.dockingPoints, (dockingPoint, _key) => {
+        for(let k in this.dockingPoints) {
+            const dockingPoint = this.dockingPoints[k];
             if (dockingPoint.child) {
                 dockingPoint.child.draw(hideDockingPoints);
             } else {
@@ -259,7 +257,7 @@ export
                     this.p.ellipse(dockingPoint.position.x, dockingPoint.position.y, dps, dps);
                 }
             }
-        });
+        }
 
         this._draw();
 
@@ -443,7 +441,7 @@ export
 	 * @returns {Widget[]} A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
-        return _compact(_map(_values(this.dockingPoints), "child"));
+        return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
 
     /**

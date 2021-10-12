@@ -23,7 +23,6 @@ limitations under the License.
 
 import p5 from "p5";
 
-
 import { Widget, Rect } from './Widget';
 import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";

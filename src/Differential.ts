@@ -21,10 +21,6 @@ limitations under the License.
 /* tslint:disable: comment-format */
 
 import p5 from "p5";
-import _compact = require('lodash/compact');
-import _map = require('lodash/map');
-import _repeat = require('lodash/repeat');
-import _values = require('lodash/values');
 
 import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
@@ -167,7 +163,9 @@ class Differential extends Widget {
             if (this.dockingPoints["order"].child != null) {
                 let n = parseInt(this.dockingPoints["order"].child.formatExpressionAs(format));
                 if (!isNaN(n) && n > 1) {
-                    expression += _repeat(" * " + expression, n-1);
+                    for (let i = 0; i < n-1; ++i) {
+                        expression += " * " + expression;
+                    }
                 }
             }
             if (this.dockingPoints["right"].child != null) {
@@ -325,6 +323,6 @@ class Differential extends Widget {
      * @returns {Array<Widget>} A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
-        return _compact(_map(_values(this.dockingPoints), "child"));
+        return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
 }
