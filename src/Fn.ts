@@ -27,12 +27,12 @@ import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
 import { isDefined } from "./utils";
+import { Inequality } from "./Inequality";
 
 /** Functions. */
 export
     class Fn extends Widget {
 
-    public s: any;
     protected name: string;
     protected custom: boolean;
     protected innerSuperscript: boolean;
@@ -46,14 +46,13 @@ export
      * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
-    constructor(p: any, s: any, name: string, custom: boolean, allowSubscript: boolean, innerSuperscript: boolean) {
+    constructor(p: p5, s: Inequality, name: string, custom: boolean, allowSubscript: boolean, innerSuperscript: boolean) {
         super(p, s);
         this.name = name;
         this.custom = custom;
-        this.s = s;
         this.allowSubscript = allowSubscript;
         this.innerSuperscript = innerSuperscript;
 
@@ -100,11 +99,12 @@ export
      * - _argument_: Argument (duh?)
      */
     generateDockingPoints() {
-        let box = this.s.font_up.textBounds(this.name || '', 0, 0, this.scale * this.s.baseFontSize);
-        let bracketBox = this.s.font_up.textBounds('(', 0, 0, this.scale * this.s.baseFontSize);
+        // The following casts are OK because x, y, w, and h are present in the returned object...
+        const box = this.s.font_up.textBounds(this.name || '', 0, 0, this.scale * this.s.baseFontSize) as Rect;
+        const bracketBox = this.s.font_up.textBounds('(', 0, 0, this.scale * this.s.baseFontSize) as Rect;
 
-        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + bracketBox.w, -this.s.xBox_h/2), 1, ["symbol", "differential"], "argument");
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["operator"], "right");
+        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + bracketBox.w, -this.s.xBox.h/2), 1, ["symbol", "differential"], "argument");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["operator"], "right");
 
         if (this.allowSubscript) {
             this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2, 0), 2/3, ["symbol"], "subscript");
@@ -230,7 +230,7 @@ export
         // FIXME Consolidate this with the _drawBracketsInBox(Rect) function in Brackets
         this.p.fill(this.color).noStroke().strokeJoin(this.p.ROUND);
 
-        let m = Math.sqrt(Math.max(1, box.h / this.s.mBox_h));
+        let m = Math.sqrt(Math.max(1, box.h / this.s.mBox.h));
         let a = m * this.s.baseFontSize/5;
         let b = m * (3+this.s.baseFontSize)/5;
         let c = Math.sqrt(4 * m + 1);
@@ -300,7 +300,7 @@ export
 
         // See Fn::boundingBox()
         // The Math.min() here is to limit how much the brackets expand vertically.
-        let height = Math.min(Math.max(this._baseBox?.h ?? 0, argumentBox.h), this.s.mBox_h*3);
+        let height = Math.min(Math.max(this._baseBox?.h ?? 0, argumentBox.h), this.s.mBox.h*3);
 
         let bracketsX = Math.max(superscriptBox.w, subscriptBox.w);
         let bracketsW = 40*this.scale + argumentBox.w;
@@ -340,10 +340,10 @@ export
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = child.leftBound;
-                child.position.y = -this.scale*this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
+                child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
             } else {
                 dp.position.x = thisBox.x + (this._nameBox?.w ?? 0) + dp.size/2;
-                dp.position.y = -this.scale * this.s.mBox_h;
+                dp.position.y = -this.scale * this.s.mBox.h;
             }
         }
 

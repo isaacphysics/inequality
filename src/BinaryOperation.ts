@@ -25,6 +25,7 @@ import p5 from "p5";
 
 import { Widget, Rect } from './Widget';
 import { DockingPoint } from "./DockingPoint";
+import { Inequality } from "./Inequality";
 
 /**
  * Binary operations, such as plus and minus.
@@ -33,7 +34,7 @@ import { DockingPoint } from "./DockingPoint";
  */
 export
     class BinaryOperation extends Widget {
-    public s: any;
+
     protected operation: string;
     protected mhchemSymbol: string;
     protected latexSymbol: string;
@@ -46,12 +47,11 @@ export
      * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale * (this.s.xBox?.h ?? 50)/2);
     }
 
-    constructor(p: any, s: any, operation: string) {
+    constructor(p: p5, s: Inequality, operation: string) {
         super(p, s);
-        this.s = s;
         this.operation = operation;
         switch(this.operation) {
           case '±':
@@ -83,7 +83,7 @@ export
      */
     generateDockingPoints() {
         let box = this.boundingBox();
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["symbol", "differential"], "right");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + (this.s.mBox?.w ?? 50)/4, -(this.s.xBox?.h ?? 50)/2), 1, ["symbol", "differential"], "right");
     }
 
     /**
@@ -141,9 +141,9 @@ export
 
     /** Paints the widget on the canvas. */
     _draw(): void {
-        this.p.fill(this.color).strokeWeight(0).noStroke();
+        this.p.fill(this.color as p5.Color).strokeWeight(0).noStroke();
 
-        this.p.textFont(this.s.font_up)
+        this.p.textFont(this.s.font_up as string|object)
             .textSize(this.s.baseFontSize * 0.8 * this.scale)
             .textAlign(this.p.CENTER, this.p.BASELINE)
             .text(this.operation, 0, 0);
@@ -156,8 +156,9 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let s = "+";
-        let box = this.s.font_up.textBounds(s, 0, 0, this.scale*this.s.baseFontSize*0.8);
+        const s = "+";
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        const box = this.s.font_up.textBounds(s, 0, 0, this.scale*this.s.baseFontSize*0.8) as Rect;
         return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
@@ -179,7 +180,7 @@ export
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
                 dp.position.x = thisBox.x + thisBox.w + dp.size;
-                dp.position.y = -this.scale*this.s.xBox_h/2;
+                dp.position.y = -this.scale * (this.s.xBox?.h ?? 50)/2;
             }
         }
     }

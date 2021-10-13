@@ -27,12 +27,12 @@ import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
 import { Relation } from "./Relation";
 import { isDefined } from "./utils";
+import { Inequality } from "./Inequality";
 
 /** A class for representing particles. */
 export
     class Particle extends Widget {
 
-    public s: any;
     protected type: string;
     protected pythonSymbol: string;
     protected latexSymbol: string;
@@ -56,10 +56,10 @@ export
      * @returns {p5.Vector} The position to which a ChemicalElement is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
-    constructor(p: any, s: any, particle: string, type: string) {
+    constructor(p: p5, s: Inequality, particle: string, type: string) {
         super(p, s);
         this.type = type;
 
@@ -131,8 +131,8 @@ export
 
         // Create the docking points - added mass number and proton number
         // TODO: add a flag to toggle the mass/proton number docking points? e.g. boolean nuclearMode
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["particle"], "right");
-        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox_h), 2/3, ["exponent"], "superscript");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
+        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
         this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
         this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
         this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
@@ -233,12 +233,13 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
+        // The following casts are OK because x, y, w, and h are present in the returned object...
         if (this.mhchemSymbol == '\\antineutrino') {
             // FIXME The unicode combining overline makes things a bit weird here. This approximation is good enough, though.
-            let box = this.s.font_it.textBounds("h", 0, 0, this.s.baseFontSize);
+            const box = this.s.font_it.textBounds("h", 0, 0, this.s.baseFontSize) as Rect;
             return new Rect(-box.w/2, box.y, box.w, box.h);
         } else {
-            let box = this.s.font_it.textBounds(this.particle || "x", 0, 0, this.s.baseFontSize);
+            const box = this.s.font_it.textBounds(this.particle || "x", 0, 0, this.s.baseFontSize) as Rect;
             return new Rect(-box.w/2, box.y, box.w, box.h);
         }
     }
@@ -269,10 +270,10 @@ export
                 // FIXME I'm keeping it like this for now because it's easier on the eyes.
                 // child.position.x = thisBox.x + child.rightBound;
                 child.position.x = thisBox.x + child.rightBound + child.subtreeDockingPointsBoundingBox.w - child.subtreeBoundingBox.w;
-                child.position.y = -this.scale*this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
+                child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
             } else {
                 dp.position.x = thisBox.x - dp.size/2;
-                dp.position.y = (-this.scale * this.s.mBox_h);
+                dp.position.y = (-this.scale * this.s.mBox.h);
             }
         }
 
@@ -298,11 +299,11 @@ export
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
-                child.position.y = -this.scale*this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
+                child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 superscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
             } else {
                 dp.position.x = thisBox.x + thisBox.w + dp.size/2;
-                dp.position.y = -this.scale * this.s.mBox_h;
+                dp.position.y = -this.scale * this.s.mBox.h;
                 superscriptWidth = dp.size;
             }
         }
@@ -330,7 +331,7 @@ export
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
                 dp.position.x = thisBox.x + thisBox.w + Math.max(superscriptWidth, subscriptWidth) + dp.size;
-                dp.position.y = -this.scale*this.s.xBox_h/2;
+                dp.position.y = -this.scale*this.s.xBox.h/2;
             }
         }
     }

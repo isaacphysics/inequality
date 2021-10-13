@@ -24,6 +24,7 @@ import p5 from "p5";
 
 import { DockingPoint } from "./DockingPoint";
 import { BinaryOperation } from "./BinaryOperation";
+import { Inequality } from "./Inequality";
 
 /**
  * Boolean Logic Binary operations, such as ANDs and ORs.
@@ -32,7 +33,7 @@ import { BinaryOperation } from "./BinaryOperation";
  */
 export
     class LogicBinaryOperation extends BinaryOperation {
-    public s: any;
+
     protected operation: string;
     protected latexSymbol: string;
     protected mathmlSymbol: string;
@@ -44,13 +45,12 @@ export
      * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
     // TODO: Add support for BinarySyntax
-    constructor(p: any, s: any, operation: string) {
+    constructor(p: p5, s: Inequality, operation: string) {
         super(p, s, operation);
-        this.s = s;
         this.operation = operation;
         if (this.s.logicSyntax == 'logic') {
             switch(this.operation) {
@@ -109,7 +109,7 @@ export
      */
     generateDockingPoints() {
         let box = this.boundingBox();
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["symbol"], "right");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["symbol"], "right");
     }
 
     /**

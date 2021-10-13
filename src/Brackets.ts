@@ -28,12 +28,12 @@ import { BinaryOperation } from "./BinaryOperation";
 import { LogicBinaryOperation } from "./LogicBinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
+import { Inequality } from "./Inequality";
 
 /** Brackets. "We got both kinds, we got country and western". */
 export
     class Brackets extends Widget {
 
-    public s: any;
     private type: string;
     private latexSymbol: { lhs: string, rhs: string };
     private pythonSymbol: { lhs: string, rhs: string };
@@ -49,10 +49,9 @@ export
         return this.p.createVector(0, 0);
     }
 
-    constructor(p: any, s: any, type: string, mode:string) {
+    constructor(p: p5, s: Inequality, type: string, mode:string) {
         super(p, s, mode);
         this.type = type;
-        this.s = s;
         switch (this.type) {
             case 'round':
                 this.latexSymbol = {
@@ -106,8 +105,8 @@ export
         let box = this.boundingBox();
         let descent = this.position.y - (box.y + box.h);
 
-        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(0, -this.s.xBox_h/2), 1, ["symbol", "differential"], "argument");
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox_w/4 + this.scale * 20, -this.s.xBox_h/2), 1, ["operator_brackets"], "right");
+        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(0, -this.s.xBox.h/2), 1, ["symbol", "differential"], "argument");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox.w/4 + this.scale * 20, -this.s.xBox.h/2), 1, ["operator_brackets"], "right");
         if (this.s.editorMode != 'logic') {
             this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");
             if (this.mode == 'chemistry') {
@@ -229,7 +228,7 @@ export
         this.p.fill(this.color).noStroke().strokeJoin(this.p.ROUND);
 
         // FIXME Consolidate this with the _drawBracketsInBox(Rect) function in Fn
-        let m = Math.sqrt(Math.max(1, box.h / this.s.mBox_h));
+        let m = Math.sqrt(Math.max(1, box.h / this.s.mBox.h));
         let a = m * this.s.baseFontSize/5;
         let b = m * (3+this.s.baseFontSize)/5;
         let c = Math.sqrt(4 * m + 1);
@@ -287,7 +286,8 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box = this.s.font_up.textBounds("()", 0, 0, this.scale * this.s.baseFontSize);
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        let box = this.s.font_up.textBounds("()", 0, 0, this.scale * this.s.baseFontSize) as Rect;
 
         let width = box.w + this._argumentBox.w;
         let height = Math.max(box.h, this._argumentBox.h);

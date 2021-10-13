@@ -27,12 +27,12 @@ import { BinaryOperation } from "./BinaryOperation";
 import { LogicBinaryOperation } from "./LogicBinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
+import { Inequality } from "./Inequality";
 
 /** LogicNot. */
 export
     class LogicNot extends Widget {
 
-    public s: any;
     private latexSymbol: Object;
     private pythonSymbol: Object;
     // private mathmlSymbol: Object = ''; // WARNING: This should be initialized in the constructor
@@ -46,9 +46,8 @@ export
         return this.p.createVector(0, 0);
     }
 
-    constructor(p: any, s: any) {
+    constructor(p: p5, s: Inequality) {
         super(p, s);
-        this.s = s;
 
         this.latexSymbol = '\\lnot';
         if (this.s.logicSyntax == 'logic') {
@@ -71,8 +70,8 @@ export
     generateDockingPoints() {
         let box = this.boundingBox();
 
-        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(0, -this.s.xBox_h/2), 1, ["symbol", "differential"], "argument");
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox_w/4 + this.scale * 20, -this.s.xBox_h/2), 1, ["operator"], "right");
+        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(0, -this.s.xBox.h/2), 1, ["symbol", "differential"], "argument");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox.w/4 + this.scale * 20, -this.s.xBox.h/2), 1, ["operator"], "right");
     }
 
     /**
@@ -140,19 +139,20 @@ export
 
     /** Paints the widget on the canvas. */
     _draw(): void {
-        let box = this.boundingBox();
-        let sw = this.s.baseFontSize/15;
+        const box = this.boundingBox();
+        const sw = this.s.baseFontSize/15;
 
         if (this.s.logicSyntax == 'logic') {
-            let notBox = this.s.font_up.textBounds("¬", 0, 0, this.scale * this.s.baseFontSize);
+            // The following cast is OK because x, y, w, and h are present in the returned object...
+            const notBox = this.s.font_up.textBounds("¬", 0, 0, this.scale * this.s.baseFontSize) as Rect;
             box.x = box.x + notBox.w;
 
             this.p.fill(this.color).noStroke().strokeJoin(this.p.ROUND);
 
-            let m = Math.sqrt(Math.max(1, box.h / this.s.mBox_h));
-            let a = m * this.s.baseFontSize/5;
-            let b = m * (3+this.s.baseFontSize)/5;
-            let c = Math.sqrt(4 * m + 1);
+            const m = Math.sqrt(Math.max(1, box.h / this.s.mBox.h));
+            const a = m * this.s.baseFontSize/5;
+            const b = m * (3+this.s.baseFontSize)/5;
+            const c = Math.sqrt(4 * m + 1);
             // LHS
             this.p.beginShape();
             this.p.vertex(      box.x + b, -box.h/2 + m);
@@ -200,14 +200,17 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box = new Rect(0, 0, 0, 0);
+        let box: Rect;
         let yShift: number = 0;
+        // The following casts are OK because x, y, w, and h are present in the returned object...
         if (this.s.logicSyntax == 'logic') {
-            box = this.s.font_up.textBounds("¬()", 0, 0, this.scale * this.s.baseFontSize);
+            box = this.s.font_up.textBounds("¬()", 0, 0, this.scale * this.s.baseFontSize) as Rect;
             yShift = 0;
         } else if (this.s.logicSyntax == 'binary') {
-            box = this.s.font_up.textBounds("X", 0, 0, this.scale * this.s.baseFontSize);
+            box = this.s.font_up.textBounds("X", 0, 0, this.scale * this.s.baseFontSize) as Rect;
             yShift = this.s.baseFontSize/2 * this.scale;
+        } else {
+            box = new Rect(0, 0, 50, 50);
         }
 
         let width = box.w + this._argumentBox.w;
@@ -233,17 +236,18 @@ export
     _shakeIt(): void {
         this._shakeItDown();
 
-        let thisBox = this.boundingBox();
-        let notBox = this.s.font_up.textBounds("¬", 0, 0, this.scale * this.s.baseFontSize);
+        const thisBox = this.boundingBox();
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        const notBox = this.s.font_up.textBounds("¬", 0, 0, this.scale * this.s.baseFontSize) as Rect;
         if (this.s.logicSyntax == 'binary') {
             notBox.w = 0;
         }
         thisBox.x += notBox.w;
 
         if (this.dockingPoints["argument"]) {
-            let dp = this.dockingPoints["argument"];
+            const dp = this.dockingPoints["argument"];
             if (dp.child) {
-                let child = dp.child;
+                const child = dp.child;
                 child.position.x = thisBox.x + child.leftBound + dp.size;
                 child.position.y = -child.dockingPoint.y;
             } else {
@@ -253,9 +257,9 @@ export
         }
 
         if (this.dockingPoints["right"]) {
-            let dp = this.dockingPoints["right"];
+            const dp = this.dockingPoints["right"];
             if (dp.child) {
-                let child = dp.child;
+                const child = dp.child;
                 child.position.x = thisBox.x - notBox.w + thisBox.w + child.leftBound + dp.size;
                 child.position.y = -child.dockingPoint.y;
             } else {

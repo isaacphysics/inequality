@@ -27,12 +27,12 @@ import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
 import { Relation } from "./Relation";
+import { Inequality } from "./Inequality";
 
 /** A class for representing numbers */
 export
     class Num extends Widget {
 
-    public s: any;
     private significand: string;
     protected right = this.dockingPoints.hasOwnProperty("right");
     protected superscript = this.dockingPoints.hasOwnProperty("superscript");
@@ -43,15 +43,13 @@ export
      * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
 
-    constructor(p: any, s: any, significand: string, _exponent: string) {
+    constructor(p: p5, s: Inequality, significand: string, _exponent: string) {
         super(p, s);
         this.significand = significand;
-        this.s = s;
-
 
         this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'particle', 'relation', 'operator_brackets', 'differential_order', 'differential_argument'];
     }
@@ -70,8 +68,8 @@ export
      */
     generateDockingPoints() {
         let box = this.boundingBox();
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["operator"], "right");
-        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox_h), 2/3, ["exponent"], "superscript");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["operator"], "right");
+        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
     }
 
     /**
@@ -179,8 +177,9 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box = this.s.font_up.textBounds(this.getFullText() || "x", 0, 0, this.scale * this.s.baseFontSize);
-        return new Rect(-box.w/2 - this.s.xBox.w/4, box.y, box.w, box.h);
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        let box = this.s.font_up.textBounds(this.getFullText() || "x", 0, 0, this.scale * this.s.baseFontSize) as Rect;
+        return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
     /**
@@ -200,11 +199,11 @@ export
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
-                child.position.y = -this.scale * this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
+                child.position.y = -this.scale * this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 superscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
             } else {
                 dp.position.x = thisBox.x + thisBox.w + dp.size/2;
-                dp.position.y = -this.scale * this.s.mBox_h;
+                dp.position.y = -this.scale * this.s.mBox.h;
                 superscriptWidth = dp.size;
             }
         }
@@ -217,7 +216,7 @@ export
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
                 dp.position.x = thisBox.x + thisBox.w + superscriptWidth + dp.size;
-                dp.position.y = -this.scale * this.s.xBox_h/2;
+                dp.position.y = -this.scale * this.s.xBox.h/2;
             }
         }
     }

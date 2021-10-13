@@ -27,6 +27,7 @@ import _isEmpty = require('lodash/isEmpty');
 
 import { DockingPoint } from './DockingPoint';
 import { isDefined } from './utils';
+import { Inequality } from './Inequality';
 
 // This is meant to be a static global thingie for uniquely identifying widgets/symbols
 // This may very well be a relic of my C++ multi-threaded past, but it served me well so far...
@@ -113,7 +114,8 @@ export
 
     abstract class Widget {
     /** p5 instance, I guess? */
-    protected p: any;
+    protected p: p5;
+    s: Inequality;
     /** Unique ID */
     id: number = -1;
 
@@ -156,7 +158,8 @@ export
     }
 
     /** The color used to draw this Widget */
-    color?: Nullable<p5.Color> = null;
+    private _color?: Nullable<p5.Color> = null;
+    get color(): p5.Color { return this._color ?? this.p.color(0) }
     isMainExpression = false;
     currentPlacement = "";
 
@@ -196,15 +199,16 @@ export
         return this.constructor.name;
     }
 
-    constructor(p: any, public s: any, mode: string = 'maths') {
+    constructor(p: p5, s: Inequality, mode: string = 'maths') {
         // Take a new unique id for this symbol
         this.id = ++wId;
         // This is weird but necessary: this.p will be the sketch function
         this.p = p;
+        this.s = s;
         // Default position is [0, 0]
         this.position = p.createVector(0, 0);
 
-        this.color = this.p.color(0);
+        this._color = this.p.color(0);
         this.mode = mode;
         this.generateDockingPoints();
     }
@@ -229,20 +233,19 @@ export
     draw(hideDockingPoints = false) {
         this.p.translate(this.position.x, this.position.y);
         let alpha = 255;
-        if (this.s.movingSymbol != null && this.id == this.s.movingSymbol.id) {
+        if (this.s.movingSymbol != null && this.id === this.s.movingSymbol.id) {
             alpha = 127;
         }
-
         for(let k in this.dockingPoints) {
             const dockingPoint = this.dockingPoints[k];
             if (dockingPoint.child) {
                 dockingPoint.child.draw(hideDockingPoints);
             } else {
-                if (hideDockingPoints) return;
+                if (hideDockingPoints) continue;
                 // There is no child to paint, let's paint an empty docking point
                 //if (this.depth < 2) { // This stops docking points from being shown, but not from being used.
                 let drawThisOne = _intersection(this.s.visibleDockingPointTypes, dockingPoint.type).length > 0;
-                let highlightThisOne = this.s.activeDockingPoint == dockingPoint;
+                let highlightThisOne = this.s.activeDockingPoint === dockingPoint;
 
                 if (drawThisOne || window.location.hash === "#debug") {
                     let ptAlpha = window.location.hash === "#debug" && !drawThisOne ? alpha * 0.5 : alpha;// * 0.5;
@@ -258,9 +261,7 @@ export
                 }
             }
         }
-
         this._draw();
-
         this.p.noFill();
         if (window.location.hash === "#debug") {
             // +++ REFERENCE POINTS +++
@@ -380,7 +381,7 @@ export
         for(let k in this.parentWidget.dockingPoints) {
             let dockingPoint = this.parentWidget?.dockingPoints[k];
             if (dockingPoint?.child == this) {
-                this.s.log.actions.push({
+                this.s.log?.actions.push({
                     event: "UNDOCK_SYMBOL",
                     symbol: this.subtreeObject(false, true, true),
                     parent: this.parentWidget?.subtreeObject(false, true, true),
@@ -427,7 +428,7 @@ export
     highlight(on = true) {
         let mainColor = this.isMainExpression ? this.p.color(0) : this.p.color(0, 0, 0, 127);
         this.isHighlighted = on;
-        this.color = on ? this.p.color(51, 153, 255) : mainColor;
+        this._color = on ? this.p.color(51, 153, 255) : mainColor;
         _each(this.dockingPoints, dockingPoint => {
             // Only recurse for turning off. This seems to improve usability.
             if (dockingPoint.child != null && !on) {

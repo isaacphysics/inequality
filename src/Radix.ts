@@ -26,12 +26,11 @@ import { Widget, Rect } from './Widget'
 import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
+import { Inequality } from "./Inequality";
 
 /** Radix. Or, as they say, the _nth_ principal root of its argument. */
 export
     class Radix extends Widget {
-
-    public s: any;
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
@@ -39,12 +38,11 @@ export
      * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
-    constructor(p: any, s: any) {
+    constructor(p: p5, s: Inequality) {
         super(p, s);
-        this.s = s;
 
         this.docksTo = ['symbol', 'operator', 'exponent', 'operator_brackets', 'relation', 'differential_argument'];
     }
@@ -58,11 +56,11 @@ export
      * - _subscript_: Subscript (duh?)
      */
     generateDockingPoints() {
-        let box = this.boundingBox();
-        let descent = this.position.y - (box.y + box.h);
-        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.xBox_w/2, -this.s.xBox_h/2), 1, ["symbol"], "argument");
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox_w/2, -this.s.xBox_h/2), 1, ["operator"], "right");
-        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox_w/2, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");
+        const box = this.boundingBox();
+        const descent = this.position.y - (box.y + box.h);
+        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.xBox.w/2, -this.s.xBox.h/2), 1, ["symbol"], "argument");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox.w/2, -this.s.xBox.h/2), 1, ["operator"], "right");
+        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox.w/2, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");
     }
 
     /**
@@ -136,10 +134,10 @@ export
         this.p.fill(this.color).noStroke();
         this.p.beginShape();
         this.p.vertex(
-            b.x,                            b.y+b.h-this.s.xBox_h*0.8);
+            b.x,                            b.y+b.h-this.s.xBox.h*0.8);
         this.p.bezierVertex(
-            b.x+b.w*(1/6),                  b.y+b.h-this.s.xBox_h-this.scale*5,
-            b.x+b.w*(0.8/6),                b.y+b.h-this.s.xBox_h-this.scale*5,
+            b.x+b.w*(1/6),                  b.y+b.h-this.s.xBox.h-this.scale*5,
+            b.x+b.w*(0.8/6),                b.y+b.h-this.s.xBox.h-this.scale*5,
             b.x+b.w*(3/6),                  b.y+b.h);
         this.p.vertex(
             b.x+b.w+this.scale*2,           b.y+this.scale*4);
@@ -154,9 +152,9 @@ export
         this.p.vertex(
             b.x+b.w*(3/6),                  b.y+b.h-this.scale*12);
         this.p.vertex(
-            b.x+b.w*(1/6)+this.scale*2,     b.y+b.h-this.s.xBox_h-this.scale*10);
+            b.x+b.w*(1/6)+this.scale*2,     b.y+b.h-this.s.xBox.h-this.scale*10);
         this.p.vertex(
-            b.x-this.scale*2,               b.y+b.h-this.s.xBox_h*0.8-this.scale*2);
+            b.x-this.scale*2,               b.y+b.h-this.s.xBox.h*0.8-this.scale*2);
         this.p.endShape();
     }
 
@@ -167,7 +165,7 @@ export
      */
     boundingBox(): Rect {
         // Half the x-box width is a nice beautification addition, but requires expanding the bounding box. See _shakeIt().
-        let width = (this._radixCharacterBox?.w ?? 0) + this._argumentBox.w + this.s.xBox_w/2;
+        let width = (this._radixCharacterBox?.w ?? 0) + this._argumentBox.w + this.s.xBox.w/2;
         let height = Math.max((this._radixCharacterBox?.h ?? 0), this._argumentBox.h);
         return new Rect(-(this._radixCharacterBox?.w ?? 0), -height/2 + this.dockingPoint.y, width, height);
     }
@@ -198,7 +196,7 @@ export
             if (dp.child) {
                 let child = dp.child;
                 // Half the x-box width is a nice beautification addition, but requires expanding the bounding box. See boundingBox().
-                child.position.x = child.leftBound + this.s.xBox_w/2;
+                child.position.x = child.leftBound + this.s.xBox.w/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y + child.topBound - this._argumentBox.h/2;
             } else {
                 dp.position.x = this._argumentBox.center.x;
@@ -229,7 +227,7 @@ export
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
                 dp.position.x = this.boundingBox().x + this.boundingBox().w + superscriptWidth + dp.size;
-                dp.position.y = (-this.scale * this.s.xBox_h/2);
+                dp.position.y = (-this.scale * this.s.xBox.h/2);
             }
         }
 

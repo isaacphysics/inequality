@@ -27,11 +27,10 @@ import { Widget, Rect } from './Widget';
 import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
+import { Inequality } from "./Inequality";
 
 export
     class Fraction extends Widget {
-    public s: any;
-
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.
      *
@@ -41,9 +40,8 @@ export
         return this.p.createVector(0, 0);
     }
 
-    constructor(p: any, s: any) {
+    constructor(p: p5, s: Inequality) {
         super(p, s);
-        this.s = s;
 
         this.docksTo = ['operator', 'symbol', 'exponent', 'operator_brackets', 'relation', 'differential_argument'];
     }
@@ -58,7 +56,7 @@ export
     generateDockingPoints() {
         let box = this.boundingBox();
         // FIXME That 50 is hard-coded, need to investigate when this.width gets initialized.
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(50 + this.scale * this.s.mBox_w/4, -box.h/2), 1, ["operator"], "right");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(50 + this.scale * this.s.mBox.w/4, -box.h/2), 1, ["operator"], "right");
         this.dockingPoints["numerator"] = new DockingPoint(this, this.p.createVector(0, -(box.h + 25)), 1, ["symbol"], "numerator");
         this.dockingPoints["denominator"] = new DockingPoint(this, this.p.createVector(0, 0 + 25), 1, ["symbol"], "denominator");
     }
@@ -132,7 +130,8 @@ export
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box = this.s.font_up.textBounds("+", 0, 0, this.scale * this.s.baseFontSize);
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        const box = this.s.font_up.textBounds("+", 0, 0, this.scale * this.s.baseFontSize) as Rect;
 
         let width = Math.max(box.w, this._numeratorBox.w, this._denominatorBox.w);
 
@@ -175,7 +174,7 @@ export
                 child.position.y = -dp.size - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
             } else {
                 dp.position.x = 0;
-                dp.position.y = -this.s.xBox_h/2 - dp.size;
+                dp.position.y = -this.s.xBox.h/2 - dp.size;
             }
         }
 
@@ -188,7 +187,7 @@ export
                 child.position.y = dp.size - child.subtreeDockingPointsBoundingBox.y;
             } else {
                 dp.position.x = 0;
-                dp.position.y = this.s.xBox_h/2 + dp.size;
+                dp.position.y = this.s.xBox.h/2 + dp.size;
             }
         }
 

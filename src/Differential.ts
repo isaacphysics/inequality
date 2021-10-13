@@ -28,12 +28,11 @@ import { DockingPoint } from "./DockingPoint";
 import { Derivative } from "./Derivative";
 import { Relation } from "./Relation";
 import { isDefined } from "./utils";
+import { Inequality } from "./Inequality";
 
 /** A class for representing variables and constants (aka, letters). */
 export
 class Differential extends Widget {
-
-    public s: any;
     protected letter: string;
 
     /**
@@ -42,13 +41,13 @@ class Differential extends Widget {
      * @returns {p5.Vector} The position to which a Differential is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
-        return this.p.createVector(0, -this.scale*this.s.xBox_h/2);
+        return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
-    public constructor(p: any, s: any, letter: string) {
+    public constructor(p: p5, s: Inequality, letter: string) {
         super(p, s);
         this.letter = letter;
-        this.s = s;
+
         this.docksTo = ['operator', 'differential', 'relation'];
     }
 
@@ -102,9 +101,9 @@ class Differential extends Widget {
         let box = this.boundingBox();
         // let descent = this.position.y - (box.y + box.h);
 
-        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox_w/4, -this.s.xBox_h/2), 1, ["differential_argument"], "argument");
-        this.dockingPoints["order"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox_h), 2/3, ["differential_order"], "order");
-        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + 1.25*this.s.mBox_w, -this.s.xBox_h/2), 1, ["differential", "operator"], "right");
+        this.dockingPoints["argument"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["differential_argument"], "argument");
+        this.dockingPoints["order"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["differential_order"], "order");
+        this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + 1.25*this.s.mBox.w, -this.s.xBox.h/2), 1, ["differential", "operator"], "right");
     }
 
     /**
@@ -234,7 +233,8 @@ class Differential extends Widget {
      * @returns {Rect} The bounding box
      */
     boundingBox(): Rect {
-        let box = this.s.font_up.textBounds(this.letter || "D", 0, 0, this.scale * this.s.baseFontSize);
+        // The following cast is OK because x, y, w, and h are present in the returned object...
+        let box = this.s.font_up.textBounds(this.letter || "D", 0, 0, this.scale * this.s.baseFontSize) as Rect;
         return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
@@ -254,7 +254,7 @@ class Differential extends Widget {
                 return Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
             } else {
                 dp.position.x = thisBox.x + thisBox.w + displacement + dp.size;
-                dp.position.y = -this.scale*this.s.xBox_h/2;
+                dp.position.y = -this.scale*this.s.xBox.h/2;
                 return 2*dp.size;
             }
         } else {
@@ -274,11 +274,11 @@ class Differential extends Widget {
             if (dp.child) {
                 let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + displacement + dp.size*child.scale/2;
-                child.position.y = -this.scale*this.s.xBox_h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
+                child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 return Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
             } else {
                 dp.position.x = thisBox.x + thisBox.w + displacement + dp.size/2;
-                dp.position.y = -this.scale*this.s.mBox_h;
+                dp.position.y = -this.scale*this.s.mBox.h;
                 return dp.size;
             }
         } else {
@@ -314,7 +314,7 @@ class Differential extends Widget {
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
                 dp.position.x = thisBox.x + thisBox.w + orderWidth + argumentWidth + dp.size;
-                dp.position.y = -this.scale*this.s.xBox_h/2;
+                dp.position.y = -this.scale*this.s.xBox.h/2;
             }
         }
     }
