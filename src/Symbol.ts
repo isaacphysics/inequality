@@ -82,7 +82,7 @@ export
         return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child;
     }
 
-    public constructor(p: p5, s: Inequality, letter: string, modifier = "") {
+    constructor(p: p5, s: Inequality, letter: string, modifier = "") {
         super(p, s);
         this.letter = letter;
         this.modifier = modifier;

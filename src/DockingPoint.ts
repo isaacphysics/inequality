@@ -30,7 +30,7 @@ export class DockingPoint {
 
     isVisible = false;
 
-    public constructor(public widget: Widget, public position: p5.Vector, public scale: number, public type: Array<string>, public name: string) {
+    constructor(public widget: Widget, public position: p5.Vector, public scale: number, public type: Array<string>, public name: string) {
 
     }
 

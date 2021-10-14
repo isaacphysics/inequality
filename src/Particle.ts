@@ -342,5 +342,4 @@ export
     get children(): Array<Widget> {
         return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
-
 }

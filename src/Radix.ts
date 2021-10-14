@@ -230,6 +230,5 @@ export
                 dp.position.y = (-this.scale * this.s.xBox.h/2);
             }
         }
-
     }
 }

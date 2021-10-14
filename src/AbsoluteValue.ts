@@ -32,7 +32,7 @@ import { Inequality } from "./Inequality";
 export
     class AbsoluteValue extends Widget {
 
-    public s: Inequality;
+    s: Inequality;
 
     /**
      * There's a thing with the baseline and all that... this sort-of fixes it.

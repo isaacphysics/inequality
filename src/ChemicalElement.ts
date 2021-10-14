@@ -47,7 +47,6 @@ export
     constructor(p: p5, s: Inequality, element: string) {
         super(p, s);
         this.element = element;
-        this.s = s;
         this.docksTo = ['ChemicalElement', 'operator', 'relation', 'symbol', 'chemical_element', "operator_brackets"];
     }
 

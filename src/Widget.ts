@@ -87,7 +87,7 @@ export
      */
     get center(): p5.Vector {
         // This is painful but I can't find a way of using createVector and p5.Vector does not have a parametric constructor.
-        let v = new p5.Vector();
+        const v = new p5.Vector();
         v.set(this.x + this.w/2, this.y + this.h/2);
         return v;
     }
@@ -115,10 +115,10 @@ export
     abstract class Widget {
     /** p5 instance, I guess? */
     protected p: p5;
-    s: Inequality;
+    /** Sketch instance for some app-wide reference values */
+    readonly s: Inequality;
     /** Unique ID */
-    id: number = -1;
-
+    readonly id: number = -1;
 
     /** Scaling factor for this widget (affected by where a widget is docked, typically) */
     scale: number = 1.0;
