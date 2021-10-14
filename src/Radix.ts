@@ -171,7 +171,7 @@ export
     }
 
     get _radixCharacterBox(): Nullable<Rect> {
-        return Rect.fromObject(this.s.font_up.textBounds("\u221A", 0, 0, this.scale * this.s.baseFontSize));
+        return Rect.fromObject(this.s.font_up.textBounds("\u221A", 0, 0, this.scale * this.s.baseFontSize) as Rect);
     }
 
     get _argumentBox(): Rect {

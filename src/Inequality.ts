@@ -172,8 +172,8 @@ export
     };
 
     updateLetterBoxes = () => {
-        this._xBox = Rect.fromObject(this.font_it.textBounds("x", 0, 0, this._baseFontSize));
-        this._mBox = Rect.fromObject(this.font_it.textBounds("M", 0, 0, this._baseFontSize));
+        this._xBox = Rect.fromObject(this.font_it.textBounds("x", 0, 0, this._baseFontSize) as Rect);
+        this._mBox = Rect.fromObject(this.font_it.textBounds("M", 0, 0, this._baseFontSize) as Rect);
     };
 
     setup = () => {

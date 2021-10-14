@@ -53,7 +53,7 @@ export
      * @param box An object with keys `x`, `y`, `w`, and `h`.
      * @returns {Rect} A Rect corresponding to the `box` parameter. null if box does not have the right parameters.
      */
-    static fromObject(box: any): Nullable<Rect> {
+    static fromObject(box: Rect): Nullable<Rect> {
         if (box.hasOwnProperty("x") && box.hasOwnProperty("y") && box.hasOwnProperty("w") && box.hasOwnProperty("h")) {
             return new Rect(box.x, box.y, box.w, box.h);
         } else {

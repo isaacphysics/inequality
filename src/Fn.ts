@@ -277,11 +277,11 @@ export
     }
 
     get _baseBox(): Nullable<Rect> {
-        return Rect.fromObject(this.s.font_up.textBounds(this.name + '()', 0, 0, this.scale * this.s.baseFontSize));
+        return Rect.fromObject(this.s.font_up.textBounds(this.name + '()', 0, 0, this.scale * this.s.baseFontSize) as Rect);
     }
 
     get _nameBox(): Nullable<Rect> {
-        return Rect.fromObject(this.s.font_up.textBounds(this.name, 0, 0, this.scale * this.s.baseFontSize));
+        return Rect.fromObject(this.s.font_up.textBounds(this.name, 0, 0, this.scale * this.s.baseFontSize) as Rect);
     }
 
     // FIXME The argument box could use some extra space to the right to accommodate docking points more nicely. OK for now.
