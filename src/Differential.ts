@@ -51,6 +51,10 @@ class Differential extends Widget {
         this.docksTo = ['operator', 'differential', 'relation'];
     }
 
+    get typeAsString(): string {
+        return 'Differential';
+    }
+
     /**
      * Prevents Differentials from being detached from Derivatives when the user is not an admin/editor.
      */

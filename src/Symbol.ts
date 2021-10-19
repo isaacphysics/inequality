@@ -40,8 +40,7 @@ export
     protected modifier: string;
 
     get typeAsString(): string {
-        // This one is necessary as Symbol is a thing in Javascript and TypeScript mangles this class' name
-        return "Symbol";
+        return 'Symbol';
     }
 
     /**

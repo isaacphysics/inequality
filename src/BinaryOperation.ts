@@ -75,6 +75,10 @@ export
         this.docksTo = ['exponent', 'operator', 'chemical_element', 'state_symbol', 'particle', 'operator_brackets', 'symbol', 'relation', 'differential', 'top-left', 'bottom-left'];
     }
 
+    get typeAsString(): string {
+        return 'BinaryOperation';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Binary Operation has one docking point:

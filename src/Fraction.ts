@@ -46,6 +46,10 @@ export
         this.docksTo = ['operator', 'symbol', 'exponent', 'operator_brackets', 'relation', 'differential_argument'];
     }
 
+    get typeAsString(): string {
+        return 'Fraction';
+    }
+
     /** Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Fraction has three docking point:
      *

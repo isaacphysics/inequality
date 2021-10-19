@@ -85,6 +85,10 @@ export
         this.docksTo = ['chemical_element', "operator_brackets"];
     }
 
+    get typeAsString(): string {
+        return 'StateSymbol';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Relation has one docking point:

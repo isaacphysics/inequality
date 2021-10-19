@@ -124,6 +124,10 @@ export
         // TODO Check that this doesn't break stuff by accident. If it does, the solution is to exclude it only for logic mode.
     }
 
+    get typeAsString(): string {
+        return 'Relation';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Relation has one docking point:

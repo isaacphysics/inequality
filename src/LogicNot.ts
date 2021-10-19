@@ -60,6 +60,10 @@ export
         this.docksTo = ['symbol', 'relation'];
     }
 
+    get typeAsString(): string {
+        return 'LogicNot';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Symbol has three docking points:

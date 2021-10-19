@@ -50,6 +50,10 @@ export
         this.docksTo = ['ChemicalElement', 'operator', 'relation', 'symbol', 'chemical_element', "operator_brackets"];
     }
 
+    get typeAsString(): string {
+        return 'ChemicalElement';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A ChemicalElement has five docking points:

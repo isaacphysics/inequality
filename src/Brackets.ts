@@ -92,6 +92,9 @@ export
         }
     }
 
+    get typeAsString(): string {
+        return 'Brackets';
+    }
 
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.

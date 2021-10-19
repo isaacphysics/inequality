@@ -53,6 +53,10 @@ export
         this.docksTo = ['symbol', 'relation'];
     }
 
+    get typeAsString(): string {
+        return 'LogicLiteral';
+    }
+
     getFullText(type?: string): string {
         if (this.s.logicSyntax == 'logic') {
             switch(type) {

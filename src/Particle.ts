@@ -125,6 +125,10 @@ export
         this.docksTo = ['operator', 'relation', 'symbol'];
     }
 
+    get typeAsString(): string {
+        return 'Particle';
+    }
+
     generateDockingPoints() {
         let box = this.boundingBox();
         let descent = this.position.y - (box.y + box.h);
@@ -243,7 +247,6 @@ export
             return new Rect(-box.w/2, box.y, box.w, box.h);
         }
     }
-
 
     /**
      * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be

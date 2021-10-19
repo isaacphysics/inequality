@@ -46,6 +46,10 @@ export
         this.docksTo = ['operator', 'symbol', 'operator_brackets', 'relation'];
     }
 
+    get typeAsString(): string {
+        return 'Derivative';
+    }
+
     /** Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Derivative has three docking point:
      *

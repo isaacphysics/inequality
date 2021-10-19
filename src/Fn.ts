@@ -89,6 +89,10 @@ export
         this.docksTo = ['relation', 'symbol', 'operator', 'exponent', "operator_brackets", 'differential_argument'];
     }
 
+    get typeAsString(): string {
+        return 'Fn';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Function has four docking points, although some may be disabled.

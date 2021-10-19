@@ -101,6 +101,10 @@ export
         this.docksTo = ['operator', 'operator_brackets'];
     }
 
+    get typeAsString(): string {
+        return 'LogicBinaryOperation';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Binary Operation has one docking point:

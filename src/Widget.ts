@@ -196,7 +196,7 @@ export
      * @returns {string}
      */
     get typeAsString(): string {
-        return this.constructor.name;
+        return 'Widget';
     }
 
     constructor(p: p5, s: Inequality, mode: string = 'maths') {

@@ -50,6 +50,10 @@ export
         this.docksTo = ['symbol', 'operator', 'exponent', 'subscript', 'chemical_element', 'operator_brackets', 'relation', 'differential_argument'];
     }
 
+    get typeAsString(): string {
+        return 'AbsoluteValue';
+    }
+
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
      * A Symbol has three docking points:
