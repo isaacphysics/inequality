@@ -144,8 +144,8 @@ export
     }
 
     token(): string {
-        let r = /(^Derivative\(.*?\)).*$/;
-        return this.formatExpressionAs("python").replace(r, '$1');
+        let r = /(^Derivative\((.*?),(.*)\)).*$/;
+        return this.formatExpressionAs("python").replace(r, 'Derivative(_,$3)');
     }
 
     /** Paints the widget on the canvas. */

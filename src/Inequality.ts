@@ -703,7 +703,7 @@ export
         };
 
         if (isDefined(symbolWithMostChildren)) {
-            const flattenedExpression = this.flattenExpression(symbolWithMostChildren).map(e => isDefined(e) ? e.replace(/,/g, ";") : '');
+            const flattenedExpression = this.flattenExpression(symbolWithMostChildren).map(e => isDefined(e) ? e.replace(/,/g, ";") : null).filter(isDefined);
             this.onNewEditorState({
                 result: {
                     "tex": symbolWithMostChildren.formatExpressionAs("latex").trim(),
