@@ -1,6 +1,6 @@
 {
   "name": "inequality",
-  "version": "0.9.33",
+  "version": "0.9.34",
   "description": "A symbolic equation editor for the web",
   "private": false,
   "main": "./lib/main.js",
