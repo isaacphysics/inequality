@@ -229,7 +229,7 @@ export
     draw = () => {
         if (!isDefined(this.p)) return;
         
-        this.p.clear();
+        this.p.clear(255, 255, 255, 255);
         for (const symbol of this._symbols) {
             symbol.shakeIt();
             symbol.draw(symbol === this._movingSymbol);
