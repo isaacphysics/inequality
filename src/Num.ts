@@ -28,7 +28,6 @@ import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
 import { Relation } from "./Relation";
 import { Inequality } from "./Inequality";
-import { Fraction } from "./Fraction";
 
 /** A class for representing numbers */
 export
@@ -97,8 +96,6 @@ export
             if (this.right && this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof Num) {
                     expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
-                } else if (this.dockingPoints["right"].child instanceof Fraction) {
-                    expression += "\\left\( " + this.dockingPoints["right"].child.formatExpressionAs(format) + "\\right\)";
                 } else {
                     expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
