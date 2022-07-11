@@ -379,7 +379,7 @@ export
         this.updateState(fromTextEntry, withUserInput);
     };
 
-    private _parseSubtreeObject = (node: WidgetSpec, parseChildren = true): Nullable<Widget> => {
+    _parseSubtreeObject = (node: WidgetSpec, parseChildren = true): Nullable<Widget> => {
         let w: Nullable<Widget>;
         switch (node.type) {
             case "Symbol":
@@ -676,33 +676,16 @@ export
     };
 
     flattenExpression = (w: Widget) => {
-        let stack: Widget[] = [w];
-        let list: string[] = [];
-        while (stack.length > 0) {
-            let e = stack.shift() as Widget;
-            list.push(e.token());
-            let children = [] as Widget[];
-            if (e.typeAsString === 'Derivative') {
-                list = [...list, ...this._flattenDerivative(e as Derivative)];
-            } else {
-                children = e.children;
-            }
-            stack = stack.concat(children);
-        }
-        return [...new Set(list)].filter(i => { return i !== ''; });
-    };
-
-    private _flattenDerivative = (w: Derivative) => {
         let stack: Array<Widget> = [w];
         let list = [];
         while (stack.length > 0) {
             let e = stack.shift() as Widget;
-            if (e.typeAsString !== 'Differential') list.push(e.token());
+            list.push(e.token());
             let children = e.children;
             stack = stack.concat(children);
         }
         return [...new Set(list)].filter(i => { return i !== ''; });
-    }
+    };
 
     onNewEditorState = (_state: object) => {
         console.error('Unoverridden onNewEditorState called');
