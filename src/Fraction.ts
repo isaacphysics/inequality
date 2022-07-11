@@ -28,6 +28,8 @@ import { BinaryOperation } from "./BinaryOperation";
 import { Relation } from "./Relation";
 import { DockingPoint } from "./DockingPoint";
 import { Inequality } from "./Inequality";
+import { Num } from "./Num";
+import { Brackets } from "./Brackets";
 
 export
     class Fraction extends Widget {
@@ -165,6 +167,17 @@ export
      * @private
      */
     _shakeIt(): void {
+        if (this.parentWidget instanceof Num && this.parentWidget.dockingPoints["right"].child === this) {
+            const b = new Brackets(this.p, this.s, "round", this.mode);
+            // vvv DO NOT SWAP THESE TWO LINES, NO MATTER HOW MUCH YOU THINK THEY ARE EQUIVALENT, THEY ARE NOT //
+            this.parentWidget.dockingPoints["right"].child = b;
+            b.dockingPoints["argument"].child = this;
+            // ^^^ //
+            b.dockingPoints["right"].child = this.dockingPoints["right"].child;
+            this.dockingPoints["right"].child = null;
+            return;
+        }
+
         this._shakeItDown();
 
         let thisBox = this.boundingBox();
