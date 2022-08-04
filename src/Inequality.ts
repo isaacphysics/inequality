@@ -364,7 +364,7 @@ export
 
     parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false, withUserInput = '') => {
         if (isDefined(root)) {
-            if (isDefined(clearExistingSymbols) && isDefined(this._symbols) && this._symbols.length > 0) {
+            if (isDefined(clearExistingSymbols) && clearExistingSymbols && isDefined(this._symbols) && this._symbols.length > 0) {
                 this._symbols.length = 0;
             }
             let w = this._parseSubtreeObject(root);
