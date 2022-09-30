@@ -4,17 +4,17 @@ Multi-modal equation entry on the web.
 
 Inequality is the drag-and-drop, symbolic entry system developed for [Isaac Physics](https://isaacphysics.org) for users to enter symbolic maths (and chemistry, and boolean logic) in a way familiar to a high school student who does not know any other specialist syntax.
 
-This package is currently a little hard to integrate but worry not for instructions will eventually appear.
+A [demo](https://isaacphysics.org/equality) is available -- and yes, we are aware of the naming irony here, that's what happens when you rewrite a legacy project.
 
-Somewhere.
-
-Maybe.
-
-Meanwhile, a [demo](https://isaacphysics.org/equality) is available -- and yes, we are aware of the naming irony here, that's what happens when you rewrite a legacy project.
+For information on how to integrate Inequality into your project, please see https://github.com/isaacphysics/isaac-react-app/blob/master/src/app/components/pages/Equality.tsx
 
 ## Usage
 
 > npm i --save inequality
+
+or
+
+> yarn add inequality
 
 ```javascript
 import { makeInequality } from 'inequality';
