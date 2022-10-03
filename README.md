@@ -10,7 +10,7 @@ For information on how to integrate Inequality into your project, please see htt
 
 ## Documentation
 
-Please see [DOCS.md] and inline code comments.
+Please see [DOCS.md](DOCS.md) and inline code comments.
 
 ## Usage
 
