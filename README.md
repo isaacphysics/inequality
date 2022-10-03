@@ -8,6 +8,10 @@ A [demo](https://isaacphysics.org/equality) is available -- and yes, we are awar
 
 For information on how to integrate Inequality into your project, please see https://github.com/isaacphysics/isaac-react-app/blob/master/src/app/components/pages/Equality.tsx
 
+## Documentation
+
+Please see [DOCS.md] and inline code comments.
+
 ## Usage
 
 > npm i --save inequality
