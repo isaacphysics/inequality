@@ -98,7 +98,7 @@ The closest docking point within the threshold is the candidate for docking if t
 
 A symbol can be undocked at any time -- minus very specific exceptions -- and dropped on the canvas, or moved to another docking point.
 
-If desired -- and most of the time you do desire this -- the application surrounding Inequality can provide a palette of symbols that can be dragged onto the canvas. Such a palette is not part of Inequality to give you control over its appearance. Inequality provides the concept of "potential symbol" for when a symbol is dragged onto the canvas from the outside, and this is where you can make the connection. It may be a little overwhelming, but [this](https://github.com/isaacphysics/isaac-react-app/blob/master/src/app/components/pages/Equality.tsx) is how we do it on the Isaac platform.
+If desired -- and most of the time you do desire this -- the application surrounding Inequality can provide a palette of symbols that can be dragged onto the canvas. Such a palette is not part of Inequality to give you control over its appearance. Inequality provides the concept of "potential symbol" for when a symbol is dragged onto the canvas from the outside, and this is where you can make the connection. It may be a little overwhelming, but [this](https://github.com/isaacphysics/isaac-react-app/blob/master/src/app/components/pages/Equality.tsx) is how we do it on the Isaac platform. You'll find the palette (or menu) in [`InequalityModal.tsx`](https://github.com/isaacphysics/isaac-react-app/blob/master/src/app/components/elements/modals/InequalityModal.tsx).
 
 ## Demo
 
