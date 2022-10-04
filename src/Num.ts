@@ -15,12 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
@@ -33,19 +27,23 @@ import { Inequality } from "./Inequality";
 export
     class Num extends Widget {
 
+    /**
+     * Significand, mantissa, coefficient... this is the part of a number in
+     * scientific notation consisting of its significant digits.
+     * 
+     * It's not like we support anything other than plain old regular
+     * first-grade notation but hey.
+     * 
+     * I'm sure there's also a funny story about why this is a string instead of
+     * a number but I can't remember it.
+     */
     private significand: string;
     protected right = this.dockingPoints.hasOwnProperty("right");
     protected superscript = this.dockingPoints.hasOwnProperty("superscript");
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
-
 
     constructor(p: p5, s: Inequality, significand: string, _exponent: string) {
         super(p, s);
@@ -75,16 +73,6 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["operator"], "right");
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
     }
-
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
 
     formatExpressionAs(format: string): string {
         let expression = "";
@@ -164,7 +152,6 @@ export
         return '';
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 
@@ -175,23 +162,12 @@ export
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         // The following cast is OK because x, y, w, and h are present in the returned object...
         let box = this.s.font_up.textBounds(this.getFullText() || "x", 0, 0, this.scale * this.s.baseFontSize) as Rect;
         return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         this._shakeItDown();
 

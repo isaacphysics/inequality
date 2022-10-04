@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: all */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
@@ -37,11 +31,6 @@ export
     private pythonSymbol: Object;
     // private mathmlSymbol: Object = ''; // WARNING: This should be initialized in the constructor
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, 0);
     }
@@ -66,7 +55,7 @@ export
 
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
-     * A Symbol has three docking points:
+     * A LogicNot has three docking points:
      *
      * - _argument_: The expression to negate
      * - _right_: Binary operation (addition, subtraction)
@@ -78,15 +67,6 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox.w/4 + this.scale * 20, -this.s.xBox.h/2), 1, ["operator"], "right");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         // TODO Triple check
         let expression = "";
@@ -141,7 +121,6 @@ export
         return '';
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         const box = this.boundingBox();
         const sw = this.s.baseFontSize/15;
@@ -198,11 +177,6 @@ export
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         let box: Rect;
         let yShift: number = 0;
@@ -223,6 +197,7 @@ export
         return new Rect(-width/2, -height/2 - yShift, width, height + yShift/4);
     }
 
+    /** Calculates the argument's bounding box */
     get _argumentBox(): Rect {
         if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child) {
             return this.dockingPoints["argument"].child.subtreeDockingPointsBoundingBox;
@@ -231,12 +206,6 @@ export
         }
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         this._shakeItDown();
 

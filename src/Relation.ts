@@ -139,15 +139,6 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["relation"], "right");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex") {
@@ -191,7 +182,6 @@ export
         return '';
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 
@@ -202,11 +192,6 @@ export
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         const s = this.relation || "=";
         // The following cast is OK because x, y, w, and h are present in the returned object...
@@ -214,12 +199,6 @@ export
         return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         this._shakeItDown();
         const thisBox = this.boundingBox();

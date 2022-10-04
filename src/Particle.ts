@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
@@ -50,11 +44,6 @@ export
         return this.type;
     }
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a ChemicalElement is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
@@ -220,7 +209,6 @@ export
         return expression;
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 
@@ -231,11 +219,6 @@ export
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         // The following casts are OK because x, y, w, and h are present in the returned object...
         if (this.mhchemSymbol == '\\antineutrino') {
@@ -248,12 +231,6 @@ export
         }
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         // This is how Chemistry works:
         // ----------------------------------
@@ -339,9 +316,6 @@ export
         }
     }
 
-    /**
-     * @returns {Widget[]} A flat array of the children of this widget, as widget objects
-     */
     get children(): Array<Widget> {
         return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }

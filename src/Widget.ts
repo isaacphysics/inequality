@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from 'p5';
 import _each = require('lodash/each');
 import _intersection = require('lodash/intersection');
@@ -29,7 +23,7 @@ import { DockingPoint } from './DockingPoint';
 import { isDefined } from './utils';
 import { Inequality } from './Inequality';
 
-// This is meant to be a static global thingie for uniquely identifying widgets/symbols
+// This is a static global id generator for uniquely identifying widgets/symbols
 // This may very well be a relic of my C++ multi-threaded past, but it served me well so far...
 export let wId = 0;
 
@@ -50,8 +44,8 @@ export
     /**
      * Factory to produce a Rect from an object with the appropriate keys.
      * 
-     * @param box An object with keys `x`, `y`, `w`, and `h`.
-     * @returns {Rect} A Rect corresponding to the `box` parameter. null if box does not have the right parameters.
+     * @param box - An object with keys `x`, `y`, `w`, and `h`.
+     * @returns A Rect corresponding to the `box` parameter. null if box does not have the right parameters.
      */
     static fromObject(box: Rect): Nullable<Rect> {
         if (box.hasOwnProperty("x") && box.hasOwnProperty("y") && box.hasOwnProperty("w") && box.hasOwnProperty("h")) {
@@ -65,7 +59,7 @@ export
 	 * Re-positions this Rect with the TL corner in the new position
 	 *
 	 * @param newOrigin The new TL corner's position
-	 * @returns {Rect} This Rect post hoc.
+	 * @returns This Rect post hoc.
      */
     setOrigin(newOrigin: p5.Vector): Rect {
         this.x = this.x - newOrigin.x;
@@ -75,8 +69,8 @@ export
 
 	/**
 	 * Checks whether this Rect contains point p in canvas coordinates.
-	 * @param p The point to be tested for containment.
-	 * @returns {boolean} Whether the point is contained or not.
+	 * @param p - The point to be tested for containment.
+	 * @returns Whether the point is contained or not.
      */
     contains(p: p5.Vector): boolean {
         return (p.x >= this.x) && (p.y >= this.y) && (p.x <= this.x + this.w) && (p.y <= this.y + this.h);
@@ -93,6 +87,7 @@ export
     }
 }
 
+/** A type to (de)serialize widgets */
 export type WidgetSpec = {
     type: string;
     properties: any;
@@ -126,8 +121,10 @@ export
     /** Position of this widget */
     position: p5.Vector;
 
-    /** Points to which other widgets can dock */
-    _dockingPoints: { [key: string]: DockingPoint; } = {};
+    /** Points to which other widgets can dock. See getter below. */
+    private _dockingPoints: { [key: string]: DockingPoint; } = {};
+
+    /** Base size of docking points, scaled according to this widget's scale factor. */
     get dockingPointSize(): number {
         return this.scale * this.s.baseDockingPointSize;
     }
@@ -146,10 +143,12 @@ export
     isHighlighted = false;
     mustExpand = false;
 
+    /** @deprecated Instructs widgets to draw their docking points a bit further away */
     expandDockingPoints() {
         this.mustExpand = true;
     }
 
+    /** @deprecated Instructs widgets to draw their docking points a bit closer */
     contractDockingPoints() {
         this.mustExpand = false;
         for (let w of this.children) {
@@ -164,7 +163,14 @@ export
     currentPlacement = "";
 
     /**
-     * @returns {boolean} True if this widget can be detached from its parent.
+     * Marks a widget as detachable from its parent, or not. This is useful in
+     * cases like with derivatives in which the derivative widget looks just
+     * like a fraction sign, and so one could be tempted to use it as such, and
+     * vice versa to use a fraction sign as a derivative object. By providing a
+     * pre-made derivatives with differentials above and below, and marking
+     * these as non-detachable (override and return false) we reduce confusion.
+     * 
+     * @returns True if this widget can be detached from its parent, false otherwise.
      *
      * @see Differential, Derivative
      */
@@ -173,14 +179,26 @@ export
     }
 
     /**
-     * @returns {p5.Vector} A reference point that other widgets can use to dock this widget to themselves with the correct alignment.
+     * A reference point that other widgets can use to dock this widget to
+     * themselves with the correct alignment.
+     * 
+     * Different symbols have different "centres", especially when dealing with
+     * text and baselines.  Most of the time, this "centre" not move around once
+     * it's set, but it can be useful to be able to do so anyway.
+     * 
+     * @returns The position to which a Symbol is meant to be docked from.
      */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, 0);
     }
 
     /**
-     * @returns {{[p: string]: DockingPoint}} A list of this widget's docking points.
+     * A list of this widget's docking points.
+     * 
+     * This is a key-value object where the keys are the identifiers of the
+     * docking points, and the values are of type DockingPoint.
+     * 
+     * @see DockingPoint
      */
     get dockingPoints(): { [key: string]: DockingPoint; } {
         return this._dockingPoints;
@@ -192,6 +210,15 @@ export
 
     /**
      * This widget's type as a string. Must be overridden by subclasses.
+     * 
+     * This is necessary because of name mangling during the transpilation
+     * process. Type names get twisted and become useless when it comes to
+     * serializing and de-serializing.
+     * 
+     * We *could* use decorators, but they may add dependencies and it all gets
+     * ugly very fast. We'll stick to this for now, until the magical world of
+     * front-end web development pulls its head out of its collective back-end
+     * and adopts a sensible language like, I don't know, Swift? Dart? Kotlin?
      *
      * @returns {string}
      */
@@ -219,17 +246,27 @@ export
     generateDockingPoints() { };
 
 	/**
-	 * Generates the expression corresponding to this widget and its subtree. **This function is a stub and will not
-	 * traverse the subtree.**
+	 * Generates the expression corresponding to this widget and its subtree.
+     * **This function is a stub and will not traverse the subtree.**
+     * 
+     * The `subscript` format is a special one for generating symbols that will
+     * work with the SymPy checker. It squashes everything together, ignoring
+     * operations and all that jazz.
 	 *
-	 * @param format A string to specify the output format. Supports: latex, python.
-	 * @returns {string} The expression in the specified format.
+	 * @param format - A string to specify the output format. Supports: latex, python, mhchem, maybe others...
+	 * @returns The expression in the specified format.
      */
     formatExpressionAs(_format: string): string {
         return "";
     }
 
-    /** Paints the widget on the canvas. */
+    /**
+     * Paints the widget on the canvas, and recurs down to its children.
+     * 
+     * @param hideDockingPoints - Whether to draw docking points or not.
+     *                            It's nice to only show the docking points when
+     *                            there is a dockable widget on the move.
+     */
     draw(hideDockingPoints = false) {
         this.p.translate(this.position.x, this.position.y);
         let alpha = 255;
@@ -237,6 +274,8 @@ export
             alpha = 127;
         }
         for(let k in this.dockingPoints) {
+            // Go through the docking points and draw them as circles if they are
+            // empty, or call the corresponding widget's draw method otherwise.
             const dockingPoint = this.dockingPoints[k];
             if (dockingPoint.child) {
                 dockingPoint.child.draw(hideDockingPoints);
@@ -247,6 +286,7 @@ export
                 let drawThisOne = _intersection(this.s.visibleDockingPointTypes, dockingPoint.type).length > 0;
                 let highlightThisOne = this.s.activeDockingPoint === dockingPoint;
 
+                // Pro tip: append #debug to your URL for extra sparkles.
                 if (drawThisOne || window.location.hash === "#debug") {
                     let ptAlpha = window.location.hash === "#debug" && !drawThisOne ? alpha * 0.5 : alpha;// * 0.5;
                     this.p.stroke(51, 153, 255, ptAlpha);
@@ -263,6 +303,8 @@ export
         }
         this._draw();
         this.p.noFill();
+        
+        // Pro tip: append #debug to your URL to show all the bounding boxes.
         if (window.location.hash === "#debug") {
             // +++ REFERENCE POINTS +++
             this.p.stroke(0, 0, 255, 128).strokeWeight(2);
@@ -273,29 +315,11 @@ export
             this.p.point(0, 0);
             this.p.strokeWeight(1).ellipse(0, 0, this.dockingPointSize/2, this.dockingPointSize/2);
 
-            // +++ LOCAL BOUNDING BOX +++
-            // let box = this.boundingBox();
-            // this.p.stroke(255, 0, 0, 128);
-            // this.p.rect(box.x, box.y, box.w, box.h);
-
             // +++ SUBTREE BOUNDING BOX +++
             // +++ Also draws local boxes because recursion.
             let subtreeBox = this.subtreeBoundingBox;
             this.p.stroke(0, 0, 255, 128);
             this.p.rect(subtreeBox.x, subtreeBox.y, subtreeBox.w, subtreeBox.h);
-
-            // +++ BOXES AROUND DOCKING POINTS +++
-            // let dpBs = this.dpBoxes();
-            // this.p.stroke(64,128,0,64).strokeWeight(2);
-            // for (let i in dpBs) {
-            //     let b = dpBs[i];
-            //     this.p.rect(b.x, b.y, b.w, b.h);
-            // }
-
-            // +++ LOCAL BOUNDING BOX INCLUDING DOCKING POINTS +++
-            // let dpB = this.dockingPointsBoundingBox;
-            // this.p.stroke(0,128,0,128).strokeWeight(2);
-            // this.p.rect(dpB.x, dpB.y, dpB.w, dpB.h);
 
             // +++ SUBTREE BOUNDING BOX INCLUDING DOCKING POINTS +++
             let sdpB = this.subtreeDockingPointsBoundingBox;
@@ -307,10 +331,20 @@ export
         this.p.translate(-this.position.x, -this.position.y);
     }
 
-    /** Widgets must draw themselves. Overriding this is how they do it. */
+    /**
+     * Helper method to draw the widgets on screen. Widgets must draw
+     * themselves. Override this and plug your drawing code in here.
+     */
     abstract _draw(): void;
 
-    /** @returns {string} A string for content editors to specify initial available symbols. */
+    /**
+     * This is a string representation of this widget that makes mathematical
+     * sense. This is used to compose the LaTeX and SymPy expressions.
+     * 
+     * On Isaac, we use these to show our lovely content editors a list of
+     * symbols that they can provide as "available symbols" that will get parsed
+     * to produced a reduced version of the menu, showing only relevant symbols.
+     */
     abstract token(): string;
 
     // ************ //
@@ -367,6 +401,8 @@ export
     // FIXME Could turn this into a `properties` getter maybe?
     abstract properties(): Nullable<Object>;
 
+    // I am not sure why we have this one but my advice is be prepared for
+    // mayhem if you decide to remove it.
     _properties(): Nullable<Object> {
         return this.properties();
     }
@@ -397,8 +433,9 @@ export
     }
 
 	/**
-	 * Hit test. Detects whether a point is hitting the tight bounding box of this widget. This is used for dragging.
-	 * Propagates down to children.
+	 * Hit test. Detects whether a point is hitting the tight bounding box of
+     * this widget. This is used to test whether we can initiate mouse/touch
+     * interaction, and it propagates down to children just in case.
 	 *
 	 * @param p The hit point
 	 * @returns {Widget} This widget, if hit; null if not.
@@ -439,14 +476,17 @@ export
     }
 
 	/**
-	 * @returns {Widget[]} A flat array of the children of this widget, as widget objects
+	 * @returns A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
         return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
 
     /**
-     * @returns {number} How many widgets this subtree is made of.
+     * Counts how many widgets are in this subtree. This is useful when trying
+     * to decide what single expression to select for output.
+     * 
+     * @returns How many widgets this subtree is made of.
      */
     get totalSymbolCount(): number {
         let total = 1;
@@ -466,16 +506,13 @@ export
         let depth = 0;
         let n: Widget = this;
         while (n.parentWidget) {
-
             if (this.currentPlacement == "subscript" || this.currentPlacement == "superscript") {
                 depth += 1;
                 n = n.parentWidget;
             }
             else {
-
                 n = n.parentWidget;
             }
-
         }
         return depth;
     }
@@ -493,8 +530,11 @@ export
     }
 
 	/**
-	 * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-	 * overridden by children of this class.
+	 * Internal companion method to shakeIt(). This is the one that actually
+     * does the work, and the one that should be overridden by children of this
+     * class.
+     * 
+     * This is quite an important method to get right.
 	 *
 	 * @private
      */
@@ -520,13 +560,13 @@ export
     /**
      * This widget's tight bounding box. This is used for the cursor hit testing.
      *
-     * @returns {Rect} The bounding box
+     * @returns The bounding box
      */
     // FIXME Upgrade TypeScript to get abstract getters and setters
     abstract boundingBox(): Rect;
 
     /**
-     * @returns {p5.Vector} The absolute position of this widget relative to the canvas.
+     * @returns The absolute position of this widget relative to the canvas.
      */
     get absolutePosition(): p5.Vector {
         if (null != this.parentWidget) {
@@ -537,7 +577,7 @@ export
     }
 
     /**
-     * @returns {Rect} The absolute bounding box of this widget relative to the canvas.
+     * @returns The absolute bounding box of this widget relative to the canvas.
      */
     get absoluteBoundingBox(): Rect {
         let box = this.boundingBox();
@@ -546,9 +586,7 @@ export
     }
 
     /**
-     * The bounding box including this widget's whole subtree.
-     *
-     * @returns {Rect}
+     * @returns The bounding box including this widget's whole subtree.
      */
     get subtreeBoundingBox(): Rect {
         let thisAbsPosition = this.absolutePosition;
@@ -581,7 +619,7 @@ export
     }
 
     /**
-     * @returns {Array<Rect>} The bounding boxes corresponding to this widget's docking points.
+     * @returns The bounding boxes corresponding to this widget's docking points.
      */
     get dockingPointsBoxes(): Array<Rect> {
         let dpBoxes: Array<Rect> = [];
@@ -595,7 +633,7 @@ export
     }
 
     /**
-     * @returns {Rect} The bounding box of this widget AND its empty docking points.
+     * @returns The bounding box of this widget AND its empty docking points.
      *
      * @see dockingPointsBoxes()
      */
@@ -614,7 +652,7 @@ export
     }
 
     /**
-     * @returns {Rect} The absolute bounding box of this widget AND docking points, relative to the canvas.
+     * @returns The absolute bounding box of this widget AND docking points, relative to the canvas.
      *
      * @see dockingPointsBoundingBox()
      */
@@ -626,7 +664,7 @@ export
     }
 
     /**
-     * @returns {Rect} The (relative?) bounding box of the sub tree AND docking points.
+     * @returns The (relative?) bounding box of the sub tree AND docking points.
      */
     get subtreeDockingPointsBoundingBox(): Rect {
         let thisAbsPosition = this.absolutePosition;

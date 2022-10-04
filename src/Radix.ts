@@ -32,11 +32,6 @@ import { Inequality } from "./Inequality";
 export
     class Radix extends Widget {
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
@@ -53,11 +48,11 @@ export
 
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
-     * A Symbol has three docking points:
+     * A Radix has three docking points:
      *
      * - _right_: Binary operation (addition, subtraction), Symbol (multiplication)
      * - _superscript_: Exponent
-     * - _subscript_: Subscript (duh?)
+     * - _argument_: The argument (duh?)
      */
     generateDockingPoints() {
         const box = this.boundingBox();
@@ -67,15 +62,6 @@ export
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w + this.scale * this.s.xBox.w/2, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         // TODO Triple check
         let expression = "";
@@ -127,11 +113,14 @@ export
         return null;
     }
 
+    /**
+     * This should have been 'sqrt' but we decided not to support it as an
+     * available symbol at Isaac. Too controversial.
+     */
     token(): string {
-        return '';//'sqrt';
+        return '';
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         let b = new Rect(this.boundingBox().x, this.boundingBox().y, this._radixCharacterBox?.w ?? 0, this.boundingBox().h);
 
@@ -162,11 +151,6 @@ export
         this.p.endShape();
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         // Half the x-box width is a nice beautification addition, but requires expanding the bounding box. See _shakeIt().
         let width = (this._radixCharacterBox?.w ?? 0) + this._argumentBox.w + this.s.xBox.w/2;
@@ -174,10 +158,12 @@ export
         return new Rect(-(this._radixCharacterBox?.w ?? 0), -height/2 + this.dockingPoint.y, width, height);
     }
 
+    /** Calculates the bounding box for the V-shaped thing on the left. */
     get _radixCharacterBox(): Nullable<Rect> {
         return Rect.fromObject(this.s.font_up.textBounds("\u221A", 0, 0, this.scale * this.s.baseFontSize) as Rect);
     }
 
+    /** Calculates the bounding box for the argument. */
     get _argumentBox(): Rect {
         if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child) {
             return this.dockingPoints["argument"].child.subtreeDockingPointsBoundingBox;
@@ -186,12 +172,6 @@ export
         }
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         this._shakeItDown();
 

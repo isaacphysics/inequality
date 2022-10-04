@@ -35,11 +35,6 @@ export
 class Differential extends Widget {
     protected letter: string;
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Differential is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
@@ -56,7 +51,10 @@ class Differential extends Widget {
     }
 
     /**
-     * Prevents Differentials from being detached from Derivatives when the user is not an admin/editor.
+     * Prevents Differentials from being detached from Derivatives when the user
+     * is not privileged.
+     * 
+     * On Isaac, privileged users are admins and content editors.
      */
     get isDetachable() {
         const userIsPrivileged = this.s.isUserPrivileged();
@@ -66,7 +64,7 @@ class Differential extends Widget {
     /**
      * Climbs up the ancestors to see if this widget is docked to a Derivative.
      */
-    get sonOfADerivative() {
+    get sonOfADerivative(): boolean {
         let p = this.parentWidget;
         while (null !== p) {
             if (p instanceof Derivative) {
@@ -79,8 +77,6 @@ class Differential extends Widget {
 
     /**
      * Climbs up the parents to see if this widget is docked to the denominator of a Derivative.
-     * 
-     * @returns {boolean}
      */
     get orderNeedsMoving(): boolean {
         let w: Widget = this;
@@ -110,15 +106,6 @@ class Differential extends Widget {
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + 1.25*this.s.mBox.w, -this.s.xBox.h/2), 1, ["differential", "operator"], "right");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating Differentials that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex") {
@@ -220,7 +207,6 @@ class Differential extends Widget {
         return expression;
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 
@@ -231,11 +217,6 @@ class Differential extends Widget {
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         // The following cast is OK because x, y, w, and h are present in the returned object...
         let box = this.s.font_up.textBounds(this.letter || "D", 0, 0, this.scale * this.s.baseFontSize) as Rect;
@@ -290,12 +271,6 @@ class Differential extends Widget {
         }
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         this._shakeItDown();
 
@@ -323,9 +298,6 @@ class Differential extends Widget {
         }
     }
 
-    /**
-     * @returns {Array<Widget>} A flat array of the children of this widget, as widget objects
-     */
     get children(): Array<Widget> {
         return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }

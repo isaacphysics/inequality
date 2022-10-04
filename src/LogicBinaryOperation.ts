@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { DockingPoint } from "./DockingPoint";
@@ -39,16 +33,10 @@ export
     protected mathmlSymbol: string;
     protected pythonSymbol: string;
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
-    // TODO: Add support for BinarySyntax
     constructor(p: p5, s: Inequality, operation: string) {
         super(p, s, operation);
         this.operation = operation;
@@ -116,15 +104,6 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["symbol"], "right");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         let expression = " ";
         if (format == "latex") {
@@ -151,7 +130,6 @@ export
         return expression;
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 

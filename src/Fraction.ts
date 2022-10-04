@@ -15,12 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget';
@@ -33,11 +27,7 @@ import { Brackets } from "./Brackets";
 
 export
     class Fraction extends Widget {
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
+
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, 0);
     }
@@ -67,15 +57,6 @@ export
         this.dockingPoints["denominator"] = new DockingPoint(this, this.p.createVector(0, 0 + 25), 1, ["symbol"], "denominator");
     }
 
-    /**
-     * Generates the expression corresponding to this widget and its subtree.
-     *
-     * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-     * everything together, ignoring operations and all that jazz.
-     *
-     * @param format A string to specify the output format. Supports: latex, python, subscript.
-     * @returns {string} The expression in the specified format.
-     */
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex" || format == 'mhchem') {
@@ -120,7 +101,6 @@ export
         return '';
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.noFill().strokeCap(this.p.SQUARE).strokeWeight(4 * this.scale).stroke(this.color);
 
@@ -130,11 +110,6 @@ export
         this.p.strokeWeight(1);
     }
 
-    /**
-     * This widget's tight bounding box. This is used for the cursor hit testing.
-     *
-     * @returns {Rect} The bounding box
-     */
     boundingBox(): Rect {
         // The following cast is OK because x, y, w, and h are present in the returned object...
         const box = this.s.font_up.textBounds("+", 0, 0, this.scale * this.s.baseFontSize) as Rect;
@@ -144,6 +119,7 @@ export
         return new Rect(-width/2, -box.h/2, width, box.h);
     }
 
+    /** Calculates the bounding box for the numerator */
     get _numeratorBox(): Rect {
         if (this.dockingPoints["numerator"] && this.dockingPoints["numerator"].child) {
             return this.dockingPoints["numerator"].child.subtreeDockingPointsBoundingBox;
@@ -152,6 +128,7 @@ export
         }
     }
 
+    /** Calculates the bounding box for the denominator */
     get _denominatorBox(): Rect {
         if (this.dockingPoints["denominator"] && this.dockingPoints["denominator"].child) {
             return this.dockingPoints["denominator"].child.subtreeDockingPointsBoundingBox;
@@ -160,12 +137,6 @@ export
         }
     }
 
-    /**
-     * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-     * overridden by children of this class.
-     *
-     * @private
-     */
     _shakeIt(): void {
         if (this.parentWidget instanceof Num && this.parentWidget.dockingPoints["right"].child === this) {
             const b = new Brackets(this.p, this.s, "round", this.mode);

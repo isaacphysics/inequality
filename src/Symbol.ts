@@ -14,12 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-///// <reference path="../../typings/p5.d" />
-///// <reference path="../../typings/lodash.d" />
-
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget'
@@ -36,18 +30,16 @@ import { Inequality } from "./Inequality";
 export
     class Symbol extends Widget {
 
+    /** The letter represented by this symbol */
     protected letter: string;
+
+    /** Any modifier applied to this symbol. Only 'prime' is supported for now. */
     protected modifier: string;
 
     get typeAsString(): string {
         return 'Symbol';
     }
 
-    /**
-     * There's a thing with the baseline and all that... this sort-of fixes it.
-     *
-     * @returns {p5.Vector} The position to which a Symbol is meant to be docked from.
-     */
     get dockingPoint(): p5.Vector {
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
@@ -93,9 +85,12 @@ export
     }
 
     /**
-     * Prevents Symbols from being detached from Differentials when the user is not an admin/editor.
+     * Prevents Symbols from being detached from Differentials when the user is
+     * unprivileged.
      * 
-     * @returns {boolean} True if this symbol is detachable from its parent, false otherwise.
+     * On Isaac, only admins and content editors are privileged.
+     * 
+     * @returns True if this symbol is detachable from its parent, false otherwise.
      */
     get isDetachable(): boolean {
         const userIsPrivileged = this.s.isUserPrivileged();
@@ -121,15 +116,6 @@ export
         }
     }
 
-    /**
-	 * Generates the expression corresponding to this widget and its subtree.
-	 *
-	 * The `subscript` format is a special one for generating symbols that will work with the sympy checker. It squashes
-	 * everything together, ignoring operations and all that jazz.
-	 *
-	 * @param format A string to specify the output format. Supports: latex, python, subscript.
-	 * @returns {string} The expression in the specified format.
-	 */
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex") {
@@ -232,7 +218,6 @@ export
         return e;
     }
 
-    /** Paints the widget on the canvas. */
     _draw(): void {
         this.p.fill(this.color).strokeWeight(0).noStroke();
 
@@ -243,11 +228,6 @@ export
         this.p.strokeWeight(1);
     }
 
-	/**
-	 * This widget's tight bounding box. This is used for the cursor hit testing.
-	 *
-	 * @returns {Rect} The bounding box
-	 */
     boundingBox(): Rect {
         const text = this.letter + (this.modifier == "prime" ? "''" : "");
         // The following cast is OK because x, y, w, and h are present in the returned object...
@@ -255,12 +235,6 @@ export
         return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
-	/**
-	 * Internal companion method to shakeIt(). This is the one that actually does the work, and the one that should be
-	 * overridden.
-	 *
-	 * @private
-	 */
     _shakeIt(): void {
         this._shakeItDown();
 
@@ -309,9 +283,6 @@ export
         }
     }
 
-    /**
-     * @returns {Widget[]} A flat array of the children of this widget, as widget objects
-     */
     get children(): Array<Widget> {
         return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
