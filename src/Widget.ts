@@ -143,12 +143,12 @@ export
     isHighlighted = false;
     mustExpand = false;
 
-    /** @deprecated Instructs widgets to draw their docking points a bit further away */
+    /** @experimental Instructs widgets to draw their docking points a bit further away */
     expandDockingPoints() {
         this.mustExpand = true;
     }
 
-    /** @deprecated Instructs widgets to draw their docking points a bit closer */
+    /** @experimental Instructs widgets to draw their docking points a bit closer */
     contractDockingPoints() {
         this.mustExpand = false;
         for (let w of this.children) {

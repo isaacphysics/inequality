@@ -15,9 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/* tslint:disable: no-unused-variable */
-/* tslint:disable: comment-format */
-
 import p5 from "p5";
 import _intersection = require('lodash/intersection');
 import { isDefined } from "./utils";
@@ -42,31 +39,42 @@ import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
 
-// This is the "main" app with the update/render loop and all that jazz.
+/** This is the "main" app with the update/render loop and all. */
 export
     class Inequality {
+    /** Top-level symbols on the canvas. */
     private _symbols: Array<Widget> = [];
 
     private _movingSymbol?: Nullable<Widget>;
+    /** The currently moving symbol, if any. This could also be a potential symbol if dragged from a menu. */
     get movingSymbol(): Nullable<Widget> { return this._movingSymbol }
 
+    /** The currently moving symbol when dragged from a menu */
     private _potentialSymbol?: Nullable<Widget>;
 
+    /** Coordinates of the first cursor point, useful to detect drags and clicks/taps. */
     private _initialTouch?: Nullable<p5.Vector>;
+
+    /** Coordinates of the second-last cursor point during a click/touch interaction.. */
     private _prevTouch?: Nullable<p5.Vector>;
 
     private _xBox?: Nullable<Rect>;
+    /** The bounding box of a lower-case "x" in the current font. Sorry, not a gaming console. */
     get xBox(): Rect { return this._xBox as Rect }
 
     private _mBox?: Nullable<Rect>;
+    /** The bounding box of a lower-case "m" in the current font. */
     get mBox(): Rect { return this._mBox as Rect }
 
     private _baseFontSize = 50;
+    /** Base font size used to draw the top-level widgets. It helps keep the sizing consistent down the AST. */
     get baseFontSize(): number { return this._baseFontSize }
 
     private _baseDockingPointSize = this._baseFontSize/3;
+    /** Base size of the empty docking points circles. */
     get baseDockingPointSize(): number { return this._baseDockingPointSize }
 
+    /** @experimental Helper method to implement zooming, except I don't think it ever worked... */
     changeBaseFontSizeBy = (amount: number) => {
         if (this._baseFontSize + amount > 0) {
             this._baseFontSize += amount;
@@ -74,6 +82,7 @@ export
         }
     };
 
+    /** @experimental Helper method to implement zooming, except I don't think it ever worked... */
     changeBaseDockingPointSizeBy = (amount: number) => {
         if (this._baseDockingPointSize + amount/3 > 0) {
             this._baseDockingPointSize += amount/3;
@@ -82,29 +91,71 @@ export
     };
 
     private _font_it?: Nullable<p5.Font>;
+    /** The italic variant of the chosen font. */
     get font_it(): p5.Font { return this._font_it as p5.Font }
+    
     private _font_up?: Nullable<p5.Font>;
+    /** The regular upright variant of the chosen font. */
     get font_up(): p5.Font { return this._font_up as p5.Font }
 
     private _visibleDockingPointTypes: Array<string> = [];
+    /** List of docking points to draw, based on the type and compatibility of the currently moving widget. */
     get visibleDockingPointTypes(): Array<string> { return this._visibleDockingPointTypes }
 
     private _activeDockingPoint?: Nullable<DockingPoint>;
+    /** The candidate docking point for docking. Used to draw the circle in a different style. */
     get activeDockingPoint(): Nullable<DockingPoint> { return this._activeDockingPoint }
 
+    /** All the docking points currently on the canvas. TODO: Check that this is true. */
     private _canvasDockingPoints: Array<DockingPoint> = [];
 
+    /**
+     * Are we using Boolean Algebra or Digital Electronics syntax for boolean expressions?
+     * 
+     * This should be set from the outside.
+     */
     logicSyntax?: Nullable<string>;
 
-    // There are more properties, but these are the only ones required from within TS
-    // TODO: Create a better specified object.
+    /**
+     * Object used for logging actions. Useful for research and undo/redo.
+     * 
+     * There are more properties, but these are the only ones required from within TS
+     */
     log: Nullable<{ initialState: Array<Object>, actions: Array<Object> }>;
 
+    /**
+     * Inequality supports three modes:
+     * - math
+     * - logic (for Boolean Algebra)
+     * - chemistry
+     * 
+     * This should be set from the outside. */
     public editorMode: string;
+
+    /** Sets whether Inequality is being used in headless mode to ingest and process the AST produced by inequality-grammar. */
     public textEntry: boolean;
+    
+    /** Path to the italic variant of the chosen font. */
     private fontItalicPath: string;
+    /** Path to the regular upright variant of the chosen font. */
     private fontRegularPath: string;
 
+    private IDLE_FPS = 7;
+
+    /**
+     * The constructor for Inequalty does a lot of work but it should be pretty
+     * self-explanatory. In any case, you are not supposed to use this directly
+     * but rather use makeInequality() -- see below.
+     * 
+     * @param p - Instance of p5.js running this sketch
+     * @param width - Initial width of the canvas
+     * @param height - Initial height of the canvas
+     * @param initialSymbolsToParse - An array of widget specs to be placed on
+     *                                the canvas from the beginning. Useful to
+     *                                restore a previous state, or to provide an
+     *                                initial expression to work with.
+     * @param options - Used to assign various sketch properties. See above.
+     */
     constructor(
         private p: p5,
         private width: number,
@@ -136,6 +187,13 @@ export
         this.fontRegularPath = fontRegularPath;
     }
 
+    /**
+     * p5.js method to ensure all the resources that need to be available on
+     * startup are indeed available on startup.
+     * 
+     * @see https://p5js.org/reference/#/p5/preload
+     * @override
+     */
     preload = () => {
         this._font_it = this.p.loadFont(this.fontItalicPath);
         this._font_up = this.p.loadFont(this.fontRegularPath);
@@ -145,6 +203,7 @@ export
         }
     };
 
+    /** @experimental This was supposed to be used in regression testing but never quite made it. */
     loadTestCase = (s: Array<WidgetSpec>) => {
         this._symbols = [];
         this.initialSymbolsToParse = s;
@@ -171,13 +230,21 @@ export
         this.updateCanvasDockingPoints();
     };
 
+    /** Sometimes it may be necessary to update some basic bounding boxes. */
     updateLetterBoxes = () => {
         this._xBox = Rect.fromObject(this.font_it.textBounds("x", 0, 0, this._baseFontSize) as Rect);
         this._mBox = Rect.fromObject(this.font_it.textBounds("M", 0, 0, this._baseFontSize) as Rect);
     };
 
+    /** 
+     * This is p5.js's setup(), the sketch's main setup function.
+     * 
+     * @see https://p5js.org/reference/#/p5/setup
+     * @override
+     */
     setup = () => {
-        this.p.frameRate(7);
+        // To conserve energy and CPU cycles, we set a low framerate when idling.
+        this.p.frameRate(this.IDLE_FPS);
 
         this.logicSyntax = this.logicSyntax;
 
@@ -189,18 +256,22 @@ export
                 break;
             case 'chemistry':
                 this._baseFontSize = 50;
+                // I am not sure why we decided to make the docking points smaller for chemistry...
                 this._baseDockingPointSize = 30/3;
                 break;
         }
 
         this.updateLetterBoxes();
 
+        // Make sure the list of symbols on the canvas is empty initially,
+        // just in case there are leftovers that haven't been cleaned up.
         this._symbols = [];
-
+        // Set a sensible initial value for this that will be overwritten anyway.
+        this._prevTouch = this.p.createVector(0, 0);
+        // p5.js needs to create a canvas before it can draw anything.
         this.p.createCanvas(this.width, this.height);
 
-        this._prevTouch = this.p.createVector(0, 0);
-
+        // Parse initial symbols if any are available, whether as a seed to work from, or as a previous object to be restored.
         try {
             if (!Array.isArray(this.initialSymbolsToParse)) {
                 throw "Initial symbols must be an array, got " + this.initialSymbolsToParse + " instead";
@@ -209,12 +280,17 @@ export
                 this.parseSubtreeObject(s);
             };
         } catch (e) {
+            // There was an "old" equation editor, called Equality, that was very briefly used on Isaac.
+            // These days, especially if starting afresh, this should never be a problem, but other issues may still happen.
             console.warn("Failed to load previous answer. Perhaps it was built with the old equation editor?", e);
         }
+        // Attempt to centre objects on the canvas.
+        // We may be restoring objects saved using another screen size so the
+        // position attribute may even be off-screen.
         this.centre(true);
         if (!isDefined(this.textEntry) && isDefined(this.log)) {
+            // If we are not running in headless mode, we want to log the initial state.
             this.log.initialState = [];
-
             for (let symbol of this._symbols) {
                 this.log.initialState.push(symbol.subtreeObject(true, true));
             };
@@ -222,29 +298,57 @@ export
         this.updateCanvasDockingPoints();
     }
 
+    /**
+     * p5.js callback when the browser's window/viewport is resized.
+     * 
+     * @see https://p5js.org/reference/#/p5/windowResized
+     * @override
+     */
     windowResized = () => {
         this.p.resizeCanvas(this.p.windowWidth * Math.ceil(window.devicePixelRatio), this.p.windowHeight * Math.ceil(window.devicePixelRatio));
     };
 
+    /**
+     * This is how you draw things in a p5 sketch. This function is called in
+     * continuously and pretty much every frame. All the drawing code should
+     * only happen within a draw() call, otherwise bad things may happen.
+     * But of course this is JavaScript after all...
+     * 
+     * @see https://p5js.org/reference/#/p5/draw
+     * @override
+     */
     draw = () => {
         if (!isDefined(this.p)) return;
         
         this.p.clear(255, 255, 255, 255);
         for (const symbol of this._symbols) {
+            // Make sure every widget is correctly placed relatively to their parents
             symbol.shakeIt();
+            // Recursively call the draw() function of each widget.
             symbol.draw(symbol === this._movingSymbol);
         };
 
+        // And let's not forget that the potential symbol being dragged from
+        // the menu is still not in our _symbols array, so we need to draw it
+        // separately. There's no need to draw its docking points, though.
         if (isDefined(this._potentialSymbol)) {
             this._potentialSymbol.draw(true);
         }
     };
 
+    /** Keeps the list of available docking points available and up to date. */
     updateCanvasDockingPoints = () => {
         this._canvasDockingPoints = [];
-        // We need a copy of this._symbols because assignment is done by reference because
+        // We need a copy of this._symbols because assignment is done by
+        // reference and so
         //     let a = this._symbols; a.shift();
-        // destroys this._symbols.
+        // destroys this._symbols, which may be a problem.
+        // It's also a good idea to filter out any moving symbol as we wouldn't
+        // be able to dock anything to their docking points.
+        //
+        // NOTE: If anyone ever manages to implement multi-cursor support, being
+        //       able to dock a moving symbol to another moving symbol may not
+        //       be the worst idea in the world -- though still a bit tricky.
         let q = [...this._symbols.filter(w => w !== this._movingSymbol)];
         while (q.length > 0) {
             let widget = q.shift() as Widget;
@@ -259,6 +363,16 @@ export
         }
     };
 
+    /**
+     * Selects the closest docking point to the given point, within a maximum
+     * threshold. This is effectively kind of a Voronoi diagram which makes the
+     * search zones of different sizes depending on the density of the docking
+     * points, so that it is not only easier to pick one in code, but also
+     * quite lenient on the user to navigate around.
+     * 
+     * @param testPoint - The point to which we want to find the nearest docking point.
+     * @returns 
+     */
     findClosestDockingPoint = (testPoint: p5.Vector): Nullable<DockingPoint> => {
         let minDistance = Infinity;
         let candidateDockingPoint: Nullable<DockingPoint>;
@@ -272,12 +386,23 @@ export
                 candidateDockingPoint = dockingPoint;
             }
         }
-        // TODO Fiddle with this parameter to find the optimal value.
+        // 1.5x the base font size seems good enough as a maximum distance for detection.
         return minDistance <= this._baseFontSize*1.5 ? candidateDockingPoint : null;
     };
 
+    /**
+     * Used while dragging a widget from an external menu.
+     * 
+     * @param spec - A WidgetSpec of the desired widget
+     * @param x - x coordinate where to draw the widget
+     * @param y - y coordinate where to draw the widget
+     */
     updatePotentialSymbol = (spec: Nullable<WidgetSpec> = null, x?: Nullable<number>, y?: Nullable<number>) => {
-        // NB: This logic requires spec to be briefly set to null when switching between potential symbol types.
+        // NOTE: This logic requires spec to be briefly set to null when
+        //       switching between potential symbol types.
+        //       The reasoning is lost in the sands of time but I think it's to
+        //       deal with leftovers from the previous potential symbol. Maybe.
+        //       I'm sure this can be improved (TODO).
         if (isDefined(spec)) {
             if (!isDefined(this._potentialSymbol)) {
                 this._potentialSymbol = this._parseSubtreeObject(spec);
@@ -321,6 +446,13 @@ export
         }
     };
 
+    /**
+     * When a potential symbol is dropped onto the canvas, we then take it in
+     * and make it a first-class widget by adding it to _symbols.
+     * 
+     * This method covers both the case of dropping the symbol onto the canvas
+     * or directly docking it to a pre-existing symbol.
+     */
     commitPotentialSymbol = () => {
         // Make sure we have an active docking point, and that the moving symbol can dock to it.
         if (isDefined(this._potentialSymbol) && this._activeDockingPoint != null && _intersection(this._potentialSymbol.docksTo, this._activeDockingPoint.type).length > 0) {
@@ -345,9 +477,14 @@ export
         this._activeDockingPoint = null;
         this.updateCanvasDockingPoints();
 
-        this.p.frameRate(7);
+        // Remember to set the framerate back to idle.
+        this.p.frameRate(this.IDLE_FPS);
     };
 
+    /**
+     * This is the case when we drag a symbol from the menu but immediately
+     * decide to trash it or drop it back onto the menu.
+     */
     abortPotentialSymbol = () => {
         this.log?.actions.push({
             event: "TRASH_SYMBOL",
@@ -359,16 +496,25 @@ export
         this.updatePotentialSymbol(null);
         this.updateCanvasDockingPoints();
 
-        this.p.frameRate(7);
+        this.p.frameRate(this.IDLE_FPS);
     };
 
-    parseSubtreeObject = (root: { type: string, properties: any, position?: { x: number, y: number } }, clearExistingSymbols = false, fromTextEntry = false, withUserInput = '') => {
+    /**
+     * De-serializes a serialized AST.
+     * 
+     * @param root - Root of the subtree to parse
+     * @param clearExistingSymbols - Whether to clear _symbols or not
+     * @param fromTextEntry - Does this come from text entry? I.e., are we running in headless mode?
+     * @param withUserInput - If so, what did the user type?
+     */
+    parseSubtreeObject = (root: WidgetSpec, clearExistingSymbols = false, fromTextEntry = false, withUserInput = '') => {
         if (isDefined(root)) {
             if (isDefined(clearExistingSymbols) && clearExistingSymbols && isDefined(this._symbols) && this._symbols.length > 0) {
                 this._symbols.length = 0;
             }
             let w = this._parseSubtreeObject(root);
             if (isDefined(w)) {
+                // Setting the position is a bit pointless since we centre everything on startup.
                 w.position.x = root.position?.x ?? 0;
                 w.position.y = root.position?.y ?? 0;
                 this._symbols.push(w);
@@ -379,6 +525,13 @@ export
         this.updateState(fromTextEntry, withUserInput);
     };
 
+    /**
+     * Helper method to (recursively) deserialize a serialized AST.
+     * 
+     * @param node - Node of the AST to deserialize.
+     * @param parseChildren - Deserialize recursively or not.
+     * @returns The corresponding Widget of the right type.
+     */
     private _parseSubtreeObject = (node: WidgetSpec, parseChildren = true): Nullable<Widget> => {
         let w: Nullable<Widget>;
         switch (node.type) {
@@ -433,10 +586,11 @@ export
             case "LogicNot":
                 w = new LogicNot(this.p, this);
                 break;
-            default: // this would be a Widget...
+            default: // this would be a Widget and should really never happen...
                 break;
         }
 
+        // By default, this method recursively parses the children of the given node.
         if (isDefined(w) && parseChildren && isDefined(node.children)) {
             for (const key in node.children) {
                 const n = node.children[key];
@@ -447,11 +601,21 @@ export
         return w;
     };
 
-    // Executive (and possibly temporary) decision: we are moving one symbol at a time (meaning: no multi-touch)
-    // Native ptouchX and ptouchY are not accurate because they are based on the "previous frame".
+    /**
+     * This sets everything up to track cursor motion, and handles hit-testing
+     * in case we happen to initiate dragging on a Widget. Don't get fooled by
+     * the "touch" name, this one also handles mouse events.
+     * 
+     * Executive (and possibly temporary) decision: we are moving one symbol at
+     * a time (meaning: no multi-touch).
+     * 
+     * Native ptouchX and ptouchY are not accurate because they are based on the
+     * "previous frame" so we keep track of the coordinates ourselves.
+     */
     touchStarted = () => {
+        // No need for cursors if we are headless.
         if (this.textEntry) return;
-
+        // Make sure we keep track this every time it should go back to idling.
         this.p.frameRate(60);
         // These are used to correctly detect clicks and taps.
 
@@ -523,7 +687,9 @@ export
         this.touchMoved();
     };
 
+    /** Keeps track of a moving cursor and drags widgets around if necessary. */
     touchMoved = () => {
+        // No need for cursors if we are headless.
         if (this.textEntry) return;
 
         let tx = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).x : this.p.mouseX;
@@ -532,7 +698,11 @@ export
         if (isDefined(this._movingSymbol) && isDefined(this._prevTouch)) {
             let d = this.p.createVector(tx - this._prevTouch.x, ty - this._prevTouch.y);
 
-            // TODO NOT DELETE the following commented section.
+            // TODO (NOT?): DELETE the following commented section.
+            // I'm not sure why, but if I commented like this it may be
+            // reference code... although, upon careful review, I don't see what
+            // purpose this section serves so I guess it can be deleted...
+
             // let sbox = this.movingSymbol.subtreeBoundingBox;
             // let spos = this.movingSymbol.absolutePosition;
             // let dx = this.p.touchX - this.prevTouch.x;
@@ -551,7 +721,7 @@ export
             // let d = this.p.createVector(dx, dy);
 
             this._movingSymbol.position.add(d);
-            // FIXME GO AHEAD PUNK, MAKE MY DAY
+            // As remarked in touchStarted
             this._prevTouch.x = tx;
             this._prevTouch.y = ty;
 
@@ -577,20 +747,55 @@ export
         }
     };
 
-    onCloseMenus = () => { /* Override this on the outside if needed */ };
+    /**
+     * Called when we think the surrounding application should close or hide
+     * the menu. If it has any.
+     * 
+     * Override this from the outside if needed.
+     */
+    onCloseMenus = () => {};
 
-    onNotifySymbolDrag = (_x: number, _y: number) => { /* Override this on the outside if needed */ };
+    /**
+     * The surrounding application can override this if it needs to know when
+     * and where a widget is being dragged.
+     * 
+     * @param _x 
+     * @param _y 
+     */
+    onNotifySymbolDrag = (_x: number, _y: number) => {};
 
-    isUserPrivileged = () => { return false }; /* Override this on the outside if needed */
+    /**
+     * Sometimes it's useful to know whether the user is privileged, like in
+     * the case of disassembling derivatives. We assume users are unprivileged
+     * by default.
+     * 
+     * @returns Whether the user is privileged (default: false).
+     */
+    isUserPrivileged = () => { return false };
 
-    isTrashActive = () => { return false }; /* Override this on the outside if needed */
+    /**
+     * Inequality doesn't provide a trash bin, but the surrounding application
+     * can. This is to notify Inequality whether a widget is being dragged onto
+     * the trash bin icon. If this is true and the widget is dropped, we get rid
+     * of the widget.
+     * 
+     * @returns Whether the trash icon is active (default: false).
+     */
+    isTrashActive = () => { return false };
 
+    /**
+     * Handles the lifting of fingers from screen or mouse button. This can
+     * result in many actions, including dopping the currently moving widget
+     * (if any) onto the canvas, or docking it to another widget, or binning it.
+     */
     touchEnded = () => {
+        // No need for cursors if we are headless.
         if (this.textEntry) return;
 
-        // TODO Maybe integrate something like the number of events or the timestamp? Timestamp would be neat.
+        // TODO Maybe integrate something like the number of events or the
+        // timestamp? Timestamp would be neat to implement a long tap gesture.
         if (null != this._initialTouch && p5.Vector.dist(this._initialTouch, this.p.createVector(this.p.mouseX, this.p.mouseY)) < 2) {
-            // Click
+            // Click or short tap.
             // Close the menu when touching the canvas
             this.onCloseMenus();
         }
@@ -635,7 +840,11 @@ export
 
         this._visibleDockingPointTypes = [];
         for (let dp of this._canvasDockingPoints) {
-            dp.isVisible = false; // TODO Rely on this in the future maybe.
+            // TODO Rely on this in the future maybe.
+            // In principle, only compatible docking points should be visible
+            // while a widget is moving, so we could rely on this information
+            // to do various things we currently do in other ways. Just a thought.
+            dp.isVisible = false;
             dp.widget.expandDockingPoints();
         }
         // Update the list of free docking points
@@ -646,6 +855,7 @@ export
 
         this._initialTouch = null;
 
+        // Try to select a good candidate to send as "current output" to the outside.
         let symbolWithMostChildren: Nullable<Widget> = null;
         let mostChildren = 0;
         for(const symbol of this._symbols) {
@@ -660,9 +870,10 @@ export
         }
         this.updateState();
 
-        this.p.frameRate(7);
+        this.p.frameRate(this.IDLE_FPS);
     };
 
+    // Handles a simplified moved workflow if we are using a mouse.
     mouseMoved = () => {
         let p = this.p.createVector(this.p.mouseX, this.p.mouseY);
         for (const symbol of this._symbols) {
@@ -675,7 +886,15 @@ export
         }
     };
 
-    flattenExpression = (w: Widget) => {
+    /**
+     * Returns a flattened list of all the tokens corresponding to the widgets
+     * present in the given subtree. Useful to provide a list of available
+     * symbols to be used to build a reduced menu.
+     * 
+     * @param w - A widget with its associated subtree.
+     * @return A list of string tokens for each widget in the given subtree.
+     */
+    flattenExpression = (w: Widget): string[] => {
         let stack: Widget[] = [w];
         let list: string[] = [];
         while (stack.length > 0) {
@@ -692,7 +911,8 @@ export
         return [...new Set(list)].filter(i => { return i !== ''; });
     };
 
-    private _flattenDerivative = (w: Derivative) => {
+    /** Helper method to flatten derivates. Derivatives are weird... */
+    private _flattenDerivative = (w: Derivative): string[] => {
         let stack: Array<Widget> = [w];
         let list = [];
         while (stack.length > 0) {
@@ -704,10 +924,20 @@ export
         return [...new Set(list)].filter(i => { return i !== ''; });
     }
 
+    /**
+     * We call this every time we update our internal state and the surrounding
+     * application may be interested in knowing about it. It needs to be
+     * overridden from the outside.
+     */
     onNewEditorState = (_state: object) => {
         console.error('Unoverridden onNewEditorState called');
     }
 
+    /**
+     * Update the current editor state ready to be consumed by the Equality Checker.
+     * 
+     * @see https://github.com/isaacphysics/equality-checker
+     */
     updateState = (fromTextEntry = false, withUserInput = '') => {
         let symbolWithMostChildren: Nullable<Widget>;
         let mostChildren = 0;
@@ -760,6 +990,10 @@ export
     };
 }
 
+/**
+ * This is how Inequality is instanced instead of through its constructor.
+ * This way, p5.js is happy, we are happy, the user is happy, everyone wins!
+ */
 export function makeInequality(
     element: any,
     width: number,
