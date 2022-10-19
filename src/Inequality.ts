@@ -228,6 +228,9 @@ export
             };
         }
         this.updateCanvasDockingPoints();
+        for (let symbol of this._symbols) {
+            symbol.shakeIt();
+        }
     };
 
     /** Sometimes it may be necessary to update some basic bounding boxes. */
@@ -296,6 +299,9 @@ export
             };
         }
         this.updateCanvasDockingPoints();
+        for (let symbol of this._symbols) {
+            symbol.shakeIt();
+        }
     }
 
     /**
@@ -322,8 +328,6 @@ export
         
         this.p.clear(255, 255, 255, 255);
         for (const symbol of this._symbols) {
-            // Make sure every widget is correctly placed relatively to their parents
-            symbol.shakeIt();
             // Recursively call the draw() function of each widget.
             symbol.draw(symbol === this._movingSymbol);
         };
@@ -349,6 +353,11 @@ export
         // NOTE: If anyone ever manages to implement multi-cursor support, being
         //       able to dock a moving symbol to another moving symbol may not
         //       be the worst idea in the world -- though still a bit tricky.
+        for (const symbol of this._symbols) {
+            // Make sure every widget is correctly placed relatively to their parents
+            symbol.shakeIt();
+        };
+
         let q = [...this._symbols.filter(w => w !== this._movingSymbol)];
         while (q.length > 0) {
             let widget = q.shift() as Widget;
@@ -476,6 +485,9 @@ export
         this.updateState();
         this._activeDockingPoint = null;
         this.updateCanvasDockingPoints();
+        for (let symbol of this._symbols) {
+            symbol.shakeIt();
+        }
 
         // Remember to set the framerate back to idle.
         this.p.frameRate(this.IDLE_FPS);
@@ -495,6 +507,9 @@ export
         this._symbols = this._symbols.filter(w => w !== this._movingSymbol)
         this.updatePotentialSymbol(null);
         this.updateCanvasDockingPoints();
+        for (let symbol of this._symbols) {
+            symbol.shakeIt();
+        }
 
         this.p.frameRate(this.IDLE_FPS);
     };
@@ -659,6 +674,9 @@ export
                 // Array.some requires this to break out of the loop.
                 return true;
             }
+            for (let symbol of this._symbols) {
+                symbol.shakeIt();
+            }    
 
             return false;
         });

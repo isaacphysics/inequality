@@ -428,6 +428,7 @@ export
                 this.parentWidget = null;
             }
         };
+        // These two may be redundant
         this.shakeIt(); // Our size may have changed. Shake it.
         oldParent.shakeIt(); // Our old parent should update. Shake it.
     }
@@ -550,6 +551,8 @@ export
             let child = this.dockingPoints[name].child;
             if (child) {
                 child.scale = this.scale * this.dockingPoints[name].scale;
+                // IMPORTANT: Make sure you call _shakeIt() here and not shakeIt()
+                // or you end up with inefficient/infinite recursion.
                 child._shakeIt();
             }
         }
