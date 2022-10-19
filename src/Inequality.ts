@@ -325,8 +325,10 @@ export
      */
     draw = () => {
         if (!isDefined(this.p)) return;
+        if (!isDefined(this.textEntry) || (isDefined(this.textEntry) && this.textEntry)) return;
         
         this.p.clear(255, 255, 255, 255);
+
         for (const symbol of this._symbols) {
             // Recursively call the draw() function of each widget.
             symbol.draw(symbol === this._movingSymbol);
@@ -525,7 +527,7 @@ export
     parseSubtreeObject = (root: WidgetSpec, clearExistingSymbols = false, fromTextEntry = false, withUserInput = '') => {
         if (isDefined(root)) {
             if (isDefined(clearExistingSymbols) && clearExistingSymbols && isDefined(this._symbols) && this._symbols.length > 0) {
-                this._symbols.length = 0;
+                this._symbols = [];
             }
             let w = this._parseSubtreeObject(root);
             if (isDefined(w)) {
