@@ -38,6 +38,7 @@ import { Particle } from './Particle';
 import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
+import {UnaryOperation} from "./UnaryOperation";
 
 /** This is the "main" app with the update/render loop and all. */
 export
@@ -557,6 +558,9 @@ export
                 break;
             case "BinaryOperation":
                 w = new BinaryOperation(this.p, this, node.properties.operation);
+                break;
+            case "UnaryOperation":
+                w = new UnaryOperation(this.p, this, node.properties.type, node.properties.operation);
                 break;
             case "Fraction":
                 w = new Fraction(this.p, this);
