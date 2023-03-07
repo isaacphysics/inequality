@@ -26,10 +26,10 @@
   "homepage": "https://github.com/isaacphysics/inequality#readme",
   "devDependencies": {
     "@babel/core": "^7.19.3",
-    "@types/lodash": "^4.14.186",
-    "@types/p5": "^1.4.3",
     "@babel/preset-env": "^7.19.3",
+    "@types/lodash": "^4.14.186",
     "@types/node": "^18.7.23",
+    "@types/p5": "^1.4.3",
     "babel-loader": "^8.2.5",
     "file-loader": "^6.2.0",
     "lodash": "^4.17.21",
