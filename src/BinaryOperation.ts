@@ -18,6 +18,7 @@ limitations under the License.
 import p5 from "p5";
 
 import { Widget, Rect } from './Widget';
+import { Num } from './Num';
 import { DockingPoint } from "./DockingPoint";
 import { Inequality } from "./Inequality";
 
@@ -79,9 +80,31 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + (this.s.mBox?.w ?? 50)/4, -(this.s.xBox?.h ?? 50)/2), 1, ["symbol", "differential"], "right");
     }
 
+    /**
+     * It is possible to use the binary minus symbol to form -1.
+     * For nuclear atomic numbers this causes a parsing error because of how
+     * binary operators are currently formatted.
+     *
+      - _right_: right docking point widget to check
+     *
+     */
+    isSolitaryNegativeOne(right: Nullable<Widget>): boolean {
+        if (right?.typeAsString == "Num") {
+            if ((right as Num).getFullText() === "1") {
+                return !right.dockingPoints["right"].child
+                    && !right.dockingPoints["superscript"].child;
+            }
+        }
+        return false;
+    }
+
     formatExpressionAs(format: string): string {
         let expression = " ";
         if (format == "latex") {
+            if (this.isSolitaryNegativeOne(this.dockingPoints["right"].child)) {
+                return "-1";
+            }
+
             expression += this.latexSymbol + " ";
             if (this.dockingPoints["right"].child != null) {
                 expression += this.dockingPoints["right"].child.formatExpressionAs(format);
@@ -92,6 +115,10 @@ export
                 expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
+            if (this.isSolitaryNegativeOne(this.dockingPoints["right"].child)) {
+                return "-1";
+            }
+
           expression += this.mhchemSymbol + " ";
             if (this.dockingPoints["right"].child != null) {
                 expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
