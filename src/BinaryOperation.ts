@@ -91,7 +91,6 @@ export
     isSolitaryNegativeOne(right: Nullable<Widget>): boolean {
         if (right?.typeAsString == "Num") {
             if ((right as Num).getFullText() === "1") {
-                // It would be possible to have
                 return !right.dockingPoints["right"].child
                     && !right.dockingPoints["superscript"].child;
             }
