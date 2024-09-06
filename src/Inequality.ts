@@ -312,7 +312,8 @@ export
      * @override
      */
     windowResized = () => {
-        this.p.resizeCanvas(this.p.windowWidth * Math.ceil(window.devicePixelRatio), this.p.windowHeight * Math.ceil(window.devicePixelRatio));
+        this.p.resizeCanvas(window.innerWidth, window.innerHeight);
+        this.centre(false);
     };
 
     /**
