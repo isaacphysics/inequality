@@ -59,9 +59,16 @@ export
 
     formatExpressionAs(format: string): string {
         let expression = "";
-        if (format == "latex" || format == 'mhchem') {
+        if (format == "latex") {
             if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
                 expression += "\\frac{" + this.dockingPoints["numerator"].child.formatExpressionAs(format) + "}{" + this.dockingPoints["denominator"].child.formatExpressionAs(format) + "}";
+                if (this.dockingPoints["right"].child != null) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                }
+            }
+        } else if (format == "mhchem") {
+            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
+                expression += this.dockingPoints["numerator"].child.formatExpressionAs(format) + "/" + this.dockingPoints["denominator"].child.formatExpressionAs(format);
                 if (this.dockingPoints["right"].child != null) {
                     expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
