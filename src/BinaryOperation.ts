@@ -90,7 +90,7 @@ export
      */
     isSolitaryNegativeOne(right: Nullable<Widget>): boolean {
         if (right?.typeAsString == "Num") {
-            if ((right as Num).getFullText() === "1") {
+            if ((right as Num).getFullText() === "1" && this.latexSymbol == '-') {
                 return !right.dockingPoints["right"].child
                     && !right.dockingPoints["superscript"].child;
             }
