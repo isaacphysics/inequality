@@ -123,12 +123,13 @@ export
         let descent = this.position.y - (box.y + box.h);
 
         // Create the docking points - added mass number and proton number
-        // TODO: add a flag to toggle the mass/proton number docking points? e.g. boolean nuclearMode
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
         this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
-        this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
-        this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
+        if (this.s.editorMode === "nuclear") {
+            this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
+            this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
+        }
     }
 
     formatExpressionAs(format: string): string {
@@ -232,11 +233,11 @@ export
     }
 
     _shakeIt(): void {
-        // This is how Chemistry works:
-        // ----------------------------------
-        //   mass_number       superscript
-        //              Element            right
-        // proton_number       subscript
+        // This is how Chemistry/(Nuclear Physics) works:
+        // ----------------------------------------------
+        //   (mass_number)       superscript
+        //                Element            right
+        // (proton_number)       subscript
 
         this._shakeItDown();
         let thisBox = this.boundingBox();
