@@ -82,7 +82,7 @@ export
             // Need to remove this so that we can append the element to mass/proton numbers
             // Renders the mass number first if present, otherwise just renders the element.
             // KaTeX doesn't support the mhchem package so padding is used to display nuclear equations correctly.
-            if (this.dockingPoints["mass_number"].child != null || this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && (this.dockingPoints["mass_number"].child != null || this.dockingPoints["proton_number"].child != null)) {
                 expression = "";
                 let mass_number_length = 0;
                 let proton_number_length = 0;
@@ -135,8 +135,8 @@ export
         } else if (format == "mathml") {
             let m_superscript = this.dockingPoints['superscript'].child != null ? "<mrow>" + this.dockingPoints['superscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
             let m_subscript = this.dockingPoints['subscript'].child != null ? "<mrow>" + this.dockingPoints['subscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
-            let m_mass_number = this.dockingPoints['mass_number'].child != null ? "<mrow>" + this.dockingPoints['mass_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
-            let m_proton_number = this.dockingPoints['proton_number'].child != null ? "<mrow>" + this.dockingPoints['proton_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_mass_number = this.s.editorMode === "nuclear" && this.dockingPoints['mass_number'].child != null ? "<mrow>" + this.dockingPoints['mass_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_proton_number = this.s.editorMode === "nuclear" && this.dockingPoints['proton_number'].child != null ? "<mrow>" + this.dockingPoints['proton_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
             expression = '';
             if (m_subscript == "<none />" && m_superscript == "<none />" && m_mass_number == "<none />" && m_proton_number == "<none />") {
                 expression += '<mi>' + this.element + '</mi>';
@@ -149,7 +149,7 @@ export
             }
         } else if (format == "mhchem") {
             expression = this.element;
-            if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                 expression = "";
                 expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
             }

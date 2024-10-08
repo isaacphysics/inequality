@@ -137,7 +137,7 @@ export
         if (format == "latex") {
             expression = this.latexSymbol;
             //  KaTeX doesn't support the mhchem package so padding is used to align proton number correctly.
-            if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                 expression = "";
                 let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
                 let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
@@ -185,7 +185,7 @@ export
             expression = this.mhchemSymbol; // need to remove this so that we can append the element to mass/proton numbers
             // TODO: add support for mass/proton number, decide if we render both simultaneously or separately.
             // Should we render one if the other is ommitted? - for now, no.
-            if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                 expression = "";
                 expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
             }
