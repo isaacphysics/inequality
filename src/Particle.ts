@@ -123,12 +123,13 @@ export
         let descent = this.position.y - (box.y + box.h);
 
         // Create the docking points - added mass number and proton number
-        // TODO: add a flag to toggle the mass/proton number docking points? e.g. boolean nuclearMode
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
         this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
-        this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
-        this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
+        if (this.s.editorMode === "nuclear") {
+            this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
+            this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
+        }
     }
 
     formatExpressionAs(format: string): string {
@@ -136,7 +137,7 @@ export
         if (format == "latex") {
             expression = this.latexSymbol;
             //  KaTeX doesn't support the mhchem package so padding is used to align proton number correctly.
-            if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                 expression = "";
                 let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
                 let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
@@ -184,7 +185,7 @@ export
             expression = this.mhchemSymbol; // need to remove this so that we can append the element to mass/proton numbers
             // TODO: add support for mass/proton number, decide if we render both simultaneously or separately.
             // Should we render one if the other is ommitted? - for now, no.
-            if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                 expression = "";
                 expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
             }
@@ -232,11 +233,11 @@ export
     }
 
     _shakeIt(): void {
-        // This is how Chemistry works:
-        // ----------------------------------
-        //   mass_number       superscript
-        //              Element            right
-        // proton_number       subscript
+        // This is how Chemistry/(Nuclear Physics) works:
+        // ----------------------------------------------
+        //   (mass_number)       superscript
+        //                Element            right
+        // (proton_number)       subscript
 
         this._shakeItDown();
         let thisBox = this.boundingBox();
