@@ -137,17 +137,26 @@ export
         if (format == "latex") {
             expression = this.latexSymbol;
             //  KaTeX doesn't support the mhchem package so padding is used to align proton number correctly.
-            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
-                expression = "";
-                let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
-                let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
-                let number_of_spaces = Math.abs(proton_number_length - mass_number_length);
-                let padding = "";
-                // Temporary hack to align mass number and proton number correctly.
-                for (let _i = 0; _i < number_of_spaces; _i++) {
-                    padding += "\\enspace";
+            if (this.s.editorMode === "nuclear") {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
+                    let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
+                    let number_of_spaces = Math.abs(proton_number_length - mass_number_length);
+                    let padding = "";
+                    // Temporary hack to align mass number and proton number correctly.
+                    for (let _i = 0; _i < number_of_spaces; _i++) {
+                        padding += "\\enspace";
+                    }
+                    expression += (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.latexSymbol : 
+                                                                                 "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.latexSymbol;
+                } else if (this.dockingPoints["mass_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + this.latexSymbol;
+                } else if (this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.latexSymbol;
                 }
-                expression += (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.latexSymbol : "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.latexSymbol;
             }
 
             if (this.dockingPoints["superscript"].child != null) {
@@ -182,12 +191,18 @@ export
         } else if (format == "mathml") {
             expression = '';
         } else if (format == "mhchem") {
-            expression = this.mhchemSymbol; // need to remove this so that we can append the element to mass/proton numbers
-            // TODO: add support for mass/proton number, decide if we render both simultaneously or separately.
-            // Should we render one if the other is ommitted? - for now, no.
-            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
-                expression = "";
-                expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
+            expression = this.mhchemSymbol;
+            if (this.s.editorMode === "nuclear") {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
+                } else if (this.dockingPoints["mass_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + this.mhchemSymbol;
+                } else if (this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
+                }
             }
             if (this.dockingPoints["subscript"].child != null) {
                 expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
