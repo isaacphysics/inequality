@@ -82,24 +82,25 @@ export
             // Need to remove this so that we can append the element to mass/proton numbers
             // Renders the mass number first if present, otherwise just renders the element.
             // KaTeX doesn't support the mhchem package so padding is used to display nuclear equations correctly.
-            if (this.s.editorMode === "nuclear" && (this.dockingPoints["mass_number"].child != null || this.dockingPoints["proton_number"].child != null)) {
-                expression = "";
-                let mass_number_length = 0;
-                let proton_number_length = 0;
-                if (this.dockingPoints["proton_number"].child != null && this.dockingPoints["mass_number"].child != null) {
-                    proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
-                    mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
+            if (this.s.editorMode === "nuclear") {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
+                    let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
                     let number_of_spaces = Math.abs(proton_number_length - mass_number_length);
                     let padding = "";
                     // Temporary hack to align mass number and proton number correctly.
                     for (let _i = 0; _i < number_of_spaces; _i++) {
                         padding += "\\enspace";
                     }
-                    expression = (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}\\text{" + this.element + "}" : "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}\\text{" + this.element + "}";
+                    expression += (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}" : 
+                                                                                 "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
                 } else if (this.dockingPoints["mass_number"].child != null) {
-                    expression = "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}\\text{" + this.element + "}";
+                    expression = "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + "\\text{" + this.element + "}";
                 } else if (this.dockingPoints["proton_number"].child != null) {
-                    expression = "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}\\text{" + this.element + "}";
+                    expression = "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
+                } else {
+                    expression ="{}^{}_{}" + "\\text{" + this.element + "}";
                 }
             }
 
@@ -149,9 +150,19 @@ export
             }
         } else if (format == "mhchem") {
             expression = this.element;
-            if (this.s.editorMode === "nuclear" && this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
-                expression = "";
-                expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
+            if (this.s.editorMode === "nuclear") {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
+                } else if (this.dockingPoints["mass_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + this.element;
+                } else if (this.dockingPoints["proton_number"].child != null) {
+                    expression = "";
+                    expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
+                } else {
+                    expression = "{}^{}_{}" + this.element;
+                }
             }
             if (this.dockingPoints["subscript"].child != null) {
                 expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);

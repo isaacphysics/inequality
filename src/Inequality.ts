@@ -125,10 +125,11 @@ export
     log: Nullable<{ initialState: Array<Object>, actions: Array<Object> }>;
 
     /**
-     * Inequality supports three modes:
+     * Inequality supports four modes:
      * - math
      * - logic (for Boolean Algebra)
      * - chemistry
+     * - nuclear (based on Chemistry)
      * 
      * This should be set from the outside. */
     public editorMode: string;
@@ -259,6 +260,7 @@ export
                 this._baseDockingPointSize = 50/3;
                 break;
             case 'chemistry':
+            case 'nuclear':
                 this._baseFontSize = 50;
                 // I am not sure why we decided to make the docking points smaller for chemistry...
                 this._baseDockingPointSize = 30/3;
