@@ -1022,7 +1022,7 @@ export
  * This way, p5.js is happy, we are happy, the user is happy, everyone wins!
  */
 export function makeInequality(
-    element: any,
+    element: HTMLElement,
     width: number,
     height: number,
     initialSymbolsToParse: Array<{ type: string, properties: any }> = [],
