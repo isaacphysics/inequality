@@ -48,7 +48,10 @@ export
         super(p, s);
         this.significand = significand;
 
-        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'relation', 'operator_brackets', 'differential_order', 'differential_argument'];
+        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'relation', 'differential_order', 'differential_argument'];
+        if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
+            this.docksTo.push('operator_brackets');
+        }
     }
 
     get typeAsString(): string {

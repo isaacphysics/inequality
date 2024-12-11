@@ -76,11 +76,8 @@ export
                 this.latexSymbol = this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = { lhs: '', rhs: '' };
         }
         this.docksTo = ['symbol', 'chemical_element', 'relation', 'differential_argument'];
-        if (!['chemistry', 'nuclear'].includes(this.s.editorMode)) {
-            this.docksTo.push('exponent', 'subscript')
-        }
-        if (this.s.editorMode != 'logic') {
-            this.docksTo.push('operator', 'operator_brackets');
+        if (this.s.editorMode === "maths") {
+            this.docksTo.push('exponent', 'subscript', 'operator', 'operator_brackets');
         }
     }
 
