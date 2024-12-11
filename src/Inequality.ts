@@ -126,7 +126,7 @@ export
 
     /**
      * Inequality supports four modes:
-     * - math
+     * - maths
      * - logic (for Boolean Algebra)
      * - chemistry
      * - nuclear (based on Chemistry)

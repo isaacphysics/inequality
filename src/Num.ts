@@ -38,7 +38,6 @@ export
      * a number but I can't remember it.
      */
     private significand: string;
-    protected right = this.dockingPoints.hasOwnProperty("right");
     protected superscript = this.dockingPoints.hasOwnProperty("superscript");
 
     get dockingPoint(): p5.Vector {
@@ -49,7 +48,10 @@ export
         super(p, s);
         this.significand = significand;
 
-        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'particle', 'relation', 'operator_brackets', 'differential_order', 'differential_argument'];
+        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'relation', 'differential_order', 'differential_argument'];
+        if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
+            this.docksTo.push('operator_brackets');
+        }
     }
 
     get typeAsString(): string {
@@ -71,7 +73,9 @@ export
     generateDockingPoints() {
         let box = this.boundingBox();
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["operator"], "right");
-        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
+        if (this.s.editorMode === "maths") {
+            this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
+        }
     }
 
     formatExpressionAs(format: string): string {
@@ -81,7 +85,7 @@ export
             if (this.superscript && this.dockingPoints["superscript"].child != null) {
                 expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
-            if (this.right && this.dockingPoints["right"].child != null) {
+            if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof Num) {
                     expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
@@ -93,7 +97,7 @@ export
             if (this.superscript && this.dockingPoints["superscript"].child != null) {
                 expression += "^" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "";
             }
-            if (this.right && this.dockingPoints["right"].child != null) {
+            if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof Num) {
                     expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else if (this.dockingPoints["right"].child instanceof BinaryOperation) {
@@ -105,7 +109,7 @@ export
 
         } else if (format == "python") {
             expression = "" + this.getFullText("python");
-            if (this.dockingPoints["superscript"].child != null) {
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
                 expression += "**(" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + ")";
             }
             if (this.dockingPoints["right"].child != null) {
@@ -120,7 +124,7 @@ export
             }
         } else if (format == "subscript") {
             expression = "" + this.getFullText();
-            if (this.dockingPoints["superscript"].child != null) {
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
                 expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
             }
             if (this.dockingPoints["right"].child != null) {
@@ -128,12 +132,10 @@ export
             }
         } else if (format == "mathml") {
             expression = '';
-            if (this.dockingPoints['superscript'].child == null) {
-                expression += '<mn>' + this.getFullText() + '</mn>';
-
-            } else {
+            if (this.superscript && this.dockingPoints['superscript'].child != null) {
                 expression += '<msup><mn>' + this.getFullText() + '</mn><mrow>' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '</mrow></msup>';
-
+            } else {
+                expression += '<mn>' + this.getFullText() + '</mn>';
             }
             if (this.dockingPoints['right'].child != null) {
                 expression += this.dockingPoints['right'].child.formatExpressionAs('mathml');
