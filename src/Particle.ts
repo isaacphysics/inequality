@@ -33,6 +33,9 @@ export
     protected particle: string;
     protected mhchemSymbol: string;
 
+    protected massNumber: boolean = this.dockingPoints.hasOwnProperty("mass_number");
+    protected protonNumber: boolean = this.dockingPoints.hasOwnProperty("proton_number");
+
     properties(): Object {
         return {
             particle: this.particle,
@@ -137,7 +140,7 @@ export
         if (format == "latex") {
             expression = this.latexSymbol;
             //  KaTeX doesn't support the mhchem package so padding is used to align proton number correctly.
-            if (this.s.editorMode === "nuclear") {
+            if (this.massNumber && this.protonNumber) {
                 if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
                     let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
@@ -192,7 +195,7 @@ export
             expression = '';
         } else if (format == "mhchem") {
             expression = this.mhchemSymbol;
-            if (this.s.editorMode === "nuclear") {
+            if (this.massNumber && this.protonNumber) {
                 if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
                     expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
