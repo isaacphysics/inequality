@@ -33,9 +33,6 @@ export
     protected particle: string;
     protected mhchemSymbol: string;
 
-    protected massNumber: boolean = this.dockingPoints.hasOwnProperty("mass_number");
-    protected protonNumber: boolean = this.dockingPoints.hasOwnProperty("proton_number");
-
     properties(): Object {
         return {
             particle: this.particle,
@@ -127,9 +124,10 @@ export
 
         // Create the docking points - added mass number and proton number
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
-        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
-        this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
-        if (this.s.editorMode === "nuclear") {
+        if (this.s.editorMode === "chemistry") {
+            this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
+            this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
+        } else if (this.s.editorMode === "nuclear") {
             this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
             this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
         }
@@ -140,7 +138,7 @@ export
         if (format == "latex") {
             expression = this.latexSymbol;
             //  KaTeX doesn't support the mhchem package so padding is used to align proton number correctly.
-            if (this.massNumber && this.protonNumber) {
+            if (this.s.editorMode === "nuclear") {
                 if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
                     let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
@@ -162,11 +160,13 @@ export
                 }
             }
 
-            if (this.dockingPoints["superscript"].child != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
-            }
-            if (this.dockingPoints["subscript"].child != null) {
-                expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
+            if (this.s.editorMode === "chemistry") {
+                if (this.dockingPoints["superscript"].child != null) {
+                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                }
+                if (this.dockingPoints["subscript"].child != null) {
+                    expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
+                }
             }
             if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof BinaryOperation) {
@@ -180,11 +180,13 @@ export
                 }
             }
         } else if (format == "subscript") {
-            if (this.dockingPoints["subscript"].child != null) {
-                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
-            }
-            if (this.dockingPoints["superscript"].child != null) {
-                expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
+            if (this.s.editorMode === "chemistry") {
+                if (this.dockingPoints["subscript"].child != null) {
+                    expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
+                }
+                if (this.dockingPoints["superscript"].child != null) {
+                    expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
+                }
             }
             if (this.dockingPoints["right"].child != null) {
                 expression += this.dockingPoints["right"].child.formatExpressionAs(format);
@@ -195,7 +197,7 @@ export
             expression = '';
         } else if (format == "mhchem") {
             expression = this.mhchemSymbol;
-            if (this.massNumber && this.protonNumber) {
+            if (this.s.editorMode === "nuclear") {
                 if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
                     expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
@@ -207,11 +209,13 @@ export
                     expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
                 }
             }
-            if (this.dockingPoints["subscript"].child != null) {
-                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
-            }
-            if (this.dockingPoints["superscript"].child != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+            if (this.s.editorMode === "chemistry") {
+                if (this.dockingPoints["subscript"].child != null) {
+                    expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
+                }
+                if (this.dockingPoints["superscript"].child != null) {
+                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                }
             }
             if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof BinaryOperation) {
