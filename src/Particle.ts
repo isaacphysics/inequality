@@ -105,7 +105,7 @@ export
             case 'electron':
                 this.particle = 'e';
                 this.pythonSymbol = '\\electron';
-                this.mhchemSymbol = '\\electron';
+                this.mhchemSymbol = 'e';
                 this.latexSymbol = '\\text{e}';
                 break;
             default:
