@@ -124,8 +124,8 @@ export
 
         // Create the docking points - added mass number and proton number
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
+        this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
         if (this.s.editorMode === "chemistry") {
-            this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
             this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
         } else if (this.s.editorMode === "nuclear") {
             this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
@@ -161,12 +161,12 @@ export
             }
 
             if (this.s.editorMode === "chemistry") {
-                if (this.dockingPoints["superscript"].child != null) {
-                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
-                }
                 if (this.dockingPoints["subscript"].child != null) {
                     expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
                 }
+            }
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
             if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof BinaryOperation) {
@@ -184,9 +184,9 @@ export
                 if (this.dockingPoints["subscript"].child != null) {
                     expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
                 }
-                if (this.dockingPoints["superscript"].child != null) {
-                    expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
-                }
+            }
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
             }
             if (this.dockingPoints["right"].child != null) {
                 expression += this.dockingPoints["right"].child.formatExpressionAs(format);
@@ -213,9 +213,9 @@ export
                 if (this.dockingPoints["subscript"].child != null) {
                     expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
                 }
-                if (this.dockingPoints["superscript"].child != null) {
-                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
-                }
+            }
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
             if (this.dockingPoints["right"].child != null) {
                 if (this.dockingPoints["right"].child instanceof BinaryOperation) {
