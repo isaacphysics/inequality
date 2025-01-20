@@ -125,9 +125,8 @@ export
         // Create the docking points - added mass number and proton number
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.s.mBox.w/4, -this.s.xBox.h/2), 1, ["particle"], "right");
         this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
-        if (this.s.editorMode === "chemistry") {
-            this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
-        } else if (this.s.editorMode === "nuclear") {
+        this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, descent), 2/3, ["subscript"], "subscript");
+        if (this.s.editorMode === "nuclear") {
             this.dockingPoints["mass_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["top-left"], "mass_number");
             this.dockingPoints["proton_number"] = new DockingPoint(this, this.p.createVector(0, 0), 2/3, ["bottom-left"], "proton_number");
         }
@@ -160,10 +159,8 @@ export
                 }
             }
 
-            if (this.s.editorMode === "chemistry") {
-                if (this.dockingPoints["subscript"].child != null) {
-                    expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
-                }
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
             }
             if (this.dockingPoints["superscript"].child != null) {
                 expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
@@ -180,10 +177,8 @@ export
                 }
             }
         } else if (format == "subscript") {
-            if (this.s.editorMode === "chemistry") {
-                if (this.dockingPoints["subscript"].child != null) {
-                    expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
-                }
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
             }
             if (this.dockingPoints["superscript"].child != null) {
                 expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
@@ -209,10 +204,8 @@ export
                     expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.mhchemSymbol;
                 }
             }
-            if (this.s.editorMode === "chemistry") {
-                if (this.dockingPoints["subscript"].child != null) {
-                    expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
-                }
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
             }
             if (this.dockingPoints["superscript"].child != null) {
                 expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
