@@ -75,9 +75,9 @@ export
             default:
                 this.latexSymbol = this.mhchemSymbol = this.pythonSymbol = this.mathmlSymbol = { lhs: '', rhs: '' };
         }
-        this.docksTo = ['symbol', 'chemical_element', 'relation', 'differential_argument'];
-        if (this.s.editorMode === "maths") {
-            this.docksTo.push('exponent', 'subscript', 'operator', 'operator_brackets');
+        this.docksTo = ['symbol', 'exponent', 'subscript', 'chemical_element', 'relation', 'differential_argument']
+        if (this.s.editorMode != 'logic') {
+            this.docksTo.push('operator', 'operator_brackets');
         }
     }
 
@@ -101,7 +101,7 @@ export
         this.dockingPoints["right"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * this.s.mBox.w/4 + this.scale * 20, -this.s.xBox.h/2), 1, ["operator_brackets"], "right");
         if (this.s.editorMode != 'logic') {
             this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -(box.h + descent + this.scale * 20)), 2/3, ["exponent"], "superscript");
-            if (this.s.editorMode === 'chemistry') {
+            if (this.s.editorMode === "chemistry") {
                 this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -(box.h + descent + this.scale * 20)), 2/3, ["subscript"], "subscript");
             } else {
                 this.dockingPoints["subscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -(box.h + descent + this.scale * 20)), 2/3, ["symbol_subscript", "subscript_maths"], "subscript");

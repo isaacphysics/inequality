@@ -62,10 +62,7 @@ export
         }
 
         // FIXME Not sure this is entirely right. Maybe make the "type" in DockingPoint an array? Works for now.
-        this.docksTo = ['exponent', 'chemical_element', 'state_symbol', 'particle', 'operator_brackets', 'symbol', 'differential', 'top-left', 'bottom-left', 'operator'];
-        if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
-            this.docksTo.push('relation');
-        }
+        this.docksTo = ['exponent', 'operator', 'chemical_element', 'state_symbol', 'particle', 'operator_brackets', 'symbol', 'relation', 'differential', 'top-left', 'bottom-left'];
     }
 
     get typeAsString(): string {
