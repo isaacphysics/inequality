@@ -81,19 +81,16 @@ export
     }
 
     /**
-     * It is possible to use the binary minus symbol to form -1.
+     * It is possible to use the binary minus symbol to form negative numbers.
      * For nuclear atomic numbers this causes a parsing error because of how
      * binary operators are currently formatted.
      *
       - _right_: right docking point widget to check
      *
      */
-    isSolitaryNegativeOne(right: Nullable<Widget>): boolean {
-        if (right?.typeAsString == "Num") {
-            if ((right as Num).getFullText() === "1" && this.latexSymbol == '-') {
-                return !right.dockingPoints["right"].child
-                    && !right.dockingPoints["superscript"].child;
-            }
+    isSolitaryNegativeNumber(right: Nullable<Widget>): boolean {
+        if (right?.typeAsString == "Num" && this.latexSymbol == '-') {
+            return !right.dockingPoints["right"].child;
         }
         return false;
     }
@@ -101,8 +98,8 @@ export
     formatExpressionAs(format: string): string {
         let expression = " ";
         if (format == "latex") {
-            if (this.isSolitaryNegativeOne(this.dockingPoints["right"].child)) {
-                return "-1";
+            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child)) {
+                return "-" + (this.dockingPoints["right"].child as Num).getFullText();
             }
 
             expression += this.latexSymbol + " ";
@@ -115,8 +112,8 @@ export
                 expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
-            if (this.isSolitaryNegativeOne(this.dockingPoints["right"].child)) {
-                return "-1";
+            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child)) {
+                return "-" + (this.dockingPoints["right"].child as Num).getFullText();
             }
 
           expression += this.mhchemSymbol + " ";
