@@ -124,7 +124,11 @@ export
                 expression += "'"
             }
             if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                if (this.parentWidget instanceof Differential) {
+                    expression = "(" + expression + "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "})";
+                } else {
+                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                }
             }
             if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child != null) {
                 expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
