@@ -428,6 +428,7 @@ export
         let oldParent = this.parentWidget;
         this.currentPlacement = "";
         this.dockedTo = "";
+        this.dockedByUser = false;
         for(let k in this.parentWidget.dockingPoints) {
             let dockingPoint = this.parentWidget?.dockingPoints[k];
             if (dockingPoint?.child == this) {
