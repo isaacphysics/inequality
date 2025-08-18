@@ -94,7 +94,7 @@ export
      */
     get isDetachable(): boolean {
         const userIsPrivileged = this.s.isUserPrivileged();
-        return document.location.pathname == '/equality' || userIsPrivileged || !this.sonOfADifferential;
+        return document.location.pathname == '/equality' || userIsPrivileged || this.dockedByUser || !this.sonOfADifferential;
     }
 
 	/**

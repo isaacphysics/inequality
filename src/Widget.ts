@@ -124,6 +124,9 @@ export
     /** Points to which other widgets can dock. See getter below. */
     private _dockingPoints: { [key: string]: DockingPoint; } = {};
 
+    /** Flag for if the widget has been docked by the user (rather than pre-docked from a composite symbol) */
+    private _dockedByUser: boolean = false;
+
     /** Base size of docking points, scaled according to this widget's scale factor. */
     get dockingPointSize(): number {
         return this.scale * this.s.baseDockingPointSize;
@@ -176,6 +179,14 @@ export
      */
     get isDetachable(): boolean {
         return true;
+    }
+
+    get dockedByUser(): boolean {
+        return this._dockedByUser;
+    }
+
+    set dockedByUser(value: boolean) {
+        this._dockedByUser = value;
     }
 
     /**

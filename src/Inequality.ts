@@ -472,6 +472,8 @@ export
         // Make sure we have an active docking point, and that the moving symbol can dock to it.
         if (isDefined(this._potentialSymbol) && this._activeDockingPoint != null && _intersection(this._potentialSymbol.docksTo, this._activeDockingPoint.type).length > 0) {
             this._activeDockingPoint.child = this._potentialSymbol;
+            this._activeDockingPoint.child.dockedByUser = true;
+            
             this.log?.actions.push({
                 event: "DOCK_POTENTIAL_SYMBOL",
                 symbol: this._potentialSymbol.subtreeObject(false, true, true),
@@ -836,6 +838,8 @@ export
                 this.updateCanvasDockingPoints();
                 // Do the actual docking
                 this._activeDockingPoint.child = this._movingSymbol;
+                this._activeDockingPoint.child.dockedByUser = true;
+
                 // Let the widget know to which docking point it is docked. This is starting to become ridiculous...
                 this._activeDockingPoint.child.dockedTo = this._activeDockingPoint.name;
 
