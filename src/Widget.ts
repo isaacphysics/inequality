@@ -94,6 +94,7 @@ export type WidgetSpec = {
     children?: Array<WidgetSpec>;
     position?: { x: number, y: number };
     expression?: any;
+    dockedByUser?: boolean;
 }
 
 /** A base class for anything visible, draggable, and dockable. */
@@ -377,8 +378,10 @@ export
             expression?: { latex?: string, python?: string },
             properties?: Object,
             children?: { [key: string]: DockingPoint },
+            dockedByUser?: boolean
         } = {
-            type: this.typeAsString
+            type: this.typeAsString,
+            dockedByUser: this.dockedByUser
         };
         if (includeIds) {
             o.id = this.id;

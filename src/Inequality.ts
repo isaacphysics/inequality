@@ -615,6 +615,10 @@ export
             default: // this would be a Widget and should really never happen...
                 break;
         }
+    
+        if (isDefined(w)) {
+            w.dockedByUser = node.dockedByUser ?? false;
+        }
 
         // By default, this method recursively parses the children of the given node.
         if (isDefined(w) && parseChildren && isDefined(node.children)) {
