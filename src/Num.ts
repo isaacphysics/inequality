@@ -22,6 +22,8 @@ import { BinaryOperation } from "./BinaryOperation";
 import { DockingPoint } from "./DockingPoint";
 import { Relation } from "./Relation";
 import { Inequality } from "./Inequality";
+import { isDefined } from "./utils";
+import { Differential } from "./Differential";
 
 /** A class for representing numbers */
 export
@@ -44,6 +46,16 @@ export
         return this.p.createVector(0, -this.scale*this.s.xBox.h/2);
     }
 
+    /**
+     *  Checks if this symbol is the direct child of a differential.
+     * 
+     * @returns {boolean} True if this symbol is the direct child of a differential but not multiplied to it.
+     */
+    get sonOfADifferential(): boolean {
+        let p = this.parentWidget;
+        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child;
+    }
+
     constructor(p: p5, s: Inequality, significand: string, _exponent: string) {
         super(p, s);
         this.significand = significand;
@@ -52,6 +64,19 @@ export
         if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
             this.docksTo.push('operator_brackets');
         }
+    }
+
+    /**
+     * Prevents Nums from being detached from pre-docked Differentials when the user is
+     * unprivileged.
+     * 
+     * On Isaac, only admins and content editors are privileged.
+     * 
+     * @returns True if this symbol is detachable from its parent, false otherwise.
+     */
+    get isDetachable(): boolean {
+        const userIsPrivileged = this.s.isUserPrivileged();
+        return document.location.pathname == '/equality' || userIsPrivileged || this.dockedByUser || !this.sonOfADifferential;
     }
 
     get typeAsString(): string {

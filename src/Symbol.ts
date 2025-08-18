@@ -85,7 +85,7 @@ export
     }
 
     /**
-     * Prevents Symbols from being detached from Differentials when the user is
+     * Prevents Symbols from being detached from pre-docked Differentials when the user is
      * unprivileged.
      * 
      * On Isaac, only admins and content editors are privileged.
