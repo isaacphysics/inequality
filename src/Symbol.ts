@@ -85,7 +85,7 @@ export
     }
 
     /**
-     * Prevents Symbols from being detached from Differentials when the user is
+     * Prevents Symbols from being detached from pre-docked Differentials when the user is
      * unprivileged.
      * 
      * On Isaac, only admins and content editors are privileged.
@@ -94,7 +94,7 @@ export
      */
     get isDetachable(): boolean {
         const userIsPrivileged = this.s.isUserPrivileged();
-        return document.location.pathname == '/equality' || userIsPrivileged || !this.sonOfADifferential;
+        return document.location.pathname == '/equality' || userIsPrivileged || this.dockedByUser || !this.sonOfADifferential;
     }
 
 	/**
@@ -124,7 +124,11 @@ export
                 expression += "'"
             }
             if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                if (this.parentWidget instanceof Differential) {
+                    expression = "(" + expression + "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "})";
+                } else {
+                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                }
             }
             if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child != null) {
                 expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";

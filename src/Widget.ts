@@ -94,6 +94,7 @@ export type WidgetSpec = {
     children?: Array<WidgetSpec>;
     position?: { x: number, y: number };
     expression?: any;
+    dockedByUser?: boolean;
 }
 
 /** A base class for anything visible, draggable, and dockable. */
@@ -123,6 +124,9 @@ export
 
     /** Points to which other widgets can dock. See getter below. */
     private _dockingPoints: { [key: string]: DockingPoint; } = {};
+
+    /** Flag for if the widget has been docked by the user (rather than pre-docked from a composite symbol) */
+    private _dockedByUser: boolean = false;
 
     /** Base size of docking points, scaled according to this widget's scale factor. */
     get dockingPointSize(): number {
@@ -176,6 +180,14 @@ export
      */
     get isDetachable(): boolean {
         return true;
+    }
+
+    get dockedByUser(): boolean {
+        return this._dockedByUser;
+    }
+
+    set dockedByUser(value: boolean) {
+        this._dockedByUser = value;
     }
 
     /**
@@ -366,8 +378,10 @@ export
             expression?: { latex?: string, python?: string },
             properties?: Object,
             children?: { [key: string]: DockingPoint },
+            dockedByUser?: boolean
         } = {
-            type: this.typeAsString
+            type: this.typeAsString,
+            dockedByUser: this.dockedByUser
         };
         if (includeIds) {
             o.id = this.id;
@@ -414,6 +428,7 @@ export
         let oldParent = this.parentWidget;
         this.currentPlacement = "";
         this.dockedTo = "";
+        this.dockedByUser = false;
         for(let k in this.parentWidget.dockingPoints) {
             let dockingPoint = this.parentWidget?.dockingPoints[k];
             if (dockingPoint?.child == this) {

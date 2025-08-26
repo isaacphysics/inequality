@@ -70,7 +70,7 @@ class Differential extends Widget {
             if (p instanceof Derivative) {
                 return true;
             }
-            p = this.parentWidget;
+            p = p?.parentWidget;
         }
         return false;
     }
