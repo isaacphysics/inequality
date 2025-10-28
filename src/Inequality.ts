@@ -59,6 +59,9 @@ export
     /** Coordinates of the second-last cursor point during a click/touch interaction.. */
     private _prevTouch?: Nullable<p5.Vector>;
 
+    /** Whether the canvas is currently being moved. Equivalent to !!_movingSymbol for the canvas. */
+    private _movingCanvas?: boolean;
+
     private _xBox?: Nullable<Rect>;
     /** The bounding box of a lower-case "x" in the current font. Sorry, not a gaming console. */
     get xBox(): Rect { return this._xBox as Rect }
@@ -275,7 +278,13 @@ export
         // Set a sensible initial value for this that will be overwritten anyway.
         this._prevTouch = this.p.createVector(0, 0);
         // p5.js needs to create a canvas before it can draw anything.
-        this.p.createCanvas(this.width, this.height);
+        const canvas = this.p.createCanvas(this.width, this.height);
+        // attach canvas drag handlers to the canvas element
+        canvas.mousePressed(this.canvasPressed);
+        canvas.mouseMoved(this.canvasMoved);
+        canvas.mouseReleased(this.canvasReleased);
+        canvas.touchMoved(this.canvasTouchMoved);
+        canvas.touchEnded(this.canvasReleased);
 
         // Parse initial symbols if any are available, whether as a seed to work from, or as a previous object to be restored.
         try {
@@ -921,6 +930,60 @@ export
         }
     };
 
+    canvasPressed = () => {
+        // No need for cursors if we are headless.
+        if (this.textEntry) return;
+        // Make sure we keep track this every time it should go back to idling.
+        this.p.frameRate(60);
+        // These are used to correctly detect clicks and taps.
+
+        // Note that touchX and touchY are incorrect when using touch. Ironically.
+        let tx = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).x : this.p.mouseX;
+        let ty = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).y : this.p.mouseY;
+
+        this._prevTouch = this.p.createVector(tx, ty);
+        this._movingCanvas = true;
+    }
+
+    canvasMoved = () => {
+        // No need for cursors if we are headless.
+        if (this.textEntry) return;
+        // If we are not dragging (with mouse down) the canvas, do nothing.
+        if (!this._movingCanvas) return;
+
+        let tx = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).x : this.p.mouseX;
+        let ty = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).y : this.p.mouseY;
+
+        if (isDefined(this._prevTouch)) {
+            let d = this.p.createVector(tx - this._prevTouch.x, ty - this._prevTouch.y);
+            this._prevTouch.x = tx;
+            this._prevTouch.y = ty;
+
+            this.moveCanvas(d.x, d.y);
+        }
+    }
+
+    canvasReleased = () => {
+        // No need for cursors if we are headless.
+        if (this.textEntry) return;
+
+        this._prevTouch = null;
+        this._movingCanvas = false;
+        this.p.frameRate(this.IDLE_FPS);
+    }
+
+    canvasTouchMoved = () => {
+        // for mobile devices, canvasTouchMoved is called if any dragging is detected on **or over** the canvas, including moving symbols around regularly.
+        // note that this is different to canvasMoved, which is only called when movement is detected on the canvas itself (i.e., not over a symbol).
+        // as such, we need to ignore this event if we are already moving a symbol. we can only know this, however, after (non-canvas) touchStarted
+        // has been called. to prevent race conditions, we do not use a canvasTouchStarted function (which would run before this, simultaneously with
+        // touchStarted), instead running the setup code (canvasPressed) here, once, if we are not moving a symbol.
+        // the cleanup function (canvasReleased) is the same for mouse and touch, so the function above is reused.
+        if (this._movingSymbol != null) return;
+        if (!this._movingCanvas) this.canvasPressed();
+        this.canvasMoved();
+    }
+
     /**
      * Returns a flattened list of all the tokens corresponding to the widgets
      * present in the given subtree. Useful to provide a list of available
@@ -1008,12 +1071,20 @@ export
         }
     };
 
+    moveCanvas = (dx: number, dy: number) => {
+        for (const symbol of this._symbols) {
+            symbol.position.x += dx;
+            symbol.position.y += dy;
+            symbol.shakeIt();
+        }
+    }
+
     centre = (init = false) => {
-        let top = window.innerHeight/2;
+        const top = window.innerHeight / 2;
+        const left = window.innerWidth / 2;
         for (const symbol of this._symbols) {
             const sbox = symbol.subtreeDockingPointsBoundingBox;
-            symbol.position = this.p.createVector(window.innerWidth/2 - sbox.center.x, top + sbox.center.y);
-            top += sbox.h;
+            symbol.position = this.p.createVector(left - sbox.center.x, top + sbox.center.y);
             symbol.shakeIt();
         }
         if (!init) {
