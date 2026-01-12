@@ -375,7 +375,7 @@ export
             type?: string,
             id?: number,
             position?: { x: number, y: number },
-            expression?: { latex?: string, python?: string },
+            expression?: { latex?: string, python?: string, mhchem?: string },
             properties?: Object,
             children?: { [key: string]: DockingPoint },
             dockedByUser?: boolean
@@ -390,7 +390,8 @@ export
             o.position = { x: p.x, y: p.y };
             o.expression = {
                 latex: this.formatExpressionAs("latex"),
-                python: this.formatExpressionAs("python")
+                python: this.formatExpressionAs("python"),
+                mhchem: this.formatExpressionAs("mhchem"),
             };
         }
         if (processChildren) {
