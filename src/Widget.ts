@@ -390,8 +390,15 @@ export
             o.position = { x: p.x, y: p.y };
             o.expression = {
                 latex: this.formatExpressionAs("latex"),
-                python: this.formatExpressionAs("python"),
-                mhchem: this.formatExpressionAs("mhchem"),
+                ...(["maths", "logic"].includes(this.s.editorMode) 
+                    ? {python: this.formatExpressionAs("python")} 
+                    : {}
+                ),
+                ...(["chemistry", "nuclear"].includes(this.s.editorMode)
+                    ? {mhchem: this.formatExpressionAs("mhchem")}
+                    : {}
+                )
+                
             };
         }
         if (processChildren) {
