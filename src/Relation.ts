@@ -145,25 +145,29 @@ export
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex") {
+            expression += " " + this.latexSymbol + " ";
             if (this.dockingPoints["right"].child != null) {
-                expression += " " + this.latexSymbol + " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
+            expression += " " + this.pythonSymbol + " ";
             if (this.dockingPoints["right"].child != null) {
-                expression += " " + this.pythonSymbol + " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "subscript") {
             if (this.dockingPoints["right"].child != null) {
                 expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
+            expression += " " + this.mhchemSymbol + " ";
             if (this.dockingPoints["right"].child != null) {
-                expression += " " + this.mhchemSymbol + " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             let rel = this.mathmlSymbol ? this.mathmlSymbol : this.relation;
+            expression = '<mo>' + rel + "</mo>";
             if (this.dockingPoints["right"].child != null) {
-                expression += '<mo>' + rel + "</mo>" + this.dockingPoints["right"].child.formatExpressionAs(format);
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         }
         return expression;
