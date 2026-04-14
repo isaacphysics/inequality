@@ -77,37 +77,37 @@ export
             } else if (this.s.logicSyntax == 'binary') {
                 lhs = '{'; rhs = '}';
             }
-            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child) {
-                expression += this.latexSymbol + lhs + this.dockingPoints['argument'].child.formatExpressionAs(format) + rhs;
+            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child[0]) {
+                expression += this.latexSymbol + lhs + this.dockingPoints['argument'].child[0].formatExpressionAs(format) + rhs;
             } else {
                 expression += this.latexSymbol + lhs + rhs;
             }
-            if (this.dockingPoints['right'] && this.dockingPoints['right'].child) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'] && this.dockingPoints['right'].child[0]) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
             }
         } else if (format == "python") {
-            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child) {
-                expression += this.pythonSymbol + '(' + this.dockingPoints['argument'].child.formatExpressionAs(format) + ')';
+            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child[0]) {
+                expression += this.pythonSymbol + '(' + this.dockingPoints['argument'].child[0].formatExpressionAs(format) + ')';
             } else {
                 expression += '()';
             }
-            if (this.dockingPoints['right'] && this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof BinaryOperation ||
-                    this.dockingPoints["right"].child instanceof Relation ||
-                    this.dockingPoints["right"].child instanceof LogicBinaryOperation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'] && this.dockingPoints["right"].child[0] != null) {
+                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation ||
+                    this.dockingPoints["right"].child[0] instanceof Relation ||
+                    this.dockingPoints["right"].child[0] instanceof LogicBinaryOperation) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 } else {
-                    expression += " * " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " * " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
             expression += "{NOT}";
         } else if (format == 'mathml') {
-            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child) {
-                expression = '<mover accent="true"><mrow>' + this.dockingPoints['argument'].child.formatExpressionAs(format) + '</mrow></mover>';
+            if (this.dockingPoints['argument'] && this.dockingPoints['argument'].child[0]) {
+                expression = '<mover accent="true"><mrow>' + this.dockingPoints['argument'].child[0].formatExpressionAs(format) + '</mrow></mover>';
             }
-            if (this.dockingPoints['right'].child) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'].child[0]) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
             }
         }
         return expression;
@@ -199,8 +199,8 @@ export
 
     /** Calculates the argument's bounding box */
     get _argumentBox(): Rect {
-        if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child) {
-            return this.dockingPoints["argument"].child.subtreeDockingPointsBoundingBox;
+        if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child[0]) {
+            return this.dockingPoints["argument"].child[0].subtreeDockingPointsBoundingBox;
         } else {
             return new Rect(0, 0, this.s.baseDockingPointSize, 0);
         }
@@ -219,8 +219,8 @@ export
 
         if (this.dockingPoints["argument"]) {
             const dp = this.dockingPoints["argument"];
-            if (dp.child) {
-                const child = dp.child;
+            if (dp.child[0]) {
+                const child = dp.child[0];
                 child.position.x = thisBox.x + child.leftBound + dp.size;
                 child.position.y = -child.dockingPoint.y;
             } else {
@@ -231,8 +231,8 @@ export
 
         if (this.dockingPoints["right"]) {
             const dp = this.dockingPoints["right"];
-            if (dp.child) {
-                const child = dp.child;
+            if (dp.child[0]) {
+                const child = dp.child[0];
                 child.position.x = thisBox.x - notBox.w + thisBox.w + child.leftBound + dp.size;
                 child.position.y = -child.dockingPoint.y;
             } else {

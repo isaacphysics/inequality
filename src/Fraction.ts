@@ -60,41 +60,41 @@ export
     formatExpressionAs(format: string): string {
         let expression = "";
         if (format == "latex") {
-            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
-                expression += "\\frac{" + this.dockingPoints["numerator"].child.formatExpressionAs(format) + "}{" + this.dockingPoints["denominator"].child.formatExpressionAs(format) + "}";
-                if (this.dockingPoints["right"].child != null) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["numerator"].child[0] != null && this.dockingPoints["denominator"].child[0] != null) {
+                expression += "\\frac{" + this.dockingPoints["numerator"].child[0].formatExpressionAs(format) + "}{" + this.dockingPoints["denominator"].child[0].formatExpressionAs(format) + "}";
+                if (this.dockingPoints["right"].child[0] != null) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "mhchem") {
-            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
-                expression += this.dockingPoints["numerator"].child.formatExpressionAs(format) + "/" + this.dockingPoints["denominator"].child.formatExpressionAs(format);
-                if (this.dockingPoints["right"].child != null) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["numerator"].child[0] != null && this.dockingPoints["denominator"].child[0] != null) {
+                expression += this.dockingPoints["numerator"].child[0].formatExpressionAs(format) + "/" + this.dockingPoints["denominator"].child[0].formatExpressionAs(format);
+                if (this.dockingPoints["right"].child[0] != null) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "python") {
-            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
-                expression += "(" + this.dockingPoints["numerator"].child.formatExpressionAs(format) + ")/(" + this.dockingPoints["denominator"].child.formatExpressionAs(format) + ")";
-                if (this.dockingPoints["right"].child != null) {
-                    if (this.dockingPoints["right"].child instanceof BinaryOperation || this.dockingPoints["right"].child instanceof Relation) {
-                        expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["numerator"].child[0] != null && this.dockingPoints["denominator"].child[0] != null) {
+                expression += "(" + this.dockingPoints["numerator"].child[0].formatExpressionAs(format) + ")/(" + this.dockingPoints["denominator"].child[0].formatExpressionAs(format) + ")";
+                if (this.dockingPoints["right"].child[0] != null) {
+                    if (this.dockingPoints["right"].child[0] instanceof BinaryOperation || this.dockingPoints["right"].child[0] instanceof Relation) {
+                        expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                     } else {
-                        expression += " * " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                        expression += " * " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
                     }
                 }
             }
         } else if (format == "subscript") {
-            if (this.dockingPoints["right"].child != null) {
+            if (this.dockingPoints["right"].child[0] != null) {
                 expression += "[FRACTION:" + this.id + "]";
             }
         } else if (format == 'mathml') {
             expression = '';
-            if (this.dockingPoints["numerator"].child != null && this.dockingPoints["denominator"].child != null) {
-                expression += '<mfrac><mrow>' + this.dockingPoints['numerator'].child.formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints['denominator'].child.formatExpressionAs(format) + '</mrow></mfrac>';
+            if (this.dockingPoints["numerator"].child[0] != null && this.dockingPoints["denominator"].child[0] != null) {
+                expression += '<mfrac><mrow>' + this.dockingPoints['numerator'].child[0].formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints['denominator'].child[0].formatExpressionAs(format) + '</mrow></mfrac>';
             }
-            if (this.dockingPoints['right'].child != null) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'].child[0] != null) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
             }
         }
         return expression;
@@ -128,8 +128,8 @@ export
 
     /** Calculates the bounding box for the numerator */
     get _numeratorBox(): Rect {
-        if (this.dockingPoints["numerator"] && this.dockingPoints["numerator"].child) {
-            return this.dockingPoints["numerator"].child.subtreeDockingPointsBoundingBox;
+        if (this.dockingPoints["numerator"] && this.dockingPoints["numerator"].child[0]) {
+            return this.dockingPoints["numerator"].child[0].subtreeDockingPointsBoundingBox;
         } else {
             return new Rect(0, 0, this.s.baseDockingPointSize, 0);
         }
@@ -137,22 +137,22 @@ export
 
     /** Calculates the bounding box for the denominator */
     get _denominatorBox(): Rect {
-        if (this.dockingPoints["denominator"] && this.dockingPoints["denominator"].child) {
-            return this.dockingPoints["denominator"].child.subtreeDockingPointsBoundingBox;
+        if (this.dockingPoints["denominator"] && this.dockingPoints["denominator"].child[0]) {
+            return this.dockingPoints["denominator"].child[0].subtreeDockingPointsBoundingBox;
         } else {
             return new Rect(0, 0, this.s.baseDockingPointSize, 0);
         }
     }
 
     _shakeIt(): void {
-        if (this.parentWidget instanceof Num && this.parentWidget.dockingPoints["right"].child === this) {
+        if (this.parentWidget instanceof Num && this.parentWidget.dockingPoints["right"].child[0] === this) {
             const b = new Brackets(this.p, this.s, "round", this.mode);
             // vvv DO NOT SWAP THESE TWO LINES, NO MATTER HOW MUCH YOU THINK THEY ARE EQUIVALENT, THEY ARE NOT //
-            this.parentWidget.dockingPoints["right"].child = b;
-            b.dockingPoints["argument"].child = this;
+            this.parentWidget.dockingPoints["right"].child[0] = b;
+            b.dockingPoints["argument"].child[0] = this;
             // ^^^ //
-            b.dockingPoints["right"].child = this.dockingPoints["right"].child;
-            this.dockingPoints["right"].child = null;
+            b.dockingPoints["right"].child[0] = this.dockingPoints["right"].child[0];
+            this.dockingPoints["right"].child[0] = null;
             return;
         }
 
@@ -162,8 +162,8 @@ export
 
         if (this.dockingPoints["numerator"]) {
             let dp = this.dockingPoints["numerator"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 // TODO Keep an eye on these, we might need the subtreeDockingPointsBoundingBox instead.
                 child.position.x = -child.subtreeBoundingBox.x - child.subtreeBoundingBox.w/2;
                 child.position.y = -dp.size - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
@@ -175,8 +175,8 @@ export
 
         if (this.dockingPoints["denominator"]) {
             let dp = this.dockingPoints["denominator"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 // TODO Keep an eye on these, we might need the subtreeDockingPointsBoundingBox instead.
                 child.position.x = -child.subtreeBoundingBox.x - child.subtreeBoundingBox.w/2;
                 child.position.y = dp.size - child.subtreeDockingPointsBoundingBox.y;
@@ -188,8 +188,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
                 child.position.y = -child.dockingPoint.y;
             } else {

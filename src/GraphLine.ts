@@ -31,7 +31,7 @@ import { Inequality } from "./Inequality";
  * Relations, such as equalities, inequalities, and unexpected friends.
  */
 export
-    class Relation extends Widget {
+    class GraphLine extends Widget {
 
     protected relationString: string;
     protected relation: string;
@@ -128,12 +128,12 @@ export
     }
 
     get typeAsString(): string {
-        return 'Relation';
+        return 'GraphLine';
     }
 
     /**
      * Generates all the docking points in one go and stores them in this.dockingPoints.
-     * A Relation has one docking point:
+     * A GraphLine has one docking point:
      *
      - _right_: Symbol
      */
@@ -192,8 +192,8 @@ export
     _draw(): void {
         this.p.noFill().strokeCap(this.p.SQUARE).strokeWeight(4 * this.scale).stroke(this.color);
 
-        const box = this.s.font_up.textBounds("+", 0, 0, this.scale * this.s.baseFontSize) as Rect;
-        this.p.line(-box.w/2, -box.w/2, this.scaleX, -box.w/2 + this.scaleY);
+        let box = this.boundingBox();
+        this.p.line(-box.w/2 * this.scaleX, 0, box.w/2 * this.scaleY, 0);
 
         this.p.strokeWeight(1);
     }
@@ -202,9 +202,7 @@ export
         const s = this.relation || "=";
         // The following cast is OK because x, y, w, and h are present in the returned object...
         const box = this.s.font_up.textBounds(s, 0, 0, this.scale*this.s.baseFontSize*0.8) as Rect;
-        console.log("box", -box.w/2, box.y, box.w + this.scaleX, box.h + this.scaleY)
-        // return new Rect(-box.w/2, box.y, box.w, box.h);
-        return new Rect(-box.w/2, box.y + this.scaleY, box.w + this.scaleX, box.h);
+        return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
     _shakeIt(): void {

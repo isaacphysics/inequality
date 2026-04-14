@@ -69,12 +69,12 @@ export class UnaryOperation extends Widget {
         // TODO Triple check
         let expression = "";
         if (format == "latex" || format == "mhchem") { // TODO make an actual case for mhchem?
-            if (this.dockingPoints['argument'].child) {
-                expression += this.dockingPoints['argument'].child.formatExpressionAs(format);
-                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child) {
-                    expression = "(" + expression + ")" + '^{' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '}';
+            if (this.dockingPoints['argument'].child[0]) {
+                expression += this.dockingPoints['argument'].child[0].formatExpressionAs(format);
+                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child[0]) {
+                    expression = "(" + expression + ")" + '^{' + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + '}';
                 }
-                if (this.dockingPoints['argument'].child instanceof Brackets) {
+                if (this.dockingPoints['argument'].child[0] instanceof Brackets) {
                     expression = this.latexFormat(expression);
                 } else {
                     expression = this.latexFormat("\\left(" + expression + "\\right)");
@@ -82,20 +82,20 @@ export class UnaryOperation extends Widget {
             } else {
                 expression += this.latexFormat("");
             }
-            if (this.dockingPoints['right'].child) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'].child[0]) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
             }
         } else if (format == "python") {
-            if (this.dockingPoints['argument'].child) {
-                expression += this.dockingPoints['argument'].child.formatExpressionAs(format);
-                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child) {
-                    expression = "(" + expression + ")" + "**(" + this.dockingPoints['superscript'].child.formatExpressionAs(format) + ")";
+            if (this.dockingPoints['argument'].child[0]) {
+                expression += this.dockingPoints['argument'].child[0].formatExpressionAs(format);
+                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child[0]) {
+                    expression = "(" + expression + ")" + "**(" + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + ")";
                 }
                 expression = this.pythonFormat(expression);
             } else {
                 expression += this.pythonFormat("");
             }
-            let rightChild = this.dockingPoints["right"].child;
+            let rightChild = this.dockingPoints["right"].child[0];
             if (rightChild != null) {
                 if (rightChild instanceof BinaryOperation || rightChild instanceof LogicBinaryOperation || rightChild instanceof Relation) {
                     expression += rightChild.formatExpressionAs(format);
@@ -106,15 +106,15 @@ export class UnaryOperation extends Widget {
         } else if (format == "subscript") {
             expression += "{FACTORIAL}";
         } else if (format == 'mathml') {
-            if (this.dockingPoints['argument'].child) {
-                expression = '<mrow>' + this.dockingPoints['argument'].child.formatExpressionAs(format) + '</mrow>';
-                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child != null) {
-                    expression = '<msup><mfenced open="(" close=")">' + expression + '</mfenced><mrow>' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '</mrow></msup>';
+            if (this.dockingPoints['argument'].child[0]) {
+                expression = '<mrow>' + this.dockingPoints['argument'].child[0].formatExpressionAs(format) + '</mrow>';
+                if (this.dockingPoints['superscript'] && this.dockingPoints['superscript'].child[0] != null) {
+                    expression = '<msup><mfenced open="(" close=")">' + expression + '</mfenced><mrow>' + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + '</mrow></msup>';
                 }
                 expression = this.mathmlFormat(expression);
             }
-            if (this.dockingPoints['right'].child) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
+            if (this.dockingPoints['right'].child[0]) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
             }
         }
         return expression;
@@ -189,8 +189,8 @@ export class UnaryOperation extends Widget {
     }
 
     get _argumentBox(): Rect {
-        if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child) {
-            return this.dockingPoints["argument"].child.subtreeDockingPointsBoundingBox;
+        if (this.dockingPoints["argument"] && this.dockingPoints["argument"].child[0]) {
+            return this.dockingPoints["argument"].child[0].subtreeDockingPointsBoundingBox;
         } else {
             return new Rect(0, 0, this.s.baseDockingPointSize, 0);
         }
@@ -203,8 +203,8 @@ export class UnaryOperation extends Widget {
 
         if (this.dockingPoints["argument"]) {
             let dp = this.dockingPoints["argument"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = this.boundingBox().x + child.leftBound + dp.size;
                 child.position.y = -child.dockingPoint.y;
             } else {
@@ -216,8 +216,8 @@ export class UnaryOperation extends Widget {
         //let superscriptWidth = 0;
         // if (this.dockingPoints["superscript"]) {
         //     let dp = this.dockingPoints["superscript"];
-        //     if (dp.child) {
-        //         let child = dp.child;
+        //     if (dp.child[0]) {
+        //         let child = dp.child[0];
         //         child.position.x = thisBox.x + thisBox.w + child.leftBound;
         //         child.position.y = -(thisBox.h + child.subtreeBoundingBox.h)/2 + dp.size;
         //         superscriptWidth = child.subtreeDockingPointsBoundingBox.w;
@@ -230,8 +230,8 @@ export class UnaryOperation extends Widget {
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + dp.size + child.leftBound;
                 child.position.y = -child.dockingPoint.y;
             } else {

@@ -378,8 +378,8 @@ export
             let widget = q.shift() as Widget;
             for (let e in widget.dockingPoints) {
                 let dockingPoint = widget.dockingPoints[e];
-                if (dockingPoint.child) {
-                    q.push(dockingPoint.child)
+                if (dockingPoint.child[0]) {
+                    q.push(dockingPoint.child[0])
                 } else {
                     this._canvasDockingPoints.push(dockingPoint);
                 }
@@ -480,8 +480,8 @@ export
     commitPotentialSymbol = () => {
         // Make sure we have an active docking point, and that the moving symbol can dock to it.
         if (isDefined(this._potentialSymbol) && this._activeDockingPoint != null && _intersection(this._potentialSymbol.docksTo, this._activeDockingPoint.type).length > 0) {
-            this._activeDockingPoint.child = this._potentialSymbol;
-            this._activeDockingPoint.child.dockedByUser = true;
+            this._activeDockingPoint.child[0] = this._potentialSymbol;
+            this._activeDockingPoint.child[0].dockedByUser = true;
             
             this.log?.actions.push({
                 event: "DOCK_POTENTIAL_SYMBOL",
@@ -633,7 +633,7 @@ export
         if (isDefined(w) && parseChildren && isDefined(node.children)) {
             for (const key in node.children) {
                 const n = node.children[key];
-                w.dockingPoints[key].child = this._parseSubtreeObject(n);
+                w.dockingPoints[key].child[0] = this._parseSubtreeObject(n);
             }
         }
 
@@ -670,7 +670,38 @@ export
         this._symbols.some((symbol, i) => {
             // .hit() propagates down the hierarchy
             let hitSymbol = symbol.hit(this.p.createVector(tx, ty));
-            if (hitSymbol != null && hitSymbol.isDetachable) {
+            console.log("Hit symbol: ", hitSymbol?.subtreeObject(false, false, true));
+            if (hitSymbol != null && hitSymbol.subtreeObject(false, false, true).type === "Relation") {
+                console.log("Hit symbol12334556: ", hitSymbol?.subtreeObject(false, false, true));
+                // If we hit that symbol, then mark it as moving
+                this._movingSymbol = hitSymbol;
+                this._prevTouch = this.p.createVector(tx, ty);
+                /*this.log?.actions.push({
+                    event: "DRAG_START", 
+                    symbol: this._movingSymbol.subtreeObject(false, true, true),
+                    timestamp: Date.now()
+                });
+                index = i;
+                this._prevTouch = this.p.createVector(tx, ty);
+
+                // Remove symbol from the hierarchy, place it back with the roots.
+                if (hitSymbol.parentWidget != null) {
+                    this._symbols.push(hitSymbol);
+                    // Update the list of free docking points
+                    this.updateCanvasDockingPoints();
+
+                    hitSymbol.scale = 1.0;
+                    hitSymbol.position = hitSymbol.absolutePosition;
+                    hitSymbol.removeFromParent();
+                }
+
+                // Get the points it docks to, we'll use them later
+                movingSymbolDocksTo = this._movingSymbol.docksTo;
+
+                // Array.some requires this to break out of the loop.*/
+                return true;
+            } else if (hitSymbol != null && hitSymbol.isDetachable) {
+                console.log("Hit symbol2: ", hitSymbol?.subtreeObject(false, false, true));
                 // If we hit that symbol, then mark it as moving
                 this._movingSymbol = hitSymbol;
                 this.log?.actions.push({
@@ -737,30 +768,19 @@ export
         let tx = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).x : this.p.mouseX;
         let ty = this.p.touches.length > 0 ? (<p5.Vector>this.p.touches[0]).y : this.p.mouseY;
 
-        if (isDefined(this._movingSymbol) && isDefined(this._prevTouch)) {
+        console.log("Moving symbol", this._movingSymbol, this._prevTouch, tx, ty);
+        if (isDefined(this._movingSymbol) && isDefined(this._prevTouch) && this._movingSymbol.subtreeObject(false, false, true).type === "Relation") {
+            let d = this.p.createVector(tx - (this._initialTouch?.x ?? 0), ty - (this._initialTouch?.y ?? 0));
+            this._movingSymbol.scaleX = d.x;
+            this._movingSymbol.scaleY = d.y;
+
+            this._prevTouch.x = tx;
+            this._prevTouch.y = ty;
+
+
+            this.onNotifySymbolDrag(tx, ty);
+        } else if (isDefined(this._movingSymbol) && isDefined(this._prevTouch)) {
             let d = this.p.createVector(tx - this._prevTouch.x, ty - this._prevTouch.y);
-
-            // TODO (NOT?): DELETE the following commented section.
-            // I'm not sure why, but if I commented like this it may be
-            // reference code... although, upon careful review, I don't see what
-            // purpose this section serves so I guess it can be deleted...
-
-            // let sbox = this.movingSymbol.subtreeBoundingBox;
-            // let spos = this.movingSymbol.absolutePosition;
-            // let dx = this.p.touchX - this.prevTouch.x;
-            // let dy = this.p.touchY - this.prevTouch.y;
-            // let left =   spos.x + sbox.x;
-            // let right =  spos.x + sbox.x + sbox.w;
-            // let top =    spos.y + sbox.y;
-            // let bottom = spos.y + sbox.y + sbox.h;
-            //
-            // if ((dx < 0 && left <= 0) || (dx > 0 && right >= this.width)) {
-            // 	dx = 0;
-            // }
-            // if ((dy < 0 && top <= 0) || (dy > 0 && bottom >= this.height)) {
-            // 	dy = 0;
-            // }
-            // let d = this.p.createVector(dx, dy);
 
             this._movingSymbol.position.add(d);
             // As remarked in touchStarted
@@ -790,42 +810,6 @@ export
     };
 
     /**
-     * Called when we think the surrounding application should close or hide
-     * the menu. If it has any.
-     * 
-     * Override this from the outside if needed.
-     */
-    onCloseMenus = () => {};
-
-    /**
-     * The surrounding application can override this if it needs to know when
-     * and where a widget is being dragged.
-     * 
-     * @param _x 
-     * @param _y 
-     */
-    onNotifySymbolDrag = (_x: number, _y: number) => {};
-
-    /**
-     * Sometimes it's useful to know whether the user is privileged, like in
-     * the case of disassembling derivatives. We assume users are unprivileged
-     * by default.
-     * 
-     * @returns Whether the user is privileged (default: false).
-     */
-    isUserPrivileged = () => { return false };
-
-    /**
-     * Inequality doesn't provide a trash bin, but the surrounding application
-     * can. This is to notify Inequality whether a widget is being dragged onto
-     * the trash bin icon. If this is true and the widget is dropped, we get rid
-     * of the widget.
-     * 
-     * @returns Whether the trash icon is active (default: false).
-     */
-    isTrashActive = () => { return false };
-
-    /**
      * Handles the lifting of fingers from screen or mouse button. This can
      * result in many actions, including dopping the currently moving widget
      * (if any) onto the canvas, or docking it to another widget, or binning it.
@@ -850,11 +834,11 @@ export
                 this._symbols = this._symbols.filter(w => w !== this._movingSymbol);
                 this.updateCanvasDockingPoints();
                 // Do the actual docking
-                this._activeDockingPoint.child = this._movingSymbol;
-                this._activeDockingPoint.child.dockedByUser = true;
+                this._activeDockingPoint.child[0] = this._movingSymbol;
+                this._activeDockingPoint.child[0].dockedByUser = true;
 
                 // Let the widget know to which docking point it is docked. This is starting to become ridiculous...
-                this._activeDockingPoint.child.dockedTo = this._activeDockingPoint.name;
+                this._activeDockingPoint.child[0].dockedTo = this._activeDockingPoint.name;
 
                 this.log?.actions.push({
                     event: "DOCK_SYMBOL",
@@ -916,6 +900,42 @@ export
 
         this.p.frameRate(this.IDLE_FPS);
     };
+
+    /**
+     * Called when we think the surrounding application should close or hide
+     * the menu. If it has any.
+     * 
+     * Override this from the outside if needed.
+     */
+    onCloseMenus = () => {};
+
+    /**
+     * The surrounding application can override this if it needs to know when
+     * and where a widget is being dragged.
+     * 
+     * @param _x 
+     * @param _y 
+     */
+    onNotifySymbolDrag = (_x: number, _y: number) => {};
+
+    /**
+     * Sometimes it's useful to know whether the user is privileged, like in
+     * the case of disassembling derivatives. We assume users are unprivileged
+     * by default.
+     * 
+     * @returns Whether the user is privileged (default: false).
+     */
+    isUserPrivileged = () => { return false };
+
+    /**
+     * Inequality doesn't provide a trash bin, but the surrounding application
+     * can. This is to notify Inequality whether a widget is being dragged onto
+     * the trash bin icon. If this is true and the widget is dropped, we get rid
+     * of the widget.
+     * 
+     * @returns Whether the trash icon is active (default: false).
+     */
+    isTrashActive = () => { return false };
 
     // Handles a simplified moved workflow if we are using a mouse.
     mouseMoved = () => {
@@ -1104,7 +1124,7 @@ export function makeInequality(
     element: HTMLElement,
     width: number,
     height: number,
-    initialSymbolsToParse: Array<{ type: string, properties: any }> = [],
+    initialSymbolsToParse: Array<{ type: string, properties?: any }> = [],
     {
         editorMode = "math",
         logicSyntax = "logic",

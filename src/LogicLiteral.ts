@@ -89,26 +89,26 @@ export
         let expression = "";
         if (format == "latex") {
             expression = this.getFullText("latex");
-            if (this.right && this.dockingPoints["right"].child != null) {
-                expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.right && this.dockingPoints["right"].child[0] != null) {
+                expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         } else if (format == "python") {
             expression = "" + this.getFullText("python");
-            if (this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof LogicBinaryOperation ||
-                    this.dockingPoints["right"].child instanceof LogicNot ||
-                    this.dockingPoints["right"].child instanceof Relation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"].child[0] != null) {
+                if (this.dockingPoints["right"].child[0] instanceof LogicBinaryOperation ||
+                    this.dockingPoints["right"].child[0] instanceof LogicNot ||
+                    this.dockingPoints["right"].child[0] instanceof Relation) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 } else {
                     // WARNING This should not happen.
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "mathml") {
             expression = '';
             expression += '<mn>' + this.getFullText() + '</mn>';
-            if (this.dockingPoints['right'].child != null) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs('mathml');
+            if (this.dockingPoints['right'].child[0] != null) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs('mathml');
             }
         }
         return expression;
@@ -175,8 +175,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {

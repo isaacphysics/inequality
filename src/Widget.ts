@@ -90,12 +90,16 @@ export
 /** A type to (de)serialize widgets */
 export type WidgetSpec = {
     type: string;
-    properties: any;
+    properties?: any;
     children?: Array<WidgetSpec>;
     position?: { x: number, y: number };
     expression?: any;
     dockedByUser?: boolean;
 }
+
+export type ExtendedWidgetSpec = {
+    id?: number
+} & WidgetSpec;
 
 /** A base class for anything visible, draggable, and dockable. */
 export
@@ -118,6 +122,8 @@ export
 
     /** Scaling factor for this widget (affected by where a widget is docked, typically) */
     scale: number = 1.0;
+    scaleX: number = 0.0;
+    scaleY: number = 0.0;
 
     /** Position of this widget */
     position: p5.Vector;
@@ -289,8 +295,8 @@ export
             // Go through the docking points and draw them as circles if they are
             // empty, or call the corresponding widget's draw method otherwise.
             const dockingPoint = this.dockingPoints[k];
-            if (dockingPoint.child) {
-                dockingPoint.child.draw(hideDockingPoints);
+            if (dockingPoint.child[0]) {
+                dockingPoint.child[0].draw(hideDockingPoints);
             } else {
                 if (hideDockingPoints) continue;
                 // There is no child to paint, let's paint an empty docking point
@@ -361,6 +367,7 @@ export
 
     // ************ //
 
+
 	/**
 	 * Retrieves the abstract tree representation having this widget as root.
 	 *
@@ -369,17 +376,9 @@ export
 	 * @param minimal Only include essential information
 	 * @returns {{type: string}}
 	 */
-    subtreeObject(processChildren = true, includeIds = false, minimal = false): Object {
+    subtreeObject(processChildren = true, includeIds = false, minimal = false): ExtendedWidgetSpec {
         let p = this.absolutePosition;
-        let o: {
-            type?: string,
-            id?: number,
-            position?: { x: number, y: number },
-            expression?: { latex?: string, python?: string, mhchem?: string },
-            properties?: Object,
-            children?: { [key: string]: DockingPoint },
-            dockedByUser?: boolean
-        } = {
+        let o: ExtendedWidgetSpec = {
             type: this.typeAsString,
             dockedByUser: this.dockedByUser
         };
@@ -404,8 +403,8 @@ export
         if (processChildren) {
             let dockingPoints: any = {};
             _each(this.dockingPoints, (dockingPoint, key) => {
-                if (dockingPoint.child != null) {
-                    dockingPoints[key] = dockingPoint.child.subtreeObject(processChildren, includeIds, minimal);
+                if (dockingPoint.child[0] != null) {
+                    dockingPoints[key] = dockingPoint.child[0].subtreeObject(processChildren, includeIds, minimal);
                 }
             });
             if (!_isEmpty(dockingPoints)) {
@@ -439,7 +438,7 @@ export
         this.dockedByUser = false;
         for(let k in this.parentWidget.dockingPoints) {
             let dockingPoint = this.parentWidget?.dockingPoints[k];
-            if (dockingPoint?.child == this) {
+            if (dockingPoint?.child[0] == this) {
                 this.s.log?.actions.push({
                     event: "UNDOCK_SYMBOL",
                     symbol: this.subtreeObject(false, true, true),
@@ -447,7 +446,7 @@ export
                     dockingPoint: dockingPoint.name,
                     timestamp: Date.now()
                 });
-                dockingPoint.child = null;
+                dockingPoint.child[0] = null;
                 this.parentWidget = null;
             }
         };
@@ -468,12 +467,13 @@ export
         let w: Nullable<Widget> = null;
         Object.entries(this.dockingPoints).some(entry => {
             const dockingPoint = entry[1];
-            if (dockingPoint.child != null) {
-                w = dockingPoint.child.hit(p5.Vector.sub(p, this.position));
+            if (dockingPoint.child[0] != null) {
+                w = dockingPoint.child[0].hit(p5.Vector.sub(p, this.position));
                 return w != null;
             }
             return false;
         });
+        console.log("hit test", this.boundingBox().contains(p5.Vector.sub(p, this.position)), this.typeAsString, this.boundingBox(), p5.Vector.sub(p, this.position));
         if (w != null) {
             return w;
         } else if (this.boundingBox().contains(p5.Vector.sub(p, this.position))) {
@@ -492,9 +492,9 @@ export
         this._color = on ? this.p.color(51, 153, 255) : mainColor;
         _each(this.dockingPoints, dockingPoint => {
             // Only recurse for turning off. This seems to improve usability.
-            if (dockingPoint.child != null && !on) {
-                dockingPoint.child.highlight(on);
-                dockingPoint.child.isMainExpression = this.isMainExpression;
+            if (dockingPoint.child[0] != null && !on) {
+                dockingPoint.child[0].highlight(on);
+                dockingPoint.child[0].isMainExpression = this.isMainExpression;
             }
         });
     }
@@ -503,7 +503,7 @@ export
 	 * @returns A flat array of the children of this widget, as widget objects
      */
     get children(): Array<Widget> {
-        return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
+        return Object.entries(this.dockingPoints).map(e => e[1].child[0]).filter(w => isDefined(w)) as Array<Widget>;
     }
 
     /**
@@ -515,7 +515,7 @@ export
     get totalSymbolCount(): number {
         let total = 1;
         for (let i in this.dockingPoints) {
-            let c = this.dockingPoints[i].child;
+            let c = this.dockingPoints[i].child[0];
             if (c != null) {
                 total += c.totalSymbolCount;
             }
@@ -571,7 +571,7 @@ export
      */
     _shakeItDown() {
         for (let name in this.dockingPoints) {
-            let child = this.dockingPoints[name].child;
+            let child = this.dockingPoints[name].child[0];
             if (child) {
                 child.scale = this.scale * this.dockingPoints[name].scale;
                 // IMPORTANT: Make sure you call _shakeIt() here and not shakeIt()
@@ -624,7 +624,7 @@ export
         let bottom = top + thisAbsBox.h;
 
         for (let name in this.dockingPoints) {
-            let child = this.dockingPoints[name].child;
+            let child = this.dockingPoints[name].child[0];
             if (child) {
                 let childAbsPosition = child.absolutePosition;
                 let childSubBox = child.subtreeBoundingBox;
@@ -651,7 +651,7 @@ export
         let dpBoxes: Array<Rect> = [];
         for (let k in this.dockingPoints) {
             let dp = this.dockingPoints[k];
-            if (null == dp.child || undefined == dp.child) {
+            if (null == dp.child[0] || undefined == dp.child[0]) {
                 dpBoxes.push(new Rect(dp.position.x-this.dockingPointSize/2, dp.position.y-this.dockingPointSize/2, this.dockingPointSize, this.dockingPointSize));
             }
         }
@@ -702,7 +702,7 @@ export
         let bottom = top + thisAbsBox.h;
 
         for (let name in this.dockingPoints) {
-            let child = this.dockingPoints[name].child;
+            let child = this.dockingPoints[name].child[0];
             if (child) {
                 let childAbsPosition = child.absolutePosition;
                 let childSubBox = child.subtreeDockingPointsBoundingBox;

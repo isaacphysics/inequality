@@ -70,7 +70,7 @@ export
      */
     get sonOfADifferential(): boolean {
         let p = this.parentWidget;
-        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child;
+        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child[0];
     }
 
     constructor(p: p5, s: Inequality, letter: string, modifier = "") {
@@ -123,22 +123,22 @@ export
             if(this.modifier == "prime") {
                 expression += "'"
             }
-            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child != null) {
+            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child[0] != null) {
                 if (this.parentWidget instanceof Differential) {
-                    expression = "(" + expression + "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "})";
+                    expression = "(" + expression + "^{" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "})";
                 } else {
-                    expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
+                    expression += "^{" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "}";
                 }
             }
-            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child != null) {
-                expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
+            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child[0] != null) {
+                expression += "_{" + this.dockingPoints["subscript"].child[0].formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["right"] && this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"] && this.dockingPoints["right"].child[0] != null) {
+                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Symbol, hence produces a multiplication
-                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "python") {
@@ -146,22 +146,22 @@ export
             if(this.modifier == "prime") {
                 expression += "_prime"
             }
-            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child != null) {
-                expression += "_" + this.dockingPoints["subscript"].child.formatExpressionAs("subscript");
+            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child[0] != null) {
+                expression += "_" + this.dockingPoints["subscript"].child[0].formatExpressionAs("subscript");
             }
-            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child != null) {
-                expression += "**(" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + ")";
+            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child[0] != null) {
+                expression += "**(" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + ")";
             }
-            if (this.dockingPoints["right"] && this.dockingPoints["right"].child != null) {
-                if (this.dockingPoints["right"].child instanceof BinaryOperation ||
-                    this.dockingPoints["right"].child instanceof Relation ||
-                    this.dockingPoints["right"].child instanceof LogicBinaryOperation) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
-                } else if (this.dockingPoints["right"] && this.dockingPoints["right"].child instanceof Num && (<Num>this.dockingPoints["right"].child).isNegative()) {
-                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"] && this.dockingPoints["right"].child[0] != null) {
+                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation ||
+                    this.dockingPoints["right"].child[0] instanceof Relation ||
+                    this.dockingPoints["right"].child[0] instanceof LogicBinaryOperation) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                } else if (this.dockingPoints["right"] && this.dockingPoints["right"].child[0] instanceof Num && (<Num>this.dockingPoints["right"].child[0]).isNegative()) {
+                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Symbol by default, hence produces a multiplication (with a star)
-                    expression += "*" + this.dockingPoints["right"].child.formatExpressionAs(format);
+                    expression += "*" + this.dockingPoints["right"].child[0].formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
@@ -169,14 +169,14 @@ export
             if(this.modifier == "prime") {
                 expression += "_prime"
             }
-            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child != null) {
-                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
+            if (this.dockingPoints["subscript"] && this.dockingPoints["subscript"].child[0] != null) {
+                expression += this.dockingPoints["subscript"].child[0].formatExpressionAs(format);
             }
-            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child != null) {
-                expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
+            if (this.dockingPoints["superscript"] && this.dockingPoints["superscript"].child[0] != null) {
+                expression += this.dockingPoints["superscript"].child[0].formatExpressionAs(format);
             }
-            if (this.dockingPoints["right"] && this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"] && this.dockingPoints["right"].child[0] != null) {
+                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             expression = '';
@@ -184,21 +184,21 @@ export
             if(this.modifier == "prime") {
                 l += "_prime"
             }
-            if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child == null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child == null) {
+            if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child[0] == null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child[0] == null) {
                 expression += '<mi>' + l + '</mi>';
 
-            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child != null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child == null) {
-                expression += '<msub><mi>' + l + '</mi><mrow>' + this.dockingPoints['subscript'].child.formatExpressionAs(format) + '</mrow></msub>';
+            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child[0] != null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child[0] == null) {
+                expression += '<msub><mi>' + l + '</mi><mrow>' + this.dockingPoints['subscript'].child[0].formatExpressionAs(format) + '</mrow></msub>';
 
-            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child == null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child != null) {
-                expression += '<msup><mi>' + l + '</mi><mrow>' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '</mrow></msup>';
+            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child[0] == null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child[0] != null) {
+                expression += '<msup><mi>' + l + '</mi><mrow>' + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + '</mrow></msup>';
 
-            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child != null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child != null) {
-                expression += '<msubsup><mi>' + l + '</mi><mrow>' + this.dockingPoints['subscript'].child.formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '</mrow></msubsup>';
+            } else if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child[0] != null && this.dockingPoints["superscript"] && this.dockingPoints['superscript'].child[0] != null) {
+                expression += '<msubsup><mi>' + l + '</mi><mrow>' + this.dockingPoints['subscript'].child[0].formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + '</mrow></msubsup>';
             }
 
-            if (this.dockingPoints["right"] && this.dockingPoints['right'].child != null) {
-                expression += this.dockingPoints['right'].child.formatExpressionAs('mathml');
+            if (this.dockingPoints["right"] && this.dockingPoints['right'].child[0] != null) {
+                expression += this.dockingPoints['right'].child[0].formatExpressionAs('mathml');
             }
         }
         return expression;
@@ -216,8 +216,8 @@ export
         if(this.modifier == "prime") {
             e += "_prime"
         }
-        if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child) {
-            e += '_' + this.dockingPoints['subscript'].child.formatExpressionAs('subscript');
+        if (this.dockingPoints['subscript'] && this.dockingPoints['subscript'].child[0]) {
+            e += '_' + this.dockingPoints['subscript'].child[0].formatExpressionAs('subscript');
         }
         return e;
     }
@@ -247,8 +247,8 @@ export
         let superscriptWidth = 0;
         if (this.dockingPoints["superscript"]) {
             let dp = this.dockingPoints["superscript"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
                 child.position.y = -this.scale * this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 superscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -262,8 +262,8 @@ export
         let subscriptWidth = 0;
         if (this.dockingPoints["subscript"]) {
             let dp = this.dockingPoints["subscript"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/3; // 3 is a prettyfication factor to make the subscript follow the letter's slant.
                 child.position.y = child.topBound;
                 subscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -276,8 +276,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child) {
-                let child = dp.child;
+            if (dp.child[0]) {
+                let child = dp.child[0];
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + Math.max(superscriptWidth, subscriptWidth) + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
@@ -288,6 +288,6 @@ export
     }
 
     get children(): Array<Widget> {
-        return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
+        return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child[0]).filter(w => isDefined(w)) as Array<Widget>;
     }
 }

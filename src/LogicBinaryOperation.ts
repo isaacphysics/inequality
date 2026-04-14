@@ -108,23 +108,23 @@ export
         let expression = " ";
         if (format == "latex") {
             expression += this.latexSymbol + " ";
-            if (this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"].child[0] != null) {
+                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         } else if (format == "python") {
             expression += this.pythonSymbol + " ";
-            if (this.dockingPoints["right"].child != null) {
-                expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"].child[0] != null) {
+                expression += "" + this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         } else if (format == "subscript") {
             expression = "";
-            if (this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"].child[0] != null) {
+                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             expression = '<mo>' + this.mathmlSymbol + "</mo>";
-            if (this.dockingPoints["right"].child != null) {
-                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+            if (this.dockingPoints["right"].child[0] != null) {
+                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
             }
         }
         return expression;
