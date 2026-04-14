@@ -117,23 +117,23 @@ class Differential extends Widget {
                 expression = "\\mathrm{" + this.letter + "}";
             }
             
-            if (this.dockingPoints["order"].child[0] != null && !this.orderNeedsMoving) {
-                expression += "^{" + this.dockingPoints["order"].child[0].formatExpressionAs(format) + "}";
+            if (this.dockingPoints["order"].child != null && !this.orderNeedsMoving) {
+                expression += "^{" + this.dockingPoints["order"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["argument"].child[0] != null) {
-                if (this.dockingPoints["argument"].child[0] instanceof BinaryOperation) {
-                    expression += " " + this.dockingPoints["argument"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["argument"].child != null) {
+                if (this.dockingPoints["argument"].child instanceof BinaryOperation) {
+                    expression += " " + this.dockingPoints["argument"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a Differential, hence produces a multiplication
-                    expression += " " + this.dockingPoints["argument"].child[0].formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["argument"].child.formatExpressionAs(format);
                 }
             }
             // AAARGH! Curses, you Leibniz!
-            if (this.dockingPoints["order"].child[0] != null && this.orderNeedsMoving) {
-                expression += "^{" + this.dockingPoints["order"].child[0].formatExpressionAs(format) + "}";
+            if (this.dockingPoints["order"].child != null && this.orderNeedsMoving) {
+                expression += "^{" + this.dockingPoints["order"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
             if (this.letter == "δ") {
@@ -144,39 +144,39 @@ class Differential extends Widget {
                 expression = "d";
             }
             let args = [];
-            if (this.dockingPoints["argument"].child[0] != null) {
-                args.push(this.dockingPoints["argument"].child[0].formatExpressionAs(format));
+            if (this.dockingPoints["argument"].child != null) {
+                args.push(this.dockingPoints["argument"].child.formatExpressionAs(format));
             }
             expression += args.join("");
 
             // FIXME We need to decide what to do with orders.
-            if (this.dockingPoints["order"].child[0] != null) {
-                let n = parseInt(this.dockingPoints["order"].child[0].formatExpressionAs(format));
+            if (this.dockingPoints["order"].child != null) {
+                let n = parseInt(this.dockingPoints["order"].child.formatExpressionAs(format));
                 if (!isNaN(n) && n > 1) {
                     for (let i = 0; i < n-1; ++i) {
                         expression += " * " + expression;
                     }
                 }
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                let op = (this.dockingPoints["right"].child[0] instanceof Relation ||
-                          this.dockingPoints["right"].child[0] instanceof BinaryOperation) ? '' : ' * ';
-                expression += op + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                let op = (this.dockingPoints["right"].child instanceof Relation ||
+                          this.dockingPoints["right"].child instanceof BinaryOperation) ? '' : ' * ';
+                expression += op + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
 
         } else if (format == "mathml") {
             expression = '';
-            if (this.dockingPoints["order"].child[0] == null && this.dockingPoints["argument"].child[0] != null) {
-                expression += "<mi>" + this.letter  + "</mi>" + this.dockingPoints["argument"].child[0].formatExpressionAs(format);
-            } else if (this.dockingPoints["order"].child[0] != null && this.dockingPoints["argument"].child[0] != null) {
+            if (this.dockingPoints["order"].child == null && this.dockingPoints["argument"].child != null) {
+                expression += "<mi>" + this.letter  + "</mi>" + this.dockingPoints["argument"].child.formatExpressionAs(format);
+            } else if (this.dockingPoints["order"].child != null && this.dockingPoints["argument"].child != null) {
                 if (this.orderNeedsMoving) {
-                    expression += '<msup><mrow><mi>' + this.letter + '</mi>' + this.dockingPoints["argument"].child[0].formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints["order"].child[0].formatExpressionAs(format) + '</mrow></msup>';
+                    expression += '<msup><mrow><mi>' + this.letter + '</mi>' + this.dockingPoints["argument"].child.formatExpressionAs(format) + '</mrow><mrow>' + this.dockingPoints["order"].child.formatExpressionAs(format) + '</mrow></msup>';
                 } else {
-                    expression += '<msup><mi>' + this.letter + '</mi><mrow>' + this.dockingPoints["order"].child[0].formatExpressionAs(format) + '</mrow></msup>' + this.dockingPoints["argument"].child[0].formatExpressionAs(format);
+                    expression += '<msup><mi>' + this.letter + '</mi><mrow>' + this.dockingPoints["order"].child.formatExpressionAs(format) + '</mrow></msup>' + this.dockingPoints["argument"].child.formatExpressionAs(format);
                 }
             }
-            if (this.dockingPoints['right'].child[0] != null) {
-                expression += this.dockingPoints['right'].child[0].formatExpressionAs(format);
+            if (this.dockingPoints['right'].child != null) {
+                expression += this.dockingPoints['right'].child.formatExpressionAs(format);
             }
         }
         return expression;
@@ -199,8 +199,8 @@ class Differential extends Widget {
             expression = "d";
         }
         let args = [];
-        if (this.dockingPoints["argument"].child[0] != null) {
-            args.push(this.dockingPoints["argument"].child[0].formatExpressionAs("python"));
+        if (this.dockingPoints["argument"].child != null) {
+            args.push(this.dockingPoints["argument"].child.formatExpressionAs("python"));
         }
         expression += args.join(" ");
 
@@ -232,8 +232,8 @@ class Differential extends Widget {
     _shakeArgument(displacement = 0, thisBox = this.boundingBox()): number {
         if (this.dockingPoints["argument"]) {
             let dp = this.dockingPoints["argument"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + displacement + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
                 return Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -256,8 +256,8 @@ class Differential extends Widget {
     _shakeOrder(displacement = 0, thisBox = this.boundingBox()): number {
         if (this.dockingPoints["order"]) {
             let dp = this.dockingPoints["order"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + displacement + dp.size*child.scale/2;
                 child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 return Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -287,8 +287,8 @@ class Differential extends Widget {
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + orderWidth + argumentWidth + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
@@ -299,6 +299,6 @@ class Differential extends Widget {
     }
 
     get children(): Array<Widget> {
-        return Object.entries(this.dockingPoints).map(e => e[1].child[0]).filter(w => isDefined(w)) as Array<Widget>;
+        return Object.entries(this.dockingPoints).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
 }

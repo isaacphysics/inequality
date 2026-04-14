@@ -53,7 +53,7 @@ export
      */
     get sonOfADifferential(): boolean {
         let p = this.parentWidget;
-        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child[0];
+        return isDefined(p) && p instanceof Differential && this != p.dockingPoints["right"].child;
     }
 
     constructor(p: p5, s: Inequality, significand: string, _exponent: string) {
@@ -107,63 +107,63 @@ export
         let expression = "";
         if (format == "latex") {
             expression = this.getFullText("latex");
-            if (this.superscript && this.dockingPoints["superscript"].child[0] != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "}";
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
+                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                if (this.dockingPoints["right"].child[0] instanceof Num) {
-                    expression += "\\cdot " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                if (this.dockingPoints["right"].child instanceof Num) {
+                    expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
-                    expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "mhchem") {
             expression = this.getFullText("mhchem");
-            if (this.superscript && this.dockingPoints["superscript"].child[0] != null) {
-                expression += "^" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "";
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
+                expression += "^" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                if (this.dockingPoints["right"].child[0] instanceof Num) {
-                    expression += "\\cdot " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
-                } else if (this.dockingPoints["right"].child[0] instanceof BinaryOperation) {
-                    expression += "" + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                if (this.dockingPoints["right"].child instanceof Num) {
+                    expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                } else if (this.dockingPoints["right"].child instanceof BinaryOperation) {
+                    expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
-                    expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
 
         } else if (format == "python") {
             expression = "" + this.getFullText("python");
-            if (this.superscript && this.dockingPoints["superscript"].child[0] != null) {
-                expression += "**(" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + ")";
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
+                expression += "**(" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + ")";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
-                } else if (this.dockingPoints["right"].child[0] instanceof Relation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                if (this.dockingPoints["right"].child instanceof BinaryOperation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
+                } else if (this.dockingPoints["right"].child instanceof Relation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a "Symbol", hence produces a multiplication
-                    expression += "*" + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                    expression += "*" + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
             expression = "" + this.getFullText();
-            if (this.superscript && this.dockingPoints["superscript"].child[0] != null) {
-                expression += this.dockingPoints["superscript"].child[0].formatExpressionAs(format);
+            if (this.superscript && this.dockingPoints["superscript"].child != null) {
+                expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             expression = '';
-            if (this.superscript && this.dockingPoints['superscript'].child[0] != null) {
-                expression += '<msup><mn>' + this.getFullText() + '</mn><mrow>' + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + '</mrow></msup>';
+            if (this.superscript && this.dockingPoints['superscript'].child != null) {
+                expression += '<msup><mn>' + this.getFullText() + '</mn><mrow>' + this.dockingPoints['superscript'].child.formatExpressionAs(format) + '</mrow></msup>';
             } else {
                 expression += '<mn>' + this.getFullText() + '</mn>';
             }
-            if (this.dockingPoints['right'].child[0] != null) {
-                expression += this.dockingPoints['right'].child[0].formatExpressionAs('mathml');
+            if (this.dockingPoints['right'].child != null) {
+                expression += this.dockingPoints['right'].child.formatExpressionAs('mathml');
             }
         }
         return expression;
@@ -203,8 +203,8 @@ export
         let superscriptWidth = 0;
         if (this.dockingPoints["superscript"]) {
             let dp = this.dockingPoints["superscript"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
                 child.position.y = -this.scale * this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 superscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -217,8 +217,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + superscriptWidth + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {

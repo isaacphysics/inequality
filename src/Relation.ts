@@ -146,28 +146,28 @@ export
         let expression = "";
         if (format == "latex") {
             expression += " " + this.latexSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
             expression += " " + this.pythonSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "subscript") {
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
             expression += " " + this.mhchemSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             let rel = this.mathmlSymbol ? this.mathmlSymbol : this.relation;
             expression = '<mo>' + rel + "</mo>";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         }
         return expression;
@@ -190,11 +190,12 @@ export
     }
 
     _draw(): void {
-        this.p.noFill().strokeCap(this.p.SQUARE).strokeWeight(4 * this.scale).stroke(this.color);
+        this.p.fill(this.color).strokeWeight(0).noStroke();
 
-        const box = this.s.font_up.textBounds("+", 0, 0, this.scale * this.s.baseFontSize) as Rect;
-        this.p.line(-box.w/2, -box.w/2, this.scaleX, -box.w/2 + this.scaleY);
-
+        this.p.textFont(this.s.font_up)
+            .textSize(this.s.baseFontSize * 0.8 * this.scale)
+            .textAlign(this.p.CENTER, this.p.BASELINE)
+            .text(this.relation, 0, 0);
         this.p.strokeWeight(1);
     }
 
@@ -202,9 +203,7 @@ export
         const s = this.relation || "=";
         // The following cast is OK because x, y, w, and h are present in the returned object...
         const box = this.s.font_up.textBounds(s, 0, 0, this.scale*this.s.baseFontSize*0.8) as Rect;
-        console.log("box", -box.w/2, box.y, box.w + this.scaleX, box.h + this.scaleY)
-        // return new Rect(-box.w/2, box.y, box.w, box.h);
-        return new Rect(-box.w/2, box.y + this.scaleY, box.w + this.scaleX, box.h);
+        return new Rect(-box.w/2, box.y, box.w, box.h);
     }
 
     _shakeIt(): void {
@@ -213,8 +212,8 @@ export
 
         if (this.dockingPoints["right"]) {
             const dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {

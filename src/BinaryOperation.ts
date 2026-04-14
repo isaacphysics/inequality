@@ -90,7 +90,7 @@ export
      */
     isSolitaryNegativeNumber(right: Nullable<Widget>): boolean {
         if (right?.typeAsString == "Num" && this.latexSymbol == '-') {
-            return !right.dockingPoints["right"].child[0];
+            return !right.dockingPoints["right"].child;
         }
         return false;
     }
@@ -98,40 +98,40 @@ export
     formatExpressionAs(format: string): string {
         let expression = " ";
         if (format == "latex") {
-            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child[0])) {
-                return "-" + (this.dockingPoints["right"].child[0] as Num).getFullText();
+            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child)) {
+                return "-" + (this.dockingPoints["right"].child as Num).getFullText();
             }
 
             expression += this.latexSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "python") {
             expression += this.pythonSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += "" + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += "" + this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
-            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child[0])) {
-                return "-" + (this.dockingPoints["right"].child[0] as Num).getFullText();
+            if (["chemistry", "nuclear"].includes(this.s.editorMode) && this.isSolitaryNegativeNumber(this.dockingPoints["right"].child)) {
+                return "-" + (this.dockingPoints["right"].child as Num).getFullText();
             }
 
           expression += this.mhchemSymbol + " ";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
             } else {
                 // This is a charge, most likely:
                 expression = this.operation.replace(/−/g, "-");
             }
         } else if (format == "subscript") {
             expression = "";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             expression = '<mo>' + this.mathmlSymbol + "</mo>";
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         }
         return expression;
@@ -170,8 +170,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {

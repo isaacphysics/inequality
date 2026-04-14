@@ -83,60 +83,60 @@ export
             // Renders the mass number first if present, otherwise just renders the element.
             // KaTeX doesn't support the mhchem package so padding is used to display nuclear equations correctly.
             if (this.s.editorMode === "nuclear") {
-                if (this.dockingPoints["mass_number"].child[0] != null && this.dockingPoints["proton_number"].child[0] != null) {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
-                    let mass_number_length = this.dockingPoints["mass_number"].child[0].formatExpressionAs(format).length;
-                    let proton_number_length = this.dockingPoints["proton_number"].child[0].formatExpressionAs(format).length;
+                    let mass_number_length = this.dockingPoints["mass_number"].child.formatExpressionAs(format).length;
+                    let proton_number_length = this.dockingPoints["proton_number"].child.formatExpressionAs(format).length;
                     let number_of_spaces = Math.abs(proton_number_length - mass_number_length);
                     let padding = "";
                     // Temporary hack to align mass number and proton number correctly.
                     for (let _i = 0; _i < number_of_spaces; _i++) {
                         padding += "\\enspace";
                     }
-                    expression += (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child[0].formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child[0].formatExpressionAs(format) + "}" + "\\text{" + this.element + "}" : 
-                                                                                 "{}^{" + this.dockingPoints["mass_number"].child[0].formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child[0].formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
-                } else if (this.dockingPoints["mass_number"].child[0] != null) {
-                    expression = "{}^{" + this.dockingPoints["mass_number"].child[0].formatExpressionAs(format) + "}_{}" + "\\text{" + this.element + "}";
-                } else if (this.dockingPoints["proton_number"].child[0] != null) {
-                    expression = "{}^{}_{" + this.dockingPoints["proton_number"].child[0].formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
+                    expression += (mass_number_length <= proton_number_length) ? "{}^{" + padding + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}" : 
+                                                                                 "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + padding + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
+                } else if (this.dockingPoints["mass_number"].child != null) {
+                    expression = "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + "\\text{" + this.element + "}";
+                } else if (this.dockingPoints["proton_number"].child != null) {
+                    expression = "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + "\\text{" + this.element + "}";
                 } else {
                     expression ="{}^{}_{}" + "\\text{" + this.element + "}";
                 }
             }
-            if (this.dockingPoints["superscript"].child[0] != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "}";
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["subscript"].child[0] != null) {
-                expression += "_{" + this.dockingPoints["subscript"].child[0].formatExpressionAs(format) + "}";
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += "_{" + this.dockingPoints["subscript"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                if (this.dockingPoints["right"].child instanceof BinaryOperation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
-                else if (this.dockingPoints["right"].child[0] instanceof Relation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                else if (this.dockingPoints["right"].child instanceof Relation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
                 else {
                     // WARNING This assumes it's a ChemicalElement, hence produces a multiplication
-                    expression += " " + this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                    expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         } else if (format == "subscript") {
             expression = "" + this.element;
-            if (this.dockingPoints["subscript"].child[0] != null) {
-                expression += this.dockingPoints["subscript"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
             }
-            if (this.dockingPoints["superscript"].child[0] != null) {
-                expression += this.dockingPoints["superscript"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += this.dockingPoints["superscript"].child.formatExpressionAs(format);
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
-            let m_superscript = this.dockingPoints['superscript'].child[0] != null ? "<mrow>" + this.dockingPoints['superscript'].child[0].formatExpressionAs(format) + "</mrow>" : "<none />";
-            let m_subscript = this.dockingPoints['subscript'].child[0] != null ? "<mrow>" + this.dockingPoints['subscript'].child[0].formatExpressionAs(format) + "</mrow>" : "<none />";
-            let m_mass_number = this.s.editorMode === "nuclear" && this.dockingPoints['mass_number'].child[0] != null ? "<mrow>" + this.dockingPoints['mass_number'].child[0].formatExpressionAs(format) + "</mrow>" : "<none />";
-            let m_proton_number = this.s.editorMode === "nuclear" && this.dockingPoints['proton_number'].child[0] != null ? "<mrow>" + this.dockingPoints['proton_number'].child[0].formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_superscript = this.dockingPoints['superscript'].child != null ? "<mrow>" + this.dockingPoints['superscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_subscript = this.dockingPoints['subscript'].child != null ? "<mrow>" + this.dockingPoints['subscript'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_mass_number = this.s.editorMode === "nuclear" && this.dockingPoints['mass_number'].child != null ? "<mrow>" + this.dockingPoints['mass_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
+            let m_proton_number = this.s.editorMode === "nuclear" && this.dockingPoints['proton_number'].child != null ? "<mrow>" + this.dockingPoints['proton_number'].child.formatExpressionAs(format) + "</mrow>" : "<none />";
             expression = '';
             if (m_subscript == "<none />" && m_superscript == "<none />" && m_mass_number == "<none />" && m_proton_number == "<none />") {
                 expression += '<mi>' + this.element + '</mi>';
@@ -144,41 +144,41 @@ export
                 expression += "<mmultiscripts>" + "<mi>" + this.element + "</mi>" + m_subscript + m_superscript;
                 expression += "<mprescripts />" + m_proton_number + m_mass_number + "</mmultiscripts>"
             }
-            if (this.dockingPoints['right'].child[0] != null) {
-                expression += this.dockingPoints['right'].child[0].formatExpressionAs('mathml');
+            if (this.dockingPoints['right'].child != null) {
+                expression += this.dockingPoints['right'].child.formatExpressionAs('mathml');
             }
         } else if (format == "mhchem") {
             expression = this.element;
             if (this.s.editorMode === "nuclear") {
-                if (this.dockingPoints["mass_number"].child[0] != null && this.dockingPoints["proton_number"].child[0] != null) {
+                if (this.dockingPoints["mass_number"].child != null && this.dockingPoints["proton_number"].child != null) {
                     expression = "";
-                    expression += "{}^{" + this.dockingPoints["mass_number"].child[0].formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child[0].formatExpressionAs(format) + "}" + this.element;
-                } else if (this.dockingPoints["mass_number"].child[0] != null) {
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
+                } else if (this.dockingPoints["mass_number"].child != null) {
                     expression = "";
-                    expression += "{}^{" + this.dockingPoints["mass_number"].child[0].formatExpressionAs(format) + "}_{}" + this.element;
-                } else if (this.dockingPoints["proton_number"].child[0] != null) {
+                    expression += "{}^{" + this.dockingPoints["mass_number"].child.formatExpressionAs(format) + "}_{}" + this.element;
+                } else if (this.dockingPoints["proton_number"].child != null) {
                     expression = "";
-                    expression += "{}^{}_{" + this.dockingPoints["proton_number"].child[0].formatExpressionAs(format) + "}" + this.element;
+                    expression += "{}^{}_{" + this.dockingPoints["proton_number"].child.formatExpressionAs(format) + "}" + this.element;
                 } else {
-                    expression = "{}^{}_{}aabdef" + this.element;
+                    expression = "{}^{}_{}" + this.element;
                 }
             }
 
-            if (this.dockingPoints["subscript"].child[0] != null) {
-                expression += this.dockingPoints["subscript"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["subscript"].child != null) {
+                expression += this.dockingPoints["subscript"].child.formatExpressionAs(format);
             }
-            if (this.dockingPoints["superscript"].child[0] != null) {
-                expression += "^{" + this.dockingPoints["superscript"].child[0].formatExpressionAs(format) + "}";
+            if (this.dockingPoints["superscript"].child != null) {
+                expression += "^{" + this.dockingPoints["superscript"].child.formatExpressionAs(format) + "}";
             }
-            if (this.dockingPoints["right"].child[0] != null) {
-                if (this.dockingPoints["right"].child[0] instanceof BinaryOperation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                if (this.dockingPoints["right"].child instanceof BinaryOperation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
-                else if (this.dockingPoints["right"].child[0] instanceof Relation) {
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                else if (this.dockingPoints["right"].child instanceof Relation) {
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     // WARNING This assumes it's a ChemicalElement, hence produces a multiplication
-                    expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+                    expression += this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
         }
@@ -226,8 +226,8 @@ export
 
         if (this.dockingPoints["mass_number"]) {
             let dp = this.dockingPoints["mass_number"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 // FIXME The commented variant is horrible with regard to spacing.
                 // FIXME The issue is likely to go away once I rewrite the docking code, if I can make the flexible spacing thing work.
                 // FIXME I'm keeping it like this for now because it's easier on the eyes.
@@ -242,8 +242,8 @@ export
 
         if (this.dockingPoints["proton_number"]) {
             let dp = this.dockingPoints["proton_number"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 // FIXME The commented variant is horrible with regard to spacing.
                 // FIXME The issue is likely to go away once I rewrite the docking code, if I can make the flexible spacing thing work.
                 // FIXME I'm keeping it like this for now because it's easier on the eyes.
@@ -259,8 +259,8 @@ export
         let superscriptWidth = 0;
         if (this.dockingPoints["superscript"]) {
             let dp = this.dockingPoints["superscript"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
                 child.position.y = -this.scale*this.s.xBox.h - (child.subtreeDockingPointsBoundingBox.y + child.subtreeDockingPointsBoundingBox.h);
                 superscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -274,8 +274,8 @@ export
         let subscriptWidth = 0;
         if (this.dockingPoints["subscript"]) {
             let dp = this.dockingPoints["subscript"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + child.scale*dp.size/2;
                 child.position.y = child.topBound;
                 subscriptWidth = Math.max(dp.size, child.subtreeDockingPointsBoundingBox.w);
@@ -288,8 +288,8 @@ export
 
         if (this.dockingPoints["right"]) {
             let dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                let child = dp.child[0];
+            if (dp.child) {
+                let child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + Math.max(superscriptWidth, subscriptWidth) + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
@@ -300,6 +300,6 @@ export
     }
 
     get children(): Array<Widget> {
-        return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child[0]).filter(w => isDefined(w)) as Array<Widget>;
+        return Object.entries(this.dockingPoints).filter(e => e[0] !== 'subscript' && isDefined(e[1])).map(e => e[1].child).filter(w => isDefined(w)) as Array<Widget>;
     }
 }

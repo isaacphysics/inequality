@@ -91,26 +91,26 @@ export
         let expression = "";
         if (format == "latex") {
             expression += this.latexSymbol;
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         // } else if (format == "python") {
-        //     if (this.dockingPoints["right"].child[0] != null) {
-        //         expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+        //     if (this.dockingPoints["right"].child != null) {
+        //         expression += this.dockingPoints["right"].child.formatExpressionAs(format);
         //     }
         } else if (format == "subscript") {
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mhchem") {
             expression += this.mhchemSymbol;
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         } else if (format == "mathml") {
             expression += '<mo>' + this.state + "</mo>"
-            if (this.dockingPoints["right"].child[0] != null) {
-                expression += this.dockingPoints["right"].child[0].formatExpressionAs(format);
+            if (this.dockingPoints["right"].child != null) {
+                expression += this.dockingPoints["right"].child.formatExpressionAs(format);
             }
         }
         return expression;
@@ -149,8 +149,8 @@ export
 
         if (this.dockingPoints["right"]) {
             const dp = this.dockingPoints["right"];
-            if (dp.child[0]) {
-                const child = dp.child[0];
+            if (dp.child) {
+                const child = dp.child;
                 child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
                 child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
