@@ -101,6 +101,15 @@ export
         if (this.s.editorMode === "maths") {
             this.dockingPoints["superscript"] = new DockingPoint(this, this.p.createVector(box.w/2 + this.scale * 20, -this.scale * this.s.mBox.h), 2/3, ["exponent"], "superscript");
         }
+        const angle = Math.PI * 2 / 8;
+        const radius = box.h * 1.5;
+        const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+        
+        directions.forEach((dir, index) => {
+            const x = radius * Math.cos(angle * index - Math.PI / 2);
+            const y = -this.s.xBox.h * 3/4 + radius * Math.sin(angle * index - Math.PI / 2);
+            this.dockingPoints[dir] = new DockingPoint(this, this.p.createVector(x, y), 1, ["graphline"], dir);
+        });
     }
 
     formatExpressionAs(format: string): string {
@@ -226,6 +235,25 @@ export
                 dp.position.y = -this.scale * this.s.xBox.h/2;
             }
         }
+
+        const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+        const angle = Math.PI * 2 / 8;
+        const radius = thisBox.h;
+        directions.forEach((dir, index) => {
+            if (this.dockingPoints[dir]) {
+                const dp = this.dockingPoints[dir];
+                if (dp.child) {
+                    const child = dp.child;
+                    child.position.x = thisBox.x + thisBox.w/2 + dp.position.x - child.dockingPoint.x;
+                    child.position.y = thisBox.y/2 + dp.position.y - child.dockingPoint.y;
+                } else {
+                    const x = radius * Math.cos(angle * index - Math.PI / 2);
+                    const y = thisBox.y/2 + radius * Math.sin(angle * index - Math.PI / 2);
+                    dp.position.x = x;
+                    dp.position.y = y;
+                }
+            }
+        });
     }
 
     isNegative(): boolean {
