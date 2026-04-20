@@ -39,6 +39,7 @@ import { LogicBinaryOperation } from './LogicBinaryOperation';
 import { LogicLiteral } from './LogicLiteral';
 import { LogicNot } from './LogicNot';
 import {UnaryOperation} from "./UnaryOperation";
+import { GraphLine } from "./GraphLine";
 
 /** This is the "main" app with the update/render loop and all. */
 export
@@ -620,6 +621,9 @@ export
                 break;
             case "LogicNot":
                 w = new LogicNot(this.p, this);
+                break;
+            case "GraphLine":
+                w = new GraphLine(this.p, this, node.properties.type);
                 break;
             default: // this would be a Widget and should really never happen...
                 break;

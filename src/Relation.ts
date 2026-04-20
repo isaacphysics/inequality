@@ -118,7 +118,7 @@ export
         }
 
         // FIXME Not sure this is entirely right. Maybe make the "type" in DockingPoint an array? Works for now.
-        this.docksTo = ['chemical_element', 'state_symbol', 'particle', "operator_brackets", "graphline"];
+        this.docksTo = ['chemical_element', 'state_symbol', 'particle', "operator_brackets"];
         if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
             this.docksTo.push('operator');
         }
@@ -190,39 +190,12 @@ export
     }
 
     _draw(): void {
-        this.p.noFill().strokeCap(this.p.SQUARE).strokeWeight(4 * this.scale).stroke(this.color);
+        this.p.fill(this.color).strokeWeight(0).noStroke();
 
-        let box = this.boundingBox();
-        
-        const angle = Math.PI * 2 / 8;
-        const radius = box.h * 2.5;
-        const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-        const arrowSize = 10;
-        
-        if (directions.includes(this.dockedTo)) {
-            directions.forEach((dir, index) => {
-                const x = radius * Math.cos(angle * index - Math.PI / 2);
-                const y = radius * Math.sin(angle * index - Math.PI / 2);
-
-                if (this.dockedTo === dir) {
-                    this.p.line(0, 0, x, y);
-                    
-                    const baseAngle = angle * index - Math.PI / 2;
-                    const x1 = x - arrowSize * Math.cos(baseAngle - Math.PI / 6);
-                    const y1 = y - arrowSize * Math.sin(baseAngle - Math.PI / 6);
-                    const x2 = x - arrowSize * Math.cos(baseAngle + Math.PI / 6);
-                    const y2 = y - arrowSize * Math.sin(baseAngle + Math.PI / 6);
-                    
-                    this.p.fill(this.color);
-                    this.p.triangle(x, y, x1, y1, x2, y2);
-                }
-                
-            });
-        } else {
-            this.p.line(-box.w/2, 0, box.w/2, 0);
-        }
-        
-
+        this.p.textFont(this.s.font_up)
+            .textSize(this.s.baseFontSize * 0.8 * this.scale)
+            .textAlign(this.p.CENTER, this.p.BASELINE)
+            .text(this.relation, 0, 0);
         this.p.strokeWeight(1);
     }
 
@@ -238,48 +211,15 @@ export
         const thisBox = this.boundingBox();
 
         if (this.dockingPoints["right"]) {
-            const angle = Math.PI * 2 / 8;
-            const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-
             const dp = this.dockingPoints["right"];
             if (dp.child) {
                 let child = dp.child;
-
-                if (directions.includes(this.dockedTo)) {
-                    const radius = thisBox.h * 5;
-                    directions.forEach((dir, index) => {
-                        const x = radius * Math.cos(angle * index - Math.PI / 2);
-                        const y = -thisBox.y + radius * Math.sin(angle * index - Math.PI / 2);
-
-                        if (this.dockedTo === dir) {
-                            child.position.x = x;
-                            child.position.y = y;
-                        }
-                        
-                    });
-                } else {
-                    child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
-                    child.position.y = this.dockingPoint.y - child.dockingPoint.y;
-                }
+                child.position.x = thisBox.x + thisBox.w + child.leftBound + dp.size/2;
+                child.position.y = this.dockingPoint.y - child.dockingPoint.y;
             } else {
-                if (directions.includes(this.dockedTo)) {
-                    const radius = thisBox.h * 5;
-                    directions.forEach((dir, index) => {
-                        const x = radius * Math.cos(angle * index - Math.PI / 2);
-                        const y = radius * Math.sin(angle * index - Math.PI / 2);
-
-                        if (this.dockedTo === dir) {
-                            dp.position.x = x;
-                            dp.position.y = y;
-                        }
-                        
-                    });
-                } else {
-                    dp.position.x = thisBox.x + thisBox.w + dp.size;
-                    dp.position.y = -this.scale*this.s.xBox.h/2;
-                }
-            }     
+                dp.position.x = thisBox.x + thisBox.w + dp.size;
+                dp.position.y = -this.scale*this.s.xBox.h/2;
+            }
         }
-
     }
 }

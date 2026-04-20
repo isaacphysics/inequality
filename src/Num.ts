@@ -60,7 +60,7 @@ export
         super(p, s);
         this.significand = significand;
 
-        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'relation', 'differential_order', 'differential_argument'];
+        this.docksTo = ['symbol', 'exponent', 'subscript', 'top-left', 'symbol_subscript', 'bottom-left', 'relation', 'differential_order', 'differential_argument', 'node'];
         if (!["chemistry", "nuclear"].includes(this.s.editorMode)) {
             this.docksTo.push('operator_brackets');
         }
@@ -108,7 +108,7 @@ export
         directions.forEach((dir, index) => {
             const x = radius * Math.cos(angle * index - Math.PI / 2);
             const y = -this.s.xBox.h * 3/4 + radius * Math.sin(angle * index - Math.PI / 2);
-            this.dockingPoints[dir] = new DockingPoint(this, this.p.createVector(x, y), 1, ["graphline"], dir);
+            this.dockingPoints[dir] = new DockingPoint(this, this.p.createVector(x, y), 1, ["startline"], dir);
         });
     }
 
@@ -124,6 +124,23 @@ export
                     expression += "\\cdot " + this.dockingPoints["right"].child.formatExpressionAs(format);
                 } else {
                     expression += " " + this.dockingPoints["right"].child.formatExpressionAs(format);
+                }
+            }
+            const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+            if (directions.some(dir => this.dockingPoints[dir].child != null)) {
+                if (!this.dockedTo) {
+                    expression = "{";
+                }  else {
+                    expression = "";
+                }
+                directions.forEach((dir) => {
+                    if (this.dockingPoints[dir].child != null) {
+                        expression += this.getFullText("python") + this.dockingPoints[dir].child?.formatExpressionAs(format);
+                    }
+                });
+                if (!this.dockedTo) {
+                    expression = expression.slice(0, -2);
+                    expression += "}";
                 }
             }
         } else if (format == "mhchem") {
@@ -156,6 +173,20 @@ export
                     expression += "*" + this.dockingPoints["right"].child.formatExpressionAs(format);
                 }
             }
+                const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+                const key = this.getFullText("python");
+
+                const children = directions
+                    .map(dir => this.dockingPoints[dir].child)
+                    .filter(child => child != null)
+                    .map(child => child?.formatExpressionAs(format)) // returns JSON fragment string
+                    .filter(v => v !== undefined);
+
+                if (children.length === 0) {
+                    return `"${key}"`; // must be a valid JSON value
+                }
+
+                return `{"${key}":[${children.join(",")}]}`
         } else if (format == "subscript") {
             expression = "" + this.getFullText();
             if (this.superscript && this.dockingPoints["superscript"].child != null) {
@@ -245,7 +276,7 @@ export
                 if (dp.child) {
                     const child = dp.child;
                     child.position.x = thisBox.x + thisBox.w/2 + dp.position.x - child.dockingPoint.x;
-                    child.position.y = thisBox.y/2 + dp.position.y - child.dockingPoint.y;
+                    child.position.y = thisBox.y/2 + radius * Math.sin(angle * index - Math.PI / 2); //thisBox.y/4 + dp.position.y - child.dockingPoint.y;
                 } else {
                     const x = radius * Math.cos(angle * index - Math.PI / 2);
                     const y = thisBox.y/2 + radius * Math.sin(angle * index - Math.PI / 2);
