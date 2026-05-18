@@ -44,6 +44,9 @@ class Differential extends Widget {
         this.letter = letter;
 
         this.docksTo = ['operator', 'differential', 'relation'];
+        if (this.letter == "δ" || this.letter == "∆" || this.letter == "Δ") {
+            this.docksTo.push('symbol');
+        };
     }
 
     get typeAsString(): string {
