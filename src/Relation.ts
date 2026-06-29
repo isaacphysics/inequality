@@ -98,7 +98,7 @@ export
             case 'equiv':
             case '=':
                 this.relation = '=';
-                this.pythonSymbol = '==';
+                this.pythonSymbol = this.s.editorMode === "logic" ? '=' : '==';
                 this.latexSymbol = '=';
                 break;
             case '.':
