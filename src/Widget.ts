@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 import p5 from 'p5';
-import _each = require('lodash/each');
-import _intersection = require('lodash/intersection');
-import _isEmpty = require('lodash/isEmpty');
+import _each from 'lodash/each';
+import _intersection from 'lodash/intersection';
+import _isEmpty from 'lodash/isEmpty';
 
 import { DockingPoint } from './DockingPoint';
 import { isDefined } from './utils';
