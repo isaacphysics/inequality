@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import p5 from "p5";
-import _intersection = require('lodash/intersection');
+import _intersection from 'lodash/intersection';
 import { isDefined } from "./utils";
 
 import { Widget, Rect, WidgetSpec } from './Widget'
